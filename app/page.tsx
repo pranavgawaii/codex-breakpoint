@@ -136,75 +136,68 @@ function Reveal({
   );
 }
 
-/* ---------- Hero ambient visual ---------- */
-
-const heroFragments = [
-  { text: "exit 0", x: "8%",  y: "18%", delay: 0,    size: 11 },
-  { text: "exit 1", x: "82%", y: "22%", delay: 1.2,  size: 11 },
-  { text: "run_0184",   x: "14%", y: "62%", delay: 2.1,  size: 10 },
-  { text: "observed",   x: "76%", y: "68%", delay: 0.6,  size: 10 },
-  { text: "hypothesis", x: "88%", y: "42%", delay: 3.0,  size: 9.5 },
-  { text: "ev_1042",    x: "6%",  y: "40%", delay: 1.8,  size: 10 },
-  { text: "compare",    x: "68%", y: "12%", delay: 0.9,  size: 10 },
-  { text: "verified",   x: "24%", y: "78%", delay: 2.6,  size: 10.5 },
-  { text: "--test",     x: "52%", y: "82%", delay: 3.4,  size: 10 },
-  { text: "diff",       x: "38%", y: "10%", delay: 1.5,  size: 11 },
-];
-
-const heroParticles = Array.from({ length: 18 }, (_, i) => ({
-  x: `${5 + ((i * 53) % 90)}%`,
-  y: `${8 + ((i * 37) % 84)}%`,
-  delay: (i * 0.7) % 5,
-  size: 2 + (i % 3),
-}));
+/* ---------- Hero orbital ambient visual (matching reference design) ---------- */
 
 function HeroVisual() {
   return (
     <div className="hero-visual" aria-hidden="true">
-      {/* Radial ambient glow */}
-      <div className="hero-glow hero-glow--primary" />
-      <div className="hero-glow hero-glow--secondary" />
+      {/* Left orbital system (anchored near 'Don't guess the bug. Prove it.') */}
+      <div className="hero-orbit-system hero-orbit-system--left">
+        <div className="orbit-ring orbit-ring--1" />
+        <div className="orbit-ring orbit-ring--2" />
+        <div className="orbit-ring orbit-ring--3" />
+        <div className="orbit-ring orbit-ring--4" />
+        
+        {/* Central focal node */}
+        <div className="orbit-core-dot" />
 
-      {/* Grid overlay */}
-      <div className="hero-grid-overlay" />
+        {/* Orbiting nodes & labels on rings */}
+        <div className="orbit-rotator orbit-rotator--slow">
+          <div className="orbit-satellite orbit-satellite--1">
+            <span className="orbit-dot" />
+            <span className="orbit-tag">run_0184</span>
+          </div>
+        </div>
 
-      {/* Floating code fragments */}
-      {heroFragments.map((frag) => (
-        <span
-          key={frag.text}
-          className="hero-frag"
-          style={{
-            left: frag.x,
-            top: frag.y,
-            fontSize: `${frag.size}px`,
-            animationDelay: `${frag.delay}s`,
-          }}
-        >
-          {frag.text}
-        </span>
-      ))}
+        <div className="orbit-rotator orbit-rotator--reverse">
+          <div className="orbit-satellite orbit-satellite--2">
+            <span className="orbit-dot orbit-dot--accent" />
+            <span className="orbit-tag">observed</span>
+          </div>
+        </div>
+      </div>
 
-      {/* Particles */}
-      {heroParticles.map((p, i) => (
-        <span
-          key={i}
-          className="hero-particle"
-          style={{
-            left: p.x,
-            top: p.y,
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            animationDelay: `${p.delay}s`,
-          }}
-        />
-      ))}
+      {/* Right orbital system (anchored behind hero-side / top right) */}
+      <div className="hero-orbit-system hero-orbit-system--right">
+        <div className="orbit-ring orbit-ring--1" />
+        <div className="orbit-ring orbit-ring--2" />
+        <div className="orbit-ring orbit-ring--3" />
+        <div className="orbit-ring orbit-ring--4" />
 
-      {/* Connecting lines */}
-      <svg className="hero-lines" viewBox="0 0 1200 600" preserveAspectRatio="none">
-        <path d="M100,100 Q400,50 600,200 T1100,150" className="hero-line" style={{ animationDelay: "0s" }} />
-        <path d="M50,300 Q300,250 500,400 T1050,350"  className="hero-line" style={{ animationDelay: "1.5s" }} />
-        <path d="M200,450 Q500,380 700,500 T1150,420" className="hero-line" style={{ animationDelay: "3s" }} />
-      </svg>
+        {/* Core & orbiting telemetry */}
+        <div className="orbit-core-dot orbit-core-dot--accent" />
+
+        <div className="orbit-rotator orbit-rotator--medium">
+          <div className="orbit-satellite orbit-satellite--right-1">
+            <span className="orbit-dot orbit-dot--indigo" />
+            <span className="orbit-tag">exit 0 · pass</span>
+          </div>
+        </div>
+
+        <div className="orbit-rotator orbit-rotator--slow">
+          <div className="orbit-satellite orbit-satellite--right-2">
+            <span className="orbit-dot" />
+            <span className="orbit-tag">ev_1042 · diff</span>
+          </div>
+        </div>
+
+        <div className="orbit-rotator orbit-rotator--reverse-slow">
+          <div className="orbit-satellite orbit-satellite--right-3">
+            <span className="orbit-dot orbit-dot--accent" />
+            <span className="orbit-tag">verified · 180ms</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

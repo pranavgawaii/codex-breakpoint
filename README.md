@@ -434,6 +434,7 @@ Breakpoint was created for the **DevDay Exchange Community Metro Hackathon: Pune
 
 - **Track**: Developer Tools / Software Reliability
 - **Core Premise**: Moving beyond generative "code assistants" that guess bug fixes, toward structured developer tools that gather forensic evidence, reproduce failure conditions, and verify code fixes with actual test runs.
+- **Pitch Deck**: [View Breakpoint Pitch Deck (6 slides, PDF)](docs/breakpoint-pitch-deck.pdf)
 
 ---
 
