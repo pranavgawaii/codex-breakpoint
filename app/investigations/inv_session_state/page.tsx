@@ -1,0 +1,3 @@
+import Link from "next/link";
+import "../../dashboard/dashboard.css";
+export default function InvestigationWorkspaceEntry() { return <main className="dashboard"><header><Link href="/dashboard">← Project</Link><div><span>INVESTIGATION</span><h1>Session state persists between tests</h1></div><b className="review">Workspace</b></header><p className="notice">This investigation workspace uses persisted local execution data. Start the workflow, inspect evidence, then explicitly review and approve a patch.</p><Link className="dashboard-link" href="/dashboard#workspace">Open live workspace →</Link></main>; }
