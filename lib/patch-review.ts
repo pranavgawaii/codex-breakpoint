@@ -5,7 +5,7 @@ import type { ProposedPatch, TestRun, VerificationResult } from "./models";
 const demoRoot = path.join(process.cwd(), "sample-project");
 const safeTarget = path.join(demoRoot, "test", "session-flow.test.js");
 
-/** Patch text is review-only; this prototype never writes a proposed fix into a project. */
+/** Patch text is scoped to the trusted demo source. Apply and revert are explicit, approval-gated operations. */
 export async function createDemoCleanupPatch(investigationId: string): Promise<ProposedPatch> {
   const originalContent = await readFile(safeTarget, "utf8");
   return { id: `patch_${crypto.randomUUID().slice(0, 8)}`, investigationId, description: "Reset module-level session state before every test.", diff: "+ test.beforeEach(() => clearSession());", status: "draft", baseline: "trusted-demo baseline", targetPath: "test/session-flow.test.js", originalContent };

@@ -7,10 +7,9 @@ import type {
   Evidence,
   Hypothesis,
   InvestigationSnapshot,
-  ProposedPatch,
-  TestRun,
-  VerificationResult
+  TestRun
 } from "@/lib/models";
+import { DiffView } from "../components/diff-view";
 import {
   AlertIcon,
   ArrowRightIcon,
@@ -218,33 +217,6 @@ function EmptyState({
   );
 }
 
-function DiffView({ patch }: { patch: ProposedPatch }) {
-  const lines = patch.diff.split("\n");
-
-  return (
-    <div className="diff-view">
-      <div className="diff-view-head">
-        <span className="diff-file">
-          <FileIcon />
-          {patch.targetPath}
-        </span>
-        <span className="diff-baseline">{patch.baseline}</span>
-      </div>
-      <pre className="diff-code" aria-label="Proposed patch">
-        {lines.map((line, index) => {
-          const tone = line.startsWith("+") ? "add" : line.startsWith("-") ? "del" : "context";
-          return (
-            <span className={`diff-line diff-line--${tone}`} key={`${line}-${index}`}>
-              <span className="diff-line-number">{index + 1}</span>
-              <span>{line || " "}</span>
-            </span>
-          );
-        })}
-      </pre>
-    </div>
-  );
-}
-
 function HypothesisCard({
   hypothesis,
   onOpenEvidence
@@ -400,7 +372,7 @@ export default function InvestigationWorkspace() {
       const successByAction: Record<Action, string> = {
         "run-workflow": "Controlled workflow recorded. New runs and evidence are ready to review.",
         "ai-review": result.summary ?? "Evidence review completed and persisted.",
-        "propose-patch": "Cleanup patch drafted. It stays review-only until you approve it.",
+        "propose-patch": "Cleanup patch drafted. It is not applied until you approve it.",
         "approve-patch": "Patch approved and verified against a recorded rerun.",
         "revert-patch": "Patch reverted. The investigation is back in review."
       };
@@ -454,18 +426,19 @@ export default function InvestigationWorkspace() {
   const unknownEvidence = evidence.length - observedEvidence;
 
   const hasRuns = runs.length > 0;
+  const hasEvidence = evidence.length > 0;
   const hasHypothesis = Boolean(hypothesis);
   const hasPatch = Boolean(patch);
   const patchDraft = patch?.status === "draft";
   const patchApplied = patch?.status === "applied";
   const verified = Boolean(verification) && (patchApplied || data?.investigation.status === "verified");
 
-  const completedSteps = [hasRuns, hasHypothesis, hasPatch, verified].filter(Boolean).length;
-  const currentStep = !hasRuns ? 0 : !hasHypothesis ? 2 : !hasPatch ? 2 : !verified ? 3 : 4;
+  const completedSteps = [hasRuns, hasEvidence, hasPatch, verified].filter(Boolean).length;
+  const currentStep = !hasRuns ? 0 : !hasPatch ? 2 : !verified ? 3 : 4;
 
   const stepState = (index: number): FlowState => {
     if (index === 1) {
-      if (hasHypothesis) return "complete";
+      if (hasHypothesis || hasEvidence) return "complete";
       return hasRuns ? "optional" : "upcoming";
     }
     if (index < currentStep) return "complete";
@@ -598,7 +571,13 @@ export default function InvestigationWorkspace() {
               value={verification ? statusLabel(verification.result) : "Not started"}
               icon={<ShieldCheckIcon />}
               textual
-              meta={verification ? `Recorded ${formatRecorded(data?.investigation.updatedAt)}` : "Awaiting a recorded rerun"}
+              meta={
+                verification
+                  ? patchDraft
+                    ? "Historical result · latest patch still in review"
+                    : `Recorded ${formatRecorded(data?.investigation.updatedAt)}`
+                  : "Awaiting a recorded rerun"
+              }
             />
           </section>
 
@@ -646,7 +625,7 @@ export default function InvestigationWorkspace() {
                 title="Review evidence"
                 description="Ask AI to inspect the evidence trail. This step is optional; the local workflow stands on its own."
                 state={stepState(1)}
-                detail={hasHypothesis ? `${hypothesis?.confidence ?? "Low"} confidence` : "Add OPENAI_API_KEY to enable"}
+                detail={hasHypothesis ? `${hypothesis?.confidence ?? "Low"} confidence` : hasEvidence ? "Evidence captured · AI optional" : "Awaiting runs"}
                 action={
                   <button
                     className="flow-btn"
@@ -665,7 +644,7 @@ export default function InvestigationWorkspace() {
                 title="Propose cleanup patch"
                 description="Draft a minimal fix against the recorded baseline. Nothing is applied without approval."
                 state={stepState(2)}
-                detail={hasPatch ? statusLabel(patch?.status ?? "") : "Review-only artifact"}
+                detail={hasPatch ? statusLabel(patch?.status ?? "") : "Approval-gated artifact"}
                 action={
                   <button
                     className="flow-btn"
@@ -867,7 +846,7 @@ export default function InvestigationWorkspace() {
                   <div className="panel-view">
                     <div className="panel-intro">
                       <div>
-                        <h2>Review-only patch</h2>
+                        <h2>Proposed patch</h2>
                         <p>The diff stays inert until you explicitly approve it.</p>
                       </div>
                       {patch && <StatusPill label={statusLabel(patch.status)} tone={patch.status === "applied" ? "success" : "neutral"} />}
@@ -1007,7 +986,7 @@ export default function InvestigationWorkspace() {
               <section className="rail-card rail-card--brief">
                 <div className="rail-head">
                   <span className="panel-eyebrow">Investigation brief</span>
-                  <span className="rail-id">{data?.investigation.id.replace("inv_", "INV-").toUpperCase() ?? "INV"}</span>
+                  <span className="rail-id">{data?.investigation.id ?? "inv_session_state"}</span>
                 </div>
                 {hypothesis ? (
                   <>

@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { InvestigationSnapshot } from "@/lib/models";
+import { Mark } from "./components/brand-mark";
+import { InvestigationWindow } from "./components/investigation-window";
+import { SiteFooter } from "./components/site-footer";
 
 const navLinksLeft = [
   { label: "Workflow", href: "#workflow" },
@@ -82,16 +85,6 @@ const nextSteps = [
   { label: "Run the controlled tests", href: "#demo" },
   { label: "Compare the recorded evidence", href: "#demo" }
 ];
-
-function Mark() {
-  return (
-    <span className="mark" aria-hidden="true">
-      <i />
-      <i />
-      <i />
-    </span>
-  );
-}
 
 function Reveal({
   children,
@@ -289,145 +282,6 @@ function StepVisual({ index }: { index: number }) {
   );
 }
 
-function EvidencePanel({ snapshot, error }: { snapshot: InvestigationSnapshot | null; error: string | null }) {
-  const hypothesis = snapshot?.hypotheses.at(-1);
-  const evidence = snapshot?.evidence.slice(-3).reverse() ?? [];
-  const latestRun = snapshot?.runs.at(-1);
-  const patch = snapshot?.patches.at(-1);
-  const verification = snapshot?.verifications.at(-1);
-
-  if (!snapshot && !error) {
-    return (
-      <div className="result-card">
-        <div className="panel-heading">
-          <div>
-            <p className="panel-label">Run evidence</p>
-            <h3>Loading the investigation record…</h3>
-          </div>
-        </div>
-        <p className="empty-panel">Waiting for the local investigation store.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="result-card">
-      <div className="panel-heading">
-        <div>
-          <p className="panel-label">Run evidence</p>
-          <h3>{hypothesis?.description ?? "Run the controlled comparison to collect evidence"}</h3>
-        </div>
-        <span className="confidence">{hypothesis ? `${hypothesis.confidence} confidence` : "No claim yet"}</span>
-      </div>
-
-      <div className="findings">
-        {error ? (
-          <div>
-            <span className="claim unknown">Runner error</span>
-            <p>{error}</p>
-          </div>
-        ) : evidence.length ? (
-          evidence.map((item) => (
-            <div key={item.id}>
-              <span className={`claim ${item.observed ? "observed" : "unknown"}`}>
-                {item.observed ? "Observed" : "Unknown"}
-              </span>
-              <p>
-                {item.statement}
-                <code>{item.id}</code>
-              </p>
-            </div>
-          ))
-        ) : (
-          <div>
-            <span className="claim unknown">Unknown</span>
-            <p>No execution evidence yet. The UI does not infer a cause before a run.</p>
-          </div>
-        )}
-      </div>
-
-      {latestRun && (
-        <div className="command-line">
-          <span aria-hidden="true">›</span>
-          <code>{latestRun.command.slice(1).join(" ")}</code>
-          <b>exit {latestRun.exitCode ?? "—"}</b>
-        </div>
-      )}
-      {patch && (
-        <div className="command-line">
-          <span aria-hidden="true">✓</span>
-          <code>Patch: {patch.description} · {patch.status}</code>
-          <b>{verification ? `verification ${verification.result}` : "awaiting approval"}</b>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ComparisonPanel({ snapshot }: { snapshot: InvestigationSnapshot | null }) {
-  const comparison = snapshot?.comparisons.at(-1);
-  const runs = snapshot?.runs ?? [];
-  const failing = runs.slice().reverse().find((run) => run.status === "failed");
-  const passing = runs.slice().reverse().find((run) => run.status === "passed");
-
-  if (!comparison || !failing || !passing) {
-    return (
-      <div className="result-card">
-        <div className="panel-heading">
-          <div>
-            <p className="panel-label">Run comparison</p>
-            <h3>Two runs, side by side</h3>
-          </div>
-          <span className="confidence">No comparison yet</span>
-        </div>
-        <p className="empty-panel">Run the investigation to compare two actual executions.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="result-card">
-      <div className="panel-heading">
-        <div>
-          <p className="panel-label">Run comparison</p>
-          <h3>What changed between the recorded runs</h3>
-        </div>
-        <span className="confidence">{comparison.findings.length} findings</span>
-      </div>
-
-      <div className="run-columns">
-        <article>
-          <div>
-            <span className="red-dot" aria-hidden="true" /> Failing run
-          </div>
-          <h3>{failing.id}</h3>
-          <p>{failing.tests.map((test) => test.name).join(" → ") || "test results unavailable"}</p>
-          <code>
-            exit {failing.exitCode} · {failing.durationMs} ms
-          </code>
-        </article>
-        <article>
-          <div>
-            <span className="green-dot" aria-hidden="true" /> Passing run
-          </div>
-          <h3>{passing.id}</h3>
-          <p>{passing.tests.map((test) => test.name).join(" → ") || "test results unavailable"}</p>
-          <code>
-            exit {passing.exitCode} · {passing.durationMs} ms
-          </code>
-        </article>
-      </div>
-
-      <div className="diff">
-        <span>Recorded findings</span>
-        {comparison.findings.slice(0, 3).map((finding, index) => (
-          <b key={`${finding.statement}-${index}`}>{finding.statement}</b>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function LandingPage() {
   const [menu, setMenu] = useState(false);
   const [tab, setTab] = useState<"evidence" | "comparison">("evidence");
@@ -488,11 +342,6 @@ export default function LandingPage() {
     finally { setRunning(false); }
   }
 
-  const status = snapshot?.investigation.status;
-  const statusLabel = status === "needs_review" ? "Needs review" : status === "verified" ? "Verified" : "Ready to run";
-  const statusTone = status === "needs_review" ? "warning" : status === "verified" ? "success" : "neutral";
-  const hypothesis = snapshot?.hypotheses.at(-1);
-  const title = snapshot?.investigation.title ?? "Session state persists between tests";
 
   return (
     <div className="site">
@@ -608,9 +457,6 @@ export default function LandingPage() {
                 </Reveal>
 
                 <Reveal delay={300} className="hero-actions">
-                  <a className="btn btn-primary" href="/app">
-                    Open product dashboard <span aria-hidden="true">→</span>
-                  </a>
                   <a className="btn btn-secondary" href="#workflow">
                     Explore the workflow <span aria-hidden="true">↓</span>
                   </a>
@@ -631,129 +477,15 @@ export default function LandingPage() {
           </div>
 
           <Reveal id="demo" delay={420} className="demo-block frame">
-            <div className="fixture-row">
-              <p className="fixture-label">
-                <span className="fixture-dot" aria-hidden="true" />
-                Trusted local demo · real Node test execution
-              </p>
-              <button
-                type="button"
-                className="btn btn-primary run-button"
-                onClick={runDemo}
-                disabled={running}
-                aria-busy={running}
-              >
-                {running ? "Running controlled tests…" : "Run real investigation"}
-                {!running && <span aria-hidden="true">→</span>}
-              </button>
-              <button type="button" className="btn btn-secondary run-button" onClick={() => patchAction(snapshot?.patches.at(-1)?.status === "draft" ? "approve-patch" : "propose-patch")} disabled={running}>
-                {snapshot?.patches.at(-1)?.status === "draft" ? "Approve & verify fix" : "Propose cleanup fix"}
-              </button>
-              {snapshot?.patches.at(-1)?.status === "applied" && <button type="button" className="btn btn-secondary run-button" onClick={() => patchAction("revert-patch")} disabled={running}>Revert patch</button>}
-            </div>
-
-            <div className="window-wrap">
-              <div className="glow" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </div>
-
-              <div className="window">
-                <div className="rail" aria-hidden="true">
-                  <i />
-                  <i className="active" />
-                  <i />
-                  <i />
-                  <i />
-                </div>
-
-                <div className="window-inner">
-                  <div className="window-head">
-                    <span>Investigation</span>
-                    <span className="sep">/</span>
-                    <strong>{title}</strong>
-                    <span className="live">
-                      <i aria-hidden="true" />
-                      {running ? "Running" : "Local demo"}
-                    </span>
-                  </div>
-
-                  <div className="window-body">
-                    <aside className="window-meta">
-                      <div>
-                        <div className="label">Workspace</div>
-                        <h3>{title}</h3>
-                      </div>
-
-                      <div className="meta-status">
-                        <span className={`status-dot ${statusTone}`} aria-hidden="true" />
-                        {statusLabel}
-                      </div>
-
-                      <div className="meta-rule" />
-
-                      <div className="meta-row">
-                        <span>Runs</span>
-                        <span>{snapshot ? `${snapshot.runs.length} recorded` : "Loading…"}</span>
-                      </div>
-                      <div className="meta-row">
-                        <span>Evidence</span>
-                        <span>{snapshot ? `${snapshot.evidence.length} linked` : "—"}</span>
-                      </div>
-                      <div className="meta-row">
-                        <span>Hypothesis</span>
-                        <span>{hypothesis ? hypothesis.confidence : "None yet"}</span>
-                      </div>
-                      <div className="meta-row">
-                        <span>Mode</span>
-                        <span>Local only</span>
-                      </div>
-                    </aside>
-
-                    <section className="window-results">
-                      <div className="console-tabs" role="tablist" aria-label="Investigation views">
-                        <button
-                          type="button"
-                          id="evidence-tab"
-                          role="tab"
-                          aria-selected={tab === "evidence"}
-                          aria-controls="evidence-panel"
-                          className={`console-tab ${tab === "evidence" ? "active" : ""}`}
-                          onClick={() => setTab("evidence")}
-                        >
-                          Evidence
-                        </button>
-                        <button
-                          type="button"
-                          id="comparison-tab"
-                          role="tab"
-                          aria-selected={tab === "comparison"}
-                          aria-controls="comparison-panel"
-                          className={`console-tab ${tab === "comparison" ? "active" : ""}`}
-                          onClick={() => setTab("comparison")}
-                        >
-                          Run comparison
-                        </button>
-                        <span className="window-file">test/session-flow.test.js</span>
-                      </div>
-
-                      <div
-                        role="tabpanel"
-                        id={tab === "evidence" ? "evidence-panel" : "comparison-panel"}
-                        aria-labelledby={tab === "evidence" ? "evidence-tab" : "comparison-tab"}
-                      >
-                        {tab === "evidence" ? (
-                          <EvidencePanel snapshot={snapshot} error={error} />
-                        ) : (
-                          <ComparisonPanel snapshot={snapshot} />
-                        )}
-                      </div>
-                    </section>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <InvestigationWindow
+              snapshot={snapshot}
+              error={error}
+              running={running}
+              tab={tab}
+              onTabChange={setTab}
+              onRun={runDemo}
+              onPatchAction={patchAction}
+            />
           </Reveal>
 
           <Reveal delay={460} className="chips-row frame">
@@ -1049,92 +781,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="footer" id="footer">
-        <div className="frame">
-          <div className="footer-top">
-            <div>
-              <a className="footer-brand" href="#top">
-                <Mark />
-                Breakpoint
-              </a>
-              <p>
-                Evidence-first debugging, powered by Codex. Reproduce the failure, compare the runs, and
-                verify the fix.
-              </p>
-            </div>
-
-            <div className="footer-cols">
-              <div className="footer-col">
-                <h4>Product</h4>
-                <ul>
-                  <li>
-                    <a className="link-underline" href="/app">
-                      Launch Breakpoint
-                    </a>
-                  </li>
-                  <li>
-                    <a className="link-underline" href="#workflow">
-                      Workflow
-                    </a>
-                  </li>
-                  <li>
-                    <a className="link-underline" href="#evidence">
-                      Evidence window
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="footer-col">
-                <h4>Developers</h4>
-                <ul>
-                  <li>
-                    <a className="link-underline" href="/dashboard">
-                      Demo workspace
-                    </a>
-                  </li>
-                  <li>
-                    <a className="link-underline" href="/investigations/inv_session_state/summary">
-                      Investigation report
-                    </a>
-                  </li>
-                  <li>
-                    <a className="link-underline" href="#principles">
-                      Principles
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="footer-col">
-                <h4>Contact</h4>
-                <ul>
-                  <li>
-                    <span className="footer-meta">Built for DevDay Exchange</span>
-                  </li>
-                  <li>
-                    <span className="footer-meta">Pune · 2026</span>
-                  </li>
-                  <li>
-                    <a className="link-underline" href="/app">Open sample project</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="footer-bottom">
-            <span>
-              © {new Date().getFullYear()} Breakpoint · Built for the DevDay Exchange Community Metro
-              Hackathon
-            </span>
-            <a className="link-underline" href="#top">
-              Back to top ↑
-            </a>
-          </div>
-        </div>
-        <div className="footer-display" aria-hidden="true">Breakpoint</div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

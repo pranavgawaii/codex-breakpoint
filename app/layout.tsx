@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./styles.css";
 import "./runtime.css";
+import "./dashboard/dashboard.css";
 
 export const metadata: Metadata = {
   title: "Breakpoint — Evidence-first debugging",

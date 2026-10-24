@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { authenticate, currentUser } from "../src/session.js";
+import { authenticate, clearSession, currentUser } from "../src/session.js";
+
+test.beforeEach(() => clearSession());
 
 test("authentication establishes the demo user", () => {
   authenticate("demo-user-1");

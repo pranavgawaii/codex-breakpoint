@@ -254,8 +254,7 @@ svg {
   height: 64px;
 }
 
-.brand,
-.footer-brand {
+.brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -1565,118 +1564,6 @@ svg {
 }
 
 /* ============================================================================
-   Footer
-   ========================================================================== */
-
-.footer {
-  overflow: hidden;
-  border-top: 1px solid var(--line);
-  background: #e8e8e2;
-  padding: clamp(22px, 3.4vw, 40px) 0 0;
-}
-
-.footer > .frame {
-  max-width: none;
-  padding-inline: clamp(20px, 3.4vw, 44px);
-}
-
-.footer-top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 24px clamp(24px, 6vw, 96px);
-}
-
-.footer-brand {
-  color: var(--ink);
-  font-size: 15px;
-  letter-spacing: -0.01em;
-}
-
-.footer-brand .mark {
-  width: 20px;
-  height: 20px;
-  flex-basis: 20px;
-  border-radius: 6px;
-}
-
-.footer-brand + p {
-  max-width: 300px;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.footer-cols {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(32px, 6vw, 96px);
-}
-
-.footer-col h4 {
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: normal;
-  text-transform: none;
-}
-
-.footer-col ul {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.footer-col a,
-.footer-meta {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.footer-col a:hover {
-  color: var(--accent);
-}
-
-.footer-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: clamp(18px, 2.6vw, 30px);
-  border-bottom: 0.5px solid rgba(10, 10, 15, 0.16);
-  padding-bottom: 12px;
-  color: var(--muted);
-  font-size: 12.5px;
-  line-height: 1.5;
-}
-
-.footer-bottom a:hover {
-  color: var(--accent);
-}
-
-.footer-display {
-  margin: clamp(28px, 4vw, 48px) 0 -0.25em;
-  color: #101016;
-  font-size: clamp(72px, 22vw, 420px);
-  font-weight: 700;
-  letter-spacing: -0.1em;
-  line-height: 0.72;
-  text-align: center;
-  white-space: nowrap;
-  opacity: 0.98;
-  transform: scaleX(0.78);
-  transform-origin: center bottom;
-  -webkit-mask-image: radial-gradient(circle, #000 2.35px, transparent 2.55px);
-  mask-image: radial-gradient(circle, #000 2.35px, transparent 2.55px);
-  -webkit-mask-size: 6px 6px;
-  mask-size: 6px 6px;
-}
-
-/* ============================================================================
    Reveal
    ========================================================================== */
 
@@ -1847,14 +1734,6 @@ svg {
     white-space: normal;
   }
 
-  .footer-cols {
-    gap: 32px;
-  }
-
-  .footer-top {
-    gap: 32px;
-  }
-
   .evidence-card {
     padding: 20px;
   }
@@ -1888,10 +1767,6 @@ svg {
 
   .hero-note .sep {
     display: none;
-  }
-
-  .footer-bottom {
-    flex-direction: column;
   }
 }
 

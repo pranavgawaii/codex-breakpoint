@@ -32,7 +32,7 @@ const demoTimeline = [
   {
     index: "04",
     title: "Propose & verify",
-    body: "Approve a review-only patch and record the rerun result.",
+    body: "Approve a proposed patch and record the rerun result.",
     state: "Then"
   }
 ];
@@ -61,7 +61,7 @@ export default function Onboarding() {
               </h1>
               <p className="setup-lede">
                 Start with a trusted local demo. Breakpoint will reproduce the failure, keep every
-                finding tied to a recorded run, and leave the fix review-only until you approve it.
+                finding tied to a recorded run, and leave the fix unapplied until you approve it.
               </p>
             </div>
 
@@ -121,7 +121,7 @@ export default function Onboarding() {
                     <CheckIcon /> Local execution
                   </li>
                   <li>
-                    <CheckIcon /> Review-only fixes
+                    <CheckIcon /> Approval-gated fixes
                   </li>
                 </ul>
 
