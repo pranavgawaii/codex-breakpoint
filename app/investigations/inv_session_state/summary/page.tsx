@@ -40,16 +40,25 @@ function formatRecorded(iso?: string) {
   }).format(date);
 }
 
-function reportTone(result?: string): StatusTone {
-  if (result === "verified") return "success";
-  if (result === "not_verified") return "danger";
-  return "warning";
-}
-
 function reportLabel(result?: string) {
   if (!result) return "Not verified";
-  return result.replaceAll("_", " ");
+  const label = result.replaceAll("_", " ");
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
+
+function investigationLabel(status?: string) {
+  if (status === "verified") return "Verified";
+  if (status === "needs_review") return "Needs review";
+  if (status === "open") return "Ready to run";
+  return "Loading";
+}
+
+function investigationTone(status?: string): StatusTone {
+  if (status === "verified") return "success";
+  if (status === "needs_review") return "warning";
+  return "neutral";
+}
+
 
 export default function Summary() {
   const [data, setData] = useState<InvestigationSnapshot | null>(null);
@@ -68,7 +77,9 @@ export default function Summary() {
 
   const hypothesis = lastItem(data?.hypotheses ?? []);
   const comparison = lastItem(data?.comparisons ?? []);
-  const patch = lastItem(data?.patches ?? []);
+  const patch =
+    [...(data?.patches ?? [])].reverse().find((item) => item.status === "applied") ??
+    lastItem(data?.patches ?? []);
   const verification = lastItem(data?.verifications ?? []);
   const latestRun = lastItem(data?.runs ?? []);
   const unknown = [...(data?.evidence ?? [])].reverse().find((item) => !item.observed);
@@ -83,7 +94,10 @@ export default function Summary() {
 
       <ProductHeader
         active="workspace"
-        status={{ label: reportLabel(verification?.result), tone: reportTone(verification?.result) }}
+        status={{
+          label: investigationLabel(data?.investigation.status),
+          tone: investigationTone(data?.investigation.status)
+        }}
       />
 
       <main id="main" className="product-main">
@@ -108,7 +122,10 @@ export default function Summary() {
             </div>
 
             <div className="report-head-meta">
-              <StatusPill label={reportLabel(verification?.result)} tone={reportTone(verification?.result)} />
+              <StatusPill
+                label={investigationLabel(data?.investigation.status)}
+                tone={investigationTone(data?.investigation.status)}
+              />
               <span className="report-generated">
                 <ClockIcon />
                 Generated {formatRecorded(data?.investigation.updatedAt)}
@@ -142,7 +159,13 @@ export default function Summary() {
             <article>
               <span className="metric-label">Verification</span>
               <strong className="report-metric-word">{reportLabel(verification?.result)}</strong>
-              <small>{verification ? verification.notes : "No recorded rerun"}</small>
+              <small>
+                {patch?.status === "draft"
+                  ? "Historical result · current patch in review"
+                  : verification
+                    ? verification.notes
+                    : "No recorded rerun"}
+              </small>
             </article>
           </section>
 
@@ -269,16 +292,24 @@ export default function Summary() {
                     </div>
                   </div>
                   {verification ? (
-                    <dl className="report-verification-meta">
-                      <div>
-                        <dt>Verification</dt>
-                        <dd><code>{verification.id}</code></dd>
-                      </div>
-                      <div>
-                        <dt>Recorded run</dt>
-                        <dd><code>{verification.runId}</code></dd>
-                      </div>
-                    </dl>
+                    <>
+                      {patch?.status === "draft" ? (
+                        <p className="report-muted">
+                          This is the latest recorded result. The current draft patch has not been
+                          approved or verified yet.
+                        </p>
+                      ) : null}
+                      <dl className="report-verification-meta">
+                        <div>
+                          <dt>Verification</dt>
+                          <dd><code>{verification.id}</code></dd>
+                        </div>
+                        <div>
+                          <dt>Recorded run</dt>
+                          <dd><code>{verification.runId}</code></dd>
+                        </div>
+                      </dl>
+                    </>
                   ) : null}
                 </div>
               </section>

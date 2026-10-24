@@ -663,7 +663,7 @@ export default function InvestigationWorkspace() {
                 title="Approve & verify"
                 description="Apply the approved patch to the trusted sample, rerun the failing pair and record the result."
                 state={stepState(3)}
-                detail={verification ? statusLabel(verification.result) : patchDraft ? "Awaiting approval" : "No patch ready"}
+                detail={patchDraft ? "Awaiting approval" : verification ? statusLabel(verification.result) : "No patch ready"}
                 action={
                   <button
                     className={`flow-btn ${patchDraft ? "flow-btn--primary" : ""}`.trim()}
