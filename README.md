@@ -18,6 +18,22 @@ Breakpoint turns debugging into a structured investigation:
 4. **Propose** — Generate a minimal, reviewable fix.
 5. **Verify** — Rerun the test and report the actual result.
 
+## Working local prototype
+
+The product view is connected to a small, trusted Node test project at `sample-project/`. Click **Run real investigation** to execute the fixed five-step workflow: the target test in isolation, the preceding authentication test in isolation, the ordered pair, the reversed pair, and the ordered pair again. Each run persists its command, captured output, exit code, timing, test results and non-secret environment metadata to `.breakpoint/investigations.json`. The comparison engine only creates findings tied to stored run-evidence IDs; it explicitly records unavailable state as unknown.
+
+The runner does **not** accept a browser-supplied command or working directory. It uses `spawn` without a shell, an allowlist of five Node test commands, a 10-second timeout, output cap, minimal environment, and Node heap cap. This is a trusted-local-demo boundary, not a sandbox: Node processes cannot be completely filesystem/network isolated without OS/container support. Do not point this prototype at untrusted repositories or secrets.
+
+The deterministic investigation agent exposes a narrow tool vocabulary in `lib/agent.ts` and has an optional `AiProvider` interface. The deterministic workflow runs without an LLM. Optional AI review can only record an evidence-cited hypothesis; it cannot execute commands or verify a fix.
+
+## Environment
+
+`OPENAI_API_KEY` is optional for local execution but required for AI evidence review. `OPENAI_MODEL` optionally overrides the default `gpt-5.4`. The server-only adapter uses the official OpenAI JavaScript SDK and Responses API; without credentials the endpoint returns a visible `503` unavailable state.
+
+`POST /api/investigations` supports `run-demo`, `run-workflow` (isolated, predecessor, ordered pair, reversed pair, repeat), `ai-review`, `propose-patch`, `approve-patch`, and `revert-patch`. It never accepts a shell command, project path, or patch body from the browser.
+
+Proposed patches are approval-gated in `lib/patch-review.ts`. Applying is restricted to the trusted demo source and its recorded baseline, and reverting restores the original content. Verification records are based only on the result of a subsequent recorded run.
+
 ## Core Features
 
 - Local debugging workspace

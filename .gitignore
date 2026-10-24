@@ -1,0 +1,10 @@
+node_modules
+.next
+.next-stale-*
+.breakpoint
+.env.local
+tsconfig.tsbuildinfo
+# External design references; keep them out of the application repository.
+landing-kit/
+breakpoint-v2.html
+breakpoint-presentation.html
