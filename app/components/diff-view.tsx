@@ -1,7 +1,7 @@
-import type { ProposedPatch } from "@/lib/models";
+import type { PublicPatch } from "@/lib/models";
 import { FileIcon } from "./icons";
 
-export function DiffView({ patch, compact = false }: { patch: ProposedPatch; compact?: boolean }) {
+export function DiffView({ patch, compact = false }: { patch: PublicPatch; compact?: boolean }) {
   const lines = patch.diff.split("\n");
 
   return (
@@ -14,7 +14,7 @@ export function DiffView({ patch, compact = false }: { patch: ProposedPatch; com
         <span className="diff-baseline">{patch.baseline}</span>
       </div>
       <pre className="diff-code" aria-label="Proposed patch">
-        {lines.map((line, index) => {
+        {lines.map((line: string, index: number) => {
           const tone = line.startsWith("+") ? "add" : line.startsWith("-") ? "del" : "context";
           return (
             <span className={`diff-line diff-line--${tone}`} key={`${line}-${index}`}>

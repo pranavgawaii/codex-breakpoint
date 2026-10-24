@@ -1126,7 +1126,7 @@
   flex: none;
   color: var(--faint);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.11em;
   line-height: 1.4;
@@ -1191,7 +1191,7 @@
   align-items: center;
   gap: 4px;
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 600;
   letter-spacing: 0.08em;
   line-height: 1.2;

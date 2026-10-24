@@ -136,6 +136,79 @@ function Reveal({
   );
 }
 
+/* ---------- Hero ambient visual ---------- */
+
+const heroFragments = [
+  { text: "exit 0", x: "8%",  y: "18%", delay: 0,    size: 11 },
+  { text: "exit 1", x: "82%", y: "22%", delay: 1.2,  size: 11 },
+  { text: "run_0184",   x: "14%", y: "62%", delay: 2.1,  size: 10 },
+  { text: "observed",   x: "76%", y: "68%", delay: 0.6,  size: 10 },
+  { text: "hypothesis", x: "88%", y: "42%", delay: 3.0,  size: 9.5 },
+  { text: "ev_1042",    x: "6%",  y: "40%", delay: 1.8,  size: 10 },
+  { text: "compare",    x: "68%", y: "12%", delay: 0.9,  size: 10 },
+  { text: "verified",   x: "24%", y: "78%", delay: 2.6,  size: 10.5 },
+  { text: "--test",     x: "52%", y: "82%", delay: 3.4,  size: 10 },
+  { text: "diff",       x: "38%", y: "10%", delay: 1.5,  size: 11 },
+];
+
+const heroParticles = Array.from({ length: 18 }, (_, i) => ({
+  x: `${5 + ((i * 53) % 90)}%`,
+  y: `${8 + ((i * 37) % 84)}%`,
+  delay: (i * 0.7) % 5,
+  size: 2 + (i % 3),
+}));
+
+function HeroVisual() {
+  return (
+    <div className="hero-visual" aria-hidden="true">
+      {/* Radial ambient glow */}
+      <div className="hero-glow hero-glow--primary" />
+      <div className="hero-glow hero-glow--secondary" />
+
+      {/* Grid overlay */}
+      <div className="hero-grid-overlay" />
+
+      {/* Floating code fragments */}
+      {heroFragments.map((frag) => (
+        <span
+          key={frag.text}
+          className="hero-frag"
+          style={{
+            left: frag.x,
+            top: frag.y,
+            fontSize: `${frag.size}px`,
+            animationDelay: `${frag.delay}s`,
+          }}
+        >
+          {frag.text}
+        </span>
+      ))}
+
+      {/* Particles */}
+      {heroParticles.map((p, i) => (
+        <span
+          key={i}
+          className="hero-particle"
+          style={{
+            left: p.x,
+            top: p.y,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            animationDelay: `${p.delay}s`,
+          }}
+        />
+      ))}
+
+      {/* Connecting lines */}
+      <svg className="hero-lines" viewBox="0 0 1200 600" preserveAspectRatio="none">
+        <path d="M100,100 Q400,50 600,200 T1100,150" className="hero-line" style={{ animationDelay: "0s" }} />
+        <path d="M50,300 Q300,250 500,400 T1050,350"  className="hero-line" style={{ animationDelay: "1.5s" }} />
+        <path d="M200,450 Q500,380 700,500 T1150,420" className="hero-line" style={{ animationDelay: "3s" }} />
+      </svg>
+    </div>
+  );
+}
+
 function StageSet() {
   return (
     <div className="marquee-set">
@@ -437,6 +510,7 @@ export default function LandingPage() {
 
       <main id="main">
         <section className="hero" id="top">
+          <HeroVisual />
           <div className="frame">
             <div className="hero-grid">
               <Reveal delay={100}>

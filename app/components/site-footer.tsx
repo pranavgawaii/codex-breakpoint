@@ -55,7 +55,7 @@ export function SiteFooter() {
       fontFamily='"Outfit", system-ui, sans-serif'
       fontWeight={800}
       monoFamily='"Outfit", system-ui, sans-serif'
-      height="clamp(380px, 34vw, 480px)"
+      height="clamp(480px, 34vw, 520px)"
     />
   );
 }

@@ -156,8 +156,8 @@ const HWF_CSS = `
 }
 .hwf-brand { flex: 0 1 360px; }
 .hwf-col { flex: 0 0 auto; min-width: 130px; }
-.hwf-brand strong { display: block; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
-.hwf-brand span { display: block; margin-top: 3px; opacity: .55; font-size: 13px; }
+.hwf-brand strong { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+.hwf-brand > span { display: block; margin-top: 3px; opacity: .55; font-size: 13px; }
 .hwf-col h3 { margin: 0 0 10px; font: inherit; font-weight: 600; font-size: 13px; letter-spacing: normal; opacity: 1; }
 .hwf-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
 .hwf-col a, .hwf-up {

@@ -7,7 +7,7 @@ import type {
   Evidence,
   Hypothesis,
   InvestigationSnapshot,
-  TestRun
+  PublicTestRun
 } from "@/lib/models";
 import { DiffView } from "../components/diff-view";
 import {
@@ -154,7 +154,7 @@ function FlowStep({
   );
 }
 
-function RunRow({ run }: { run: TestRun }) {
+function RunRow({ run }: { run: PublicTestRun }) {
   const failed = run.status !== "passed";
 
   return (

@@ -1,12 +1,11 @@
 import OpenAI from "openai";
-import type { AgentToolInvocation, Hypothesis, InvestigationSnapshot } from "./models";
+import type { AgentToolInvocation, AgentToolName, Hypothesis, InvestigationSnapshot } from "./models";
 
 export const allowedTools = ["run_tests", "compare_runs", "inspect_test_output", "inspect_evidence", "propose_experiment", "record_hypothesis", "propose_patch", "verify_patch"] as const;
-type AllowedTool = typeof allowedTools[number];
 
 export class AiUnavailableError extends Error {}
 
-function invocation(investigationId: string, tool: AllowedTool, args: Record<string, unknown>, status: AgentToolInvocation["status"], result: string): AgentToolInvocation {
+function invocation(investigationId: string, tool: AgentToolName, args: Record<string, unknown>, status: AgentToolInvocation["status"], result: string): AgentToolInvocation {
   return { id: `tool_${crypto.randomUUID().slice(0, 8)}`, investigationId, tool, arguments: args, status, result, createdAt: new Date().toISOString() };
 }
 
@@ -23,5 +22,5 @@ export async function evaluateEvidence(snapshot: InvestigationSnapshot): Promise
   let args: Record<string, unknown>; try { args = JSON.parse(call.arguments) as Record<string, unknown>; } catch { return { summary: "The model returned malformed tool arguments.", invocations: [invocation(snapshot.investigation.id, "record_hypothesis", {}, "rejected", "Arguments were not JSON.")] }; }
   const cited = [...(args.supportingEvidenceIds as string[] ?? []), ...(args.contradictingEvidenceIds as string[] ?? [])];
   if (!cited.length || cited.some((id) => !evidenceIds.has(id))) return { summary: "The model proposed a hypothesis with invalid evidence references.", invocations: [invocation(snapshot.investigation.id, "record_hypothesis", args, "rejected", "Every cited evidence ID must exist in this investigation.")] };
-  return { summary: "AI evidence review completed.", invocations: [invocation(snapshot.investigation.id, "record_hypothesis", args, "completed", "Validated evidence references.")], hypothesis: { description: String(args.description), supportingEvidenceIds: args.supportingEvidenceIds as string[], contradictingEvidenceIds: args.contradictingEvidenceIds as string[], confidence: args.confidence as Hypothesis["confidence"], confidenceJustification: String(args.confidenceJustification), alternativeExplanations: args.alternativeExplanations as string[], nextExperiment: String(args.nextExperiment), experimentOutcome: null, investigationId: snapshot.investigation.id } };
+  return { summary: "AI evidence review completed.", invocations: [invocation(snapshot.investigation.id, "record_hypothesis", args, "completed", "Validated evidence references.")], hypothesis: { source: "ai", description: String(args.description), supportingEvidenceIds: args.supportingEvidenceIds as string[], contradictingEvidenceIds: args.contradictingEvidenceIds as string[], confidence: args.confidence as Hypothesis["confidence"], confidenceJustification: String(args.confidenceJustification), alternativeExplanations: args.alternativeExplanations as string[], nextExperiment: String(args.nextExperiment), experimentOutcome: null, investigationId: snapshot.investigation.id } };
 }

@@ -1,6 +1,18 @@
 export type RunStatus = "passed" | "failed" | "timeout" | "cancelled" | "infrastructure_error";
 export type EvidenceKind = "run" | "comparison" | "output" | "environment" | "unknown";
 export type Confidence = "low" | "medium" | "high";
+export type HypothesisSource = "deterministic" | "ai";
+export type PatchStatus = "draft" | "reviewed" | "applied" | "rejected" | "reverted";
+
+export type AgentToolName =
+  | "run_tests"
+  | "compare_runs"
+  | "inspect_test_output"
+  | "inspect_evidence"
+  | "propose_experiment"
+  | "record_hypothesis"
+  | "propose_patch"
+  | "verify_patch";
 
 export interface Project {
   id: string;
@@ -34,6 +46,14 @@ export interface TestRun {
   environment: Record<string, string>;
 }
 
+/** Run shape safe to send to the browser: raw output stays on the server. */
+export interface PublicTestRun extends Omit<TestRun, "stdout" | "stderr"> {
+  stdout?: string;
+  stderr?: string;
+  stdoutBytes?: number;
+  stderrBytes?: number;
+}
+
 export interface Evidence {
   id: string;
   investigationId: string;
@@ -64,6 +84,7 @@ export interface RunComparison {
 export interface Hypothesis {
   id: string;
   investigationId: string;
+  source?: HypothesisSource;
   description: string;
   supportingEvidenceIds: string[];
   contradictingEvidenceIds: string[];
@@ -74,10 +95,11 @@ export interface Hypothesis {
   experimentOutcome: string | null;
   createdAt: string;
 }
+
 export interface AgentToolInvocation {
   id: string;
   investigationId: string;
-  tool: "run_tests" | "compare_runs" | "inspect_test_output" | "inspect_evidence" | "propose_experiment" | "record_hypothesis" | "propose_patch" | "verify_patch";
+  tool: AgentToolName;
   arguments: Record<string, unknown>;
   status: "requested" | "completed" | "rejected" | "failed";
   result: string;
@@ -89,11 +111,17 @@ export interface ProposedPatch {
   investigationId: string;
   description: string;
   diff: string;
-  status: "draft" | "reviewed" | "applied" | "rejected";
+  status: PatchStatus;
   baseline: string;
   targetPath: string;
+  /** Server-only: exact baseline content used for apply/revert checks. */
   originalContent: string;
+  /** Server-only: exact content written when the patch was applied. */
+  appliedContent?: string;
 }
+
+/** Patch shape safe to send to the browser. */
+export type PublicPatch = Omit<ProposedPatch, "originalContent" | "appliedContent">;
 
 export interface VerificationResult {
   id: string;
@@ -132,11 +160,11 @@ export interface StoredData {
 
 export interface InvestigationSnapshot {
   investigation: Investigation;
-  runs: TestRun[];
+  runs: PublicTestRun[];
   evidence: Evidence[];
   comparisons: RunComparison[];
   hypotheses: Hypothesis[];
   toolInvocations: AgentToolInvocation[];
-  patches: ProposedPatch[];
+  patches: PublicPatch[];
   verifications: VerificationResult[];
 }
