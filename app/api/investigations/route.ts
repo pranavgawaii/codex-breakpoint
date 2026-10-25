@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
+import { AppError } from "@/lib/errors";
 import { approveAndVerifyPatch, getInvestigation, proposeDemoPatch, revertPatch, runAiReview, runControlledWorkflow, runDemoInvestigation } from "@/lib/investigations";
 import { runExclusive } from "@/lib/lock";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+/** Map thrown errors to explicit statuses. AppError carries its own status;
+ * AiUnavailableError predates the hierarchy and maps to 503. */
+function statusFor(error: unknown): number {
+  if (error instanceof AppError) return error.status;
+  if (error instanceof Error && error.name === "AiUnavailableError") return 503;
+  return 500;
+}
 
 export async function GET() {
   try {
@@ -28,6 +37,6 @@ export async function POST(request: Request) {
     if (action === "revert-patch" && typeof body.patchId === "string") return NextResponse.json(await runExclusive("revert-patch", () => revertPatch(body.patchId as string)));
     return NextResponse.json({ error: "Unsupported investigation action." }, { status: 400 });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to run investigation." }, { status: error instanceof Error && error.name === "AiUnavailableError" ? 503 : 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to run investigation." }, { status: statusFor(error) });
   }
 }

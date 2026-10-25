@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { ConflictError, ValidationError } from "./errors";
 import type { ProposedPatch, TestRun, VerificationResult } from "./models";
 
 const demoRoot = path.join(process.cwd(), "sample-project");
@@ -12,17 +13,17 @@ export async function createDemoCleanupPatch(investigationId: string): Promise<P
 }
 
 export async function applyDemoPatch(patch: ProposedPatch): Promise<ProposedPatch> {
-  if (patch.status !== "draft" || patch.targetPath !== "test/session-flow.test.js") throw new Error("Only a draft patch for the approved demo source can be applied.");
+  if (patch.status !== "draft" || patch.targetPath !== "test/session-flow.test.js") throw new ValidationError("Only a draft patch for the approved demo source can be applied.");
   const current = await readFile(safeTarget, "utf8");
-  if (current !== patch.originalContent) throw new Error("Patch blocked: source no longer matches the recorded baseline.");
+  if (current !== patch.originalContent) throw new ConflictError("Patch blocked: source no longer matches the recorded baseline.");
   const updated = current.replace('import { authenticate, currentUser } from "../src/session.js";', 'import { authenticate, clearSession, currentUser } from "../src/session.js";\n\ntest.beforeEach(() => clearSession());');
-  if (updated === current) throw new Error("Patch blocked: expected import location was not found.");
+  if (updated === current) throw new ValidationError("Patch blocked: expected import location was not found.");
   await writeFile(safeTarget, updated, "utf8");
   return { ...patch, status: "applied" };
 }
 
 export async function revertDemoPatch(patch: ProposedPatch): Promise<ProposedPatch> {
-  if (patch.status !== "applied" || patch.targetPath !== "test/session-flow.test.js") throw new Error("Only the approved demo patch can be reverted.");
+  if (patch.status !== "applied" || patch.targetPath !== "test/session-flow.test.js") throw new ValidationError("Only the approved demo patch can be reverted.");
   await writeFile(safeTarget, patch.originalContent, "utf8");
   return { ...patch, status: "reviewed" };
 }

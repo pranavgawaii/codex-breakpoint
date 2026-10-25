@@ -5,6 +5,7 @@ import { runApprovedDemo } from "./test-runner";
 import { readStore, writeStore } from "./store";
 import { evaluateEvidence } from "./openai-provider";
 import { applyDemoPatch, createDemoCleanupPatch, revertDemoPatch, verifyRun } from "./patch-review";
+import { NotFoundError } from "./errors";
 
 const now = () => new Date().toISOString();
 function bootstrap(data: StoredData): { project: Project; investigation: Investigation } {
@@ -74,7 +75,7 @@ export async function proposeDemoPatch(): Promise<InvestigationSnapshot> {
 
 export async function approveAndVerifyPatch(patchId: string): Promise<InvestigationSnapshot> {
   const data = await readStore(); const { investigation } = bootstrap(data); const index = data.patches.findIndex((patch) => patch.id === patchId && patch.investigationId === investigation.id);
-  if (index < 0) throw new Error("Patch was not found for this investigation.");
+  if (index < 0) throw new NotFoundError("Patch was not found for this investigation.");
   data.patches[index] = await applyDemoPatch(data.patches[index]);
   const run = await runApprovedDemo("pair"); recordRun(data, investigation, run);
   const verification = verifyRun(investigation.id, run, "Approved patch verification ran the previously failing ordered pair.");
@@ -83,5 +84,5 @@ export async function approveAndVerifyPatch(patchId: string): Promise<Investigat
 
 export async function revertPatch(patchId: string): Promise<InvestigationSnapshot> {
   const data = await readStore(); const { investigation } = bootstrap(data); const index = data.patches.findIndex((patch) => patch.id === patchId && patch.investigationId === investigation.id);
-  if (index < 0) throw new Error("Patch was not found for this investigation."); data.patches[index] = await revertDemoPatch(data.patches[index]); investigation.status = "needs_review"; investigation.updatedAt = now(); await writeStore(data); return snapshot(data, investigation);
+  if (index < 0) throw new NotFoundError("Patch was not found for this investigation."); data.patches[index] = await revertDemoPatch(data.patches[index]); investigation.status = "needs_review"; investigation.updatedAt = now(); await writeStore(data); return snapshot(data, investigation);
 }
