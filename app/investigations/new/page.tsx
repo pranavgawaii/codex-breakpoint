@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRightIcon,
@@ -21,9 +20,6 @@ const plan = [
 ];
 
 export default function NewInvestigation() {
-  const [goal, setGoal] = useState("Find why this test fails depending on execution order.");
-  const [target, setTarget] = useState("session");
-
   return (
     <div className="product-shell">
       <a className="skip-link" href="#main">
@@ -78,21 +74,21 @@ export default function NewInvestigation() {
               <div className="config-form">
                 <label className="form-field">
                   <span>Target test</span>
-                  <select value={target} onChange={(event) => setTarget(event.target.value)}>
+                  <select value="session" disabled>
                     <option value="session">session starts without a user</option>
                     <option value="auth">authentication establishes the demo user</option>
                   </select>
-                  <small>The target is resolved from the trusted sample test suite.</small>
+                  <small>Resolved from the trusted sample test suite; not editable in this prototype.</small>
                 </label>
 
                 <label className="form-field">
                   <span>Investigation goal</span>
                   <textarea
-                    value={goal}
-                    onChange={(event) => setGoal(event.target.value)}
+                    value="Find why this test fails depending on execution order."
+                    readOnly
                     rows={4}
                   />
-                  <small>Recorded with the local report so the reason for the run stays visible.</small>
+                  <small>Fixed for the demo run so the reason for the investigation stays visible.</small>
                 </label>
 
                 <div className="form-locked">

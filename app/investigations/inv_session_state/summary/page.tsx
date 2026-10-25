@@ -65,14 +65,24 @@ export default function Summary() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     fetch("/api/investigations")
       .then(async (response) => {
         const result = (await response.json()) as InvestigationSnapshot & { error?: string };
         if (!response.ok) throw new Error(result.error ?? "Unable to load the report.");
         return result;
       })
-      .then(setData)
-      .catch((cause: unknown) => setError(cause instanceof Error ? cause.message : "Unable to load the report."));
+      .then((result) => {
+        if (cancelled) return;
+        setData(result);
+      })
+      .catch((cause: unknown) => {
+        if (cancelled) return;
+        setError(cause instanceof Error ? cause.message : "Unable to load the report.");
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const hypothesis = lastItem(data?.hypotheses ?? []);
