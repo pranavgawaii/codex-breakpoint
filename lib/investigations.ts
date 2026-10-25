@@ -1,6 +1,6 @@
 import { deterministicHypothesis } from "./agent";
 import { compareRuns } from "./comparison";
-import type { AgentToolInvocation, Evidence, Hypothesis, Investigation, InvestigationSnapshot, Project, RunComparison, StoredData, TestRun } from "./models";
+import type { AgentToolInvocation, Evidence, Hypothesis, Investigation, InvestigationSnapshot, Project, ProposedPatch, PublicPatch, PublicTestRun, RunComparison, StoredData, TestRun } from "./models";
 import { runApprovedDemo } from "./test-runner";
 import { readStore, writeStore } from "./store";
 import { evaluateEvidence } from "./openai-provider";
@@ -15,8 +15,14 @@ function bootstrap(data: StoredData): { project: Project; investigation: Investi
   if (!investigation) { investigation = { id: "inv_session_state", projectId: project.id, title: "Session state persists between tests", status: "open", runIds: [], evidenceIds: [], hypothesisIds: [], comparisonIds: [], patchIds: [], verificationIds: [], createdAt: now(), updatedAt: now() }; data.investigations.push(investigation); }
   return { project, investigation };
 }
+function publicRun(run: TestRun): PublicTestRun {
+  return { id: run.id, projectId: run.projectId, label: run.label, status: run.status, command: run.command, workingDirectory: run.workingDirectory, startedAt: run.startedAt, finishedAt: run.finishedAt, durationMs: run.durationMs, exitCode: run.exitCode, tests: run.tests, environment: run.environment, stdoutBytes: Buffer.byteLength(run.stdout, "utf8"), stderrBytes: Buffer.byteLength(run.stderr, "utf8") };
+}
+function publicPatch(patch: ProposedPatch): PublicPatch {
+  return { id: patch.id, investigationId: patch.investigationId, description: patch.description, diff: patch.diff, status: patch.status, baseline: patch.baseline, targetPath: patch.targetPath };
+}
 function snapshot(data: StoredData, investigation: Investigation): InvestigationSnapshot {
-  return { investigation, runs: investigation.runIds.map((id) => data.runs.find((run) => run.id === id)).filter((run): run is TestRun => Boolean(run)), evidence: investigation.evidenceIds.map((id) => data.evidence.find((item) => item.id === id)).filter((item): item is Evidence => Boolean(item)), comparisons: investigation.comparisonIds.map((id) => data.comparisons.find((item) => item.id === id)).filter((item): item is RunComparison => Boolean(item)), hypotheses: investigation.hypothesisIds.map((id) => data.hypotheses.find((item) => item.id === id)).filter((item): item is Hypothesis => Boolean(item)), toolInvocations: data.toolInvocations.filter((item): item is AgentToolInvocation => item.investigationId === investigation.id), patches: data.patches.filter((item) => item.investigationId === investigation.id), verifications: data.verifications.filter((item) => item.investigationId === investigation.id) };
+  return { investigation, runs: investigation.runIds.map((id) => data.runs.find((run) => run.id === id)).filter((run): run is TestRun => Boolean(run)).map(publicRun), evidence: investigation.evidenceIds.map((id) => data.evidence.find((item) => item.id === id)).filter((item): item is Evidence => Boolean(item)), comparisons: investigation.comparisonIds.map((id) => data.comparisons.find((item) => item.id === id)).filter((item): item is RunComparison => Boolean(item)), hypotheses: investigation.hypothesisIds.map((id) => data.hypotheses.find((item) => item.id === id)).filter((item): item is Hypothesis => Boolean(item)), toolInvocations: data.toolInvocations.filter((item): item is AgentToolInvocation => item.investigationId === investigation.id), patches: data.patches.filter((item) => item.investigationId === investigation.id).map(publicPatch), verifications: data.verifications.filter((item) => item.investigationId === investigation.id) };
 }
 function recordRun(data: StoredData, investigation: Investigation, run: TestRun): Evidence {
   data.runs.push(run); investigation.runIds.push(run.id);
