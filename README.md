@@ -10,6 +10,12 @@
   An evidence-first debugging workspace for inconsistent and order-dependent test failures.
 </p>
 
+<p align="center">
+  <a href="https://github.com/pranavgawaii/codex-breakpoint/actions/workflows/ci.yml">
+    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/pranavgawaii/codex-breakpoint/ci.yml?branch=main&label=CI" />
+  </a>
+</p>
+
 ---
 
 ## Quick Start (30 Seconds)
@@ -440,6 +446,6 @@ Breakpoint was created for the **DevDay Exchange Community Metro Hackathon: Pune
 
 ## License
 
-Private project developed for hackathon demonstration.
+All rights reserved — see [`LICENSE`](LICENSE). This project was developed for a hackathon demonstration and is publicly viewable for evaluation only.
 
 Font assets in `public/fonts/` (Outfit, Redaction 35) are licensed under the [SIL Open Font License 1.1](public/fonts/LICENSE-OFL-1.1.txt). See [`public/fonts/FONT-LICENSES.md`](public/fonts/FONT-LICENSES.md) for full attribution.

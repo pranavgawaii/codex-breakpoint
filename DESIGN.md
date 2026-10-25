@@ -2,7 +2,7 @@
 
 ## Reference inspected
 
-- Local reference: `/Users/8teen/Development/GitHub Repository/Mnemo`
+- Local reference: an editorial developer-tool landing page referenced during the build
 - Inspected: its landing-page composition, navigation, hero, global stylesheet, Tailwind tokens, and product-window component.
 
 ## Observed visual system
