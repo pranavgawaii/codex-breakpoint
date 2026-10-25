@@ -2,7 +2,9 @@ node_modules
 .next
 .next-stale-*
 .breakpoint
+.env
 .env.local
+!.env.example
 tsconfig.tsbuildinfo
 # External design references; keep them out of the application repository.
 landing-kit/
