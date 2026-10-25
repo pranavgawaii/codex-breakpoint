@@ -19,13 +19,13 @@ export async function applyDemoPatch(patch: ProposedPatch): Promise<ProposedPatc
   const updated = current.replace('import { authenticate, currentUser } from "../src/session.js";', 'import { authenticate, clearSession, currentUser } from "../src/session.js";\n\ntest.beforeEach(() => clearSession());');
   if (updated === current) throw new ValidationError("Patch blocked: expected import location was not found.");
   await writeFile(safeTarget, updated, "utf8");
-  return { ...patch, status: "applied" };
+  return { ...patch, status: "applied", appliedContent: updated };
 }
 
 export async function revertDemoPatch(patch: ProposedPatch): Promise<ProposedPatch> {
   if (patch.status !== "applied" || patch.targetPath !== "test/session-flow.test.js") throw new ValidationError("Only the approved demo patch can be reverted.");
   await writeFile(safeTarget, patch.originalContent, "utf8");
-  return { ...patch, status: "reviewed" };
+  return { ...patch, status: "reverted" };
 }
 
 export function verifyRun(investigationId: string, run: TestRun, notes: string): VerificationResult {

@@ -882,7 +882,7 @@ export default function InvestigationWorkspace() {
                               </button>
                             </>
                           )}
-                          {patch.status === "reviewed" && (
+                          {(patch.status === "reviewed" || patch.status === "reverted") && (
                             <button className="btn btn-secondary" type="button" onClick={() => act("propose-patch", "patch")} disabled={disabled}>
                               <WrenchIcon />
                               Draft another patch

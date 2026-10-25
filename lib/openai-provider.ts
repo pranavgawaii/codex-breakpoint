@@ -1,8 +1,6 @@
 import OpenAI from "openai";
 import type { AgentToolInvocation, AgentToolName, Hypothesis, InvestigationSnapshot } from "./models";
 
-export const allowedTools = ["run_tests", "compare_runs", "inspect_test_output", "inspect_evidence", "propose_experiment", "record_hypothesis", "propose_patch", "verify_patch"] as const;
-
 export class AiUnavailableError extends Error {}
 
 function invocation(investigationId: string, tool: AgentToolName, args: Record<string, unknown>, status: AgentToolInvocation["status"], result: string): AgentToolInvocation {

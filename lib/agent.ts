@@ -1,6 +1,5 @@
 import type { Evidence, Hypothesis, TestRun } from "./models";
 
-export type InvestigationTool = "run_tests" | "compare_runs" | "inspect_test_output" | "inspect_available_state" | "record_hypothesis" | "propose_experiment";
 export interface AiProvider { plan(input: { facts: string[]; unknowns: string[] }): Promise<string>; }
 
 export function deterministicHypothesis(investigationId: string, failing: TestRun, passing: TestRun, evidence: Evidence[]): Hypothesis {
