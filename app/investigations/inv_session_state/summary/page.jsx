@@ -1,114 +1,99 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { InvestigationSnapshot } from "@/lib/models";
-import {
-  ArrowRightIcon,
-  ArrowUpRightIcon,
-  CheckIcon,
-  ClockIcon,
-  FileIcon,
-  FolderIcon,
-  InfoIcon,
-  PlayIcon,
-  ShieldCheckIcon,
-  SparkIcon,
-  TerminalIcon
-} from "../../../components/icons";
-import { ProductHeader, StatusPill, type StatusTone } from "../../../components/product-chrome";
+import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, ClockIcon, FileIcon, FolderIcon, InfoIcon, PlayIcon, ShieldCheckIcon, SparkIcon, TerminalIcon } from "../../../components/icons";
+import { ProductHeader, StatusPill } from "../../../components/product-chrome";
 import { DiffView } from "../../../components/diff-view";
-
-function lastItem<T>(items: T[]): T | undefined {
-  return items.length ? items[items.length - 1] : undefined;
+function lastItem(items) {
+    return items.length ? items[items.length - 1] : undefined;
 }
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en-US").format(value);
+function formatNumber(value) {
+    return new Intl.NumberFormat("en-US").format(value);
 }
-
-function formatRecorded(iso?: string) {
-  if (!iso) return "Not recorded";
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "Not recorded";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(date);
+function formatRecorded(iso) {
+    if (!iso)
+        return "Not recorded";
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime()))
+        return "Not recorded";
+    return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }).format(date);
 }
-
-function reportLabel(result?: string) {
-  if (!result) return "Not verified";
-  const label = result.replaceAll("_", " ");
-  return label.charAt(0).toUpperCase() + label.slice(1);
+function reportLabel(result) {
+    if (!result)
+        return "Not verified";
+    const label = result.replaceAll("_", " ");
+    return label.charAt(0).toUpperCase() + label.slice(1);
 }
-
-function investigationLabel(status?: string) {
-  if (status === "verified") return "Verified";
-  if (status === "needs_review") return "Needs review";
-  if (status === "open") return "Ready to run";
-  return "Loading";
+function investigationLabel(status) {
+    if (status === "verified")
+        return "Verified";
+    if (status === "needs_review")
+        return "Needs review";
+    if (status === "open")
+        return "Ready to run";
+    return "Loading";
 }
-
-function investigationTone(status?: string): StatusTone {
-  if (status === "verified") return "success";
-  if (status === "needs_review") return "warning";
-  return "neutral";
+function investigationTone(status) {
+    if (status === "verified")
+        return "success";
+    if (status === "needs_review")
+        return "warning";
+    return "neutral";
 }
-
-
+function runnerLabel(framework) {
+    return framework === "node" ? "node --test" : framework ?? "—";
+}
 export default function Summary() {
-  const [data, setData] = useState<InvestigationSnapshot | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/investigations")
-      .then(async (response) => {
-        const result = (await response.json()) as InvestigationSnapshot & { error?: string };
-        if (!response.ok) throw new Error(result.error ?? "Unable to load the report.");
-        return result;
-      })
-      .then((result) => {
-        if (cancelled) return;
-        setData(result);
-      })
-      .catch((cause: unknown) => {
-        if (cancelled) return;
-        setError(cause instanceof Error ? cause.message : "Unable to load the report.");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const hypothesis = lastItem(data?.hypotheses ?? []);
-  const comparison = lastItem(data?.comparisons ?? []);
-  const patch =
-    [...(data?.patches ?? [])].reverse().find((item) => item.status === "applied") ??
-    lastItem(data?.patches ?? []);
-  const verification = lastItem(data?.verifications ?? []);
-  const latestRun = lastItem(data?.runs ?? []);
-  const unknown = [...(data?.evidence ?? [])].reverse().find((item) => !item.observed);
-  const observed = (data?.evidence ?? []).filter((item) => item.observed).length;
-  const unknownCount = (data?.evidence ?? []).length - observed;
-
-  return (
-    <div className="product-shell">
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/investigations")
+            .then(async (response) => {
+            const result = (await response.json());
+            if (!response.ok)
+                throw new Error(result.error ?? "Unable to load the report.");
+            return result;
+        })
+            .then((result) => {
+            if (cancelled)
+                return;
+            setData(result);
+        })
+            .catch((cause) => {
+            if (cancelled)
+                return;
+            setError(cause instanceof Error ? cause.message : "Unable to load the report.");
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+    const hypothesis = lastItem(data?.hypotheses ?? []);
+    const comparison = lastItem(data?.comparisons ?? []);
+    const patch = [...(data?.patches ?? [])].reverse().find((item) => item.status === "applied") ??
+        lastItem(data?.patches ?? []);
+    const verification = lastItem(data?.verifications ?? []);
+    const target = data?.investigation.target ?? null;
+    const latestRun = lastItem(data?.runs ?? []);
+    const unknown = [...(data?.evidence ?? [])].reverse().find((item) => !item.observed);
+    const observed = (data?.evidence ?? []).filter((item) => item.observed).length;
+    const unknownCount = (data?.evidence ?? []).length - observed;
+    return (<div className="product-shell">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
 
-      <ProductHeader
-        active="workspace"
-        status={{
-          label: investigationLabel(data?.investigation.status),
-          tone: investigationTone(data?.investigation.status)
-        }}
-      />
+      <ProductHeader active="workspace" status={{
+            label: investigationLabel(data?.investigation.status),
+            tone: investigationTone(data?.investigation.status)
+        }}/>
 
       <main id="main" className="product-main">
         <div className="frame report-page">
@@ -120,22 +105,19 @@ export default function Summary() {
           <header className="report-head">
             <div className="report-head-copy">
               <span className="page-kicker">
-                Investigation report <span aria-hidden="true">·</span> {data?.investigation.id ?? "inv_session_state"}
+                Investigation report <span aria-hidden="true">·</span> {data?.investigation.id ?? "—"}
               </span>
               <h1 className="report-title">
-                Session state <span className="serif">persists</span> between tests.
+                {data?.investigation.title ?? "Investigation report"}
               </h1>
               <p className="report-lede">
-                A recorded account of the order-dependent session failure: what was run, what the
-                evidence supports, what stayed unknown, and what the approved fix actually changed.
+                A recorded account of this investigation: what was run, what the evidence supports,
+                what stayed unknown, and what the approved fix actually changed.
               </p>
             </div>
 
             <div className="report-head-meta">
-              <StatusPill
-                label={investigationLabel(data?.investigation.status)}
-                tone={investigationTone(data?.investigation.status)}
-              />
+              <StatusPill label={investigationLabel(data?.investigation.status)} tone={investigationTone(data?.investigation.status)}/>
               <span className="report-generated">
                 <ClockIcon />
                 Generated {formatRecorded(data?.investigation.updatedAt)}
@@ -143,12 +125,10 @@ export default function Summary() {
             </div>
           </header>
 
-          {error ? (
-            <div className="report-error" role="alert">
+          {error ? (<div className="report-error" role="alert">
               <InfoIcon />
               <p>{error}</p>
-            </div>
-          ) : null}
+            </div>) : null}
 
           <section className="report-metrics" aria-label="Report metrics">
             <article>
@@ -171,10 +151,10 @@ export default function Summary() {
               <strong className="report-metric-word">{reportLabel(verification?.result)}</strong>
               <small>
                 {patch?.status === "draft"
-                  ? "Historical result · current patch in review"
-                  : verification
-                    ? verification.notes
-                    : "No recorded rerun"}
+            ? "Historical result · current patch in review"
+            : verification
+                ? verification.notes
+                : "No recorded rerun"}
               </small>
             </article>
           </section>
@@ -185,20 +165,20 @@ export default function Summary() {
                 <span className="report-number">01</span>
                 <div className="report-section-body">
                   <span className="panel-eyebrow">Original problem</span>
-                  <h2>The session test passed alone and failed after authentication.</h2>
+                  <h2>{data?.investigation.goal ?? "No goal was recorded."}</h2>
                   <p>
-                    The trusted sample establishes a user during the authentication test. When the
-                    session test runs immediately after it, module-level state survives into the next
-                    test. Run in isolation, the session starts empty and the same test passes.
+                    {target
+                      ? `The failing sequence is ${target.testFile}${target.targetTest ? ` (${target.targetTest})` : ""}${target.predecessorTest ? ` when it follows ${target.predecessorTest}` : ""}. ${target.reasoning}`
+                      : "Run the controlled workflow to resolve which test sequence fails and why."}
                   </p>
                   <div className="report-inline-meta">
                     <span>
                       <FolderIcon />
-                      breakpoint-session-demo
+                      {data?.project?.name ?? "—"}
                     </span>
                     <span>
                       <TerminalIcon />
-                      node --test test/session-flow.test.js
+                      {data?.project?.framework === "node" ? "node --test" : data?.project?.framework ?? "—"}
                     </span>
                   </div>
                 </div>
@@ -209,27 +189,19 @@ export default function Summary() {
                 <div className="report-section-body">
                   <span className="panel-eyebrow">What was observed</span>
                   <h2>Evidence linked to actual executions.</h2>
-                  {comparison ? (
-                    <ul className="report-findings">
-                      {comparison.findings.map((finding, index) => (
-                        <li key={`${finding.statement}-${index}`}>
+                  {comparison ? (<ul className="report-findings">
+                      {comparison.findings.map((finding, index) => (<li key={`${finding.statement}-${index}`}>
                           <span className={`finding-tag ${finding.certainty === "observed" ? "finding-tag--observed" : "finding-tag--unknown"}`.trim()}>
                             {finding.certainty}
                           </span>
                           <p>{finding.statement}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="report-muted">No comparison has been recorded yet.</p>
-                  )}
-                  {data ? (
-                    <div className="report-stat-line">
+                        </li>))}
+                    </ul>) : (<p className="report-muted">No comparison has been recorded yet.</p>)}
+                  {data ? (<div className="report-stat-line">
                       <span><PlayIcon /> {formatNumber(data.runs.length)} recorded runs</span>
                       <span><FileIcon /> {formatNumber(data.evidence.length)} evidence records</span>
                       <span><CheckIcon /> {observed} observed facts</span>
-                    </div>
-                  ) : null}
+                    </div>) : null}
                 </div>
               </section>
 
@@ -238,27 +210,19 @@ export default function Summary() {
                 <div className="report-section-body">
                   <span className="panel-eyebrow">Working hypothesis</span>
                   <h2>{hypothesis ? hypothesis.description : "No hypothesis was recorded."}</h2>
-                  {hypothesis ? (
-                    <>
+                  {hypothesis ? (<>
                       <p>{hypothesis.confidenceJustification}</p>
                       <div className="report-next">
                         <span>Next experiment</span>
                         <p>{hypothesis.nextExperiment}</p>
                       </div>
-                      {hypothesis.alternativeExplanations.length ? (
-                        <ul className="report-alternatives">
-                          {hypothesis.alternativeExplanations.map((alternative) => (
-                            <li key={alternative}>{alternative}</li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </>
-                  ) : (
-                    <p className="report-muted">
+                      {hypothesis.alternativeExplanations.length ? (<ul className="report-alternatives">
+                          {hypothesis.alternativeExplanations.map((alternative) => (<li key={alternative}>{alternative}</li>))}
+                        </ul>) : null}
+                    </>) : (<p className="report-muted">
                       The local workflow records evidence without inventing a diagnosis. Run an
                       evidence review to add a bounded hypothesis.
-                    </p>
-                  )}
+                    </p>)}
                 </div>
               </section>
 
@@ -267,20 +231,16 @@ export default function Summary() {
                 <div className="report-section-body">
                   <span className="panel-eyebrow">Proposed fix</span>
                   <h2>{patch ? patch.description : "No cleanup patch was proposed."}</h2>
-                  {patch ? (
-                    <>
+                  {patch ? (<>
                       <div className="report-patch-meta">
-                        <StatusPill label={patch.status} tone={patch.status === "applied" ? "success" : "neutral"} />
+                        <StatusPill label={patch.status} tone={patch.status === "applied" ? "success" : "neutral"}/>
                         <code>{patch.targetPath}</code>
                         <span>{patch.baseline}</span>
                       </div>
-                      <DiffView patch={patch} compact />
-                    </>
-                  ) : (
-                    <p className="report-muted">
+                      <DiffView patch={patch} compact/>
+                    </>) : (<p className="report-muted">
                       A fix remains review-only until a draft is proposed and explicitly approved.
-                    </p>
-                  )}
+                    </p>)}
                 </div>
               </section>
 
@@ -296,19 +256,16 @@ export default function Summary() {
                       <h2>{verification ? reportLabel(verification.result) : "No verification recorded."}</h2>
                       <p>
                         {verification
-                          ? verification.notes
-                          : "Approval and verification are separate steps. This report does not claim a fix works until a rerun records the result."}
+            ? verification.notes
+            : "Approval and verification are separate steps. This report does not claim a fix works until a rerun records the result."}
                       </p>
                     </div>
                   </div>
-                  {verification ? (
-                    <>
-                      {patch?.status === "draft" ? (
-                        <p className="report-muted">
+                  {verification ? (<>
+                      {patch?.status === "draft" ? (<p className="report-muted">
                           This is the latest recorded result. The current draft patch has not been
                           approved or verified yet.
-                        </p>
-                      ) : null}
+                        </p>) : null}
                       <dl className="report-verification-meta">
                         <div>
                           <dt>Verification</dt>
@@ -319,8 +276,7 @@ export default function Summary() {
                           <dd><code>{verification.runId}</code></dd>
                         </div>
                       </dl>
-                    </>
-                  ) : null}
+                    </>) : null}
                 </div>
               </section>
             </article>
@@ -333,7 +289,7 @@ export default function Summary() {
                 </div>
                 <p className="rail-body">
                   {unknown?.statement ??
-                    "Every recorded finding is currently observed. No unknown state has been recorded."}
+            "Every recorded finding is currently observed. No unknown state has been recorded."}
                 </p>
                 <span className="rail-caption">Kept visible on purpose</span>
               </section>
@@ -349,11 +305,11 @@ export default function Summary() {
                   </li>
                   <li>
                     <span>Project</span>
-                    <code>breakpoint-session-demo</code>
+                    <code>{data?.project?.name ?? "—"}</code>
                   </li>
                   <li>
                     <span>Runner</span>
-                    <code>node --test</code>
+                    <code>{data ? runnerLabel(data?.project?.framework) : "—"}</code>
                   </li>
                   <li>
                     <span>Mode</span>
@@ -401,6 +357,5 @@ export default function Summary() {
           </footer>
         </div>
       </main>
-    </div>
-  );
+    </div>);
 }

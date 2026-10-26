@@ -34,7 +34,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the overview or [http://localhost:3000/dashboard](http://localhost:3000/dashboard) to trigger the five-stage controlled investigation flow.
+Open [http://localhost:3000](http://localhost:3000) for the overview or [http://localhost:3000/app](http://localhost:3000/app) to connect a project — the bundled trusted sample, or any local directory you register. Then start an investigation and let the controlled workflow reproduce, compare and verify the failure.
 
 ---
 
@@ -94,38 +94,35 @@ sequenceDiagram
     actor Dev as Developer (Browser)
     participant UI as Next.js Workspace (/dashboard)
     participant API as Route Handler (/api/investigations)
-    participant Runner as Test Runner (lib/test-runner.ts)
-    participant Cmp as Diff Engine (lib/comparison.ts)
-    participant Store as JSON Store (lib/store.ts)
-    participant AI as OpenAI Adapter (lib/openai-provider.ts)
-    participant Patch as Patch Engine (lib/patch-review.ts)
+    participant Disc as Discovery (lib/discovery.js)
+    participant Runner as Run Matrix (lib/runner.js)
+    participant Cmp as Diff Engine (lib/comparison.js)
+    participant Store as JSON Store (lib/store.js)
+    participant AI as OpenAI Adapter (lib/openai-provider.js)
+    participant Patch as Patch Engine (lib/patch-review.js)
 
-    Dev->>UI: Click "Run controlled workflow"
-    UI->>API: POST /api/investigations { action: "run-workflow" }
-    
+    Dev->>UI: Connect a project directory (POST /api/projects)
+    UI->>API: POST /api/investigations { action: "start-investigation", projectId }
+
     rect rgb(240, 244, 255)
         note over API,Runner: Stage 1: Reproduce
-        API->>Runner: runApprovedDemo("isolated")
-        Runner-->>API: TestRun (exitCode: 0, passed)
-        API->>Runner: runApprovedDemo("auth")
-        Runner-->>API: TestRun (exitCode: 0, passed)
-        API->>Runner: runApprovedDemo("pair")
-        Runner-->>API: TestRun (exitCode: 1, failed)
-        API->>Runner: runApprovedDemo("reverse")
-        Runner-->>API: TestRun (exitCode: 0, passed)
-        API->>Runner: runApprovedDemo("pair")
-        Runner-->>API: TestRun (exitCode: 1, failed)
+        API->>Disc: discoverFiles(project.root) -> framework, test files
+        API->>Runner: triage runs (most suspect files, capped)
+        Runner-->>API: TestRun records (TAP/jest parsed)
+        API->>Runner: focused matrix: target solo, predecessor solo, ordered file, reproducibility probe
+        Runner-->>API: TestRun records incl. the failing ordered run
     end
 
     rect rgb(245, 245, 245)
         note over API,Cmp: Stage 2: Compare
-        API->>Cmp: compareRuns(failingRun, passingReverseRun)
+        API->>Cmp: compareRunMatrix(allRuns, runEvidence)
         Cmp-->>API: Findings [status, order, exitCode, unknown state]
         API->>Store: Persist runs, comparisons, evidence IDs
     end
 
     rect rgb(255, 250, 240)
         note over API,AI: Stage 3: Investigate
+        API->>Store: Deterministic hypothesis from findings (always)
         Dev->>UI: Click "Run AI evidence review" (Optional)
         UI->>API: POST /api/investigations { action: "ai-review" }
         API->>AI: evaluateEvidence(snapshot)
@@ -137,13 +134,13 @@ sequenceDiagram
         note over API,Patch: Stage 4 & 5: Propose & Verify
         Dev->>UI: Click "Propose cleanup fix"
         UI->>API: POST /api/investigations { action: "propose-patch" }
-        API->>Patch: createDemoCleanupPatch()
+        API->>Patch: draftCleanupPatch(evidence) (multi-file edits)
         Patch-->>API: ProposedPatch (draft)
         
         Dev->>UI: Click "Approve & verify fix"
         UI->>API: POST /api/investigations { action: "approve-patch", patchId }
-        API->>Patch: applyDemoPatch() (checks disk baseline)
-        API->>Runner: runApprovedDemo("pair")
+        API->>Patch: applyPatch() (byte-exact baseline check)
+        API->>Runner: rerunRecordedSpec() on the failing pair
         Runner-->>API: TestRun (exitCode: 0, passed)
         API->>Patch: verifyRun() -> "verified"
         API->>Store: Update investigation status: "verified"
@@ -157,15 +154,17 @@ sequenceDiagram
 
 ## Key Features (Verified in Code)
 
-- **Allowlisted Process Execution (`lib/test-runner.ts`)**: Executes real Node.js test runs using `child_process.spawn` with an unalterable argument allowlist (`isolated`, `auth`, `pair`, `reverse`, `suite`). The browser cannot supply arbitrary shell commands, working directories, or execution parameters.
-- **Process Safety Controls (`lib/test-runner.ts`)**: Enforces a strict 10-second execution timeout via `SIGKILL`, 64 KB stdout/stderr buffer truncation, memory bounds via `--max-old-space-size=128`, and runs without shell interpretation (`shell: false`).
-- **Differential TAP Output Parser (`lib/test-runner.ts`)**: Ingests standard TAP output from Node's native test runner (`node --test`), extracting individual subtest names, run durations, exit codes, and failure assertion messages.
-- **Differential Run Comparison Engine (`lib/comparison.ts`)**: Contrasts failing and passing runs across status, exit codes, execution sequence, and assertion errors. Explicitly creates records with `certainty: "unknown"` for uncaptured runtime memory state.
-- **Single-Tenant Operation Serialization (`lib/lock.ts`)**: Mutating actions (`run-workflow`, `ai-review`, `approve-patch`) are protected by an in-memory lock that returns HTTP 409 Conflict if a concurrent mutation is initiated.
-- **Local-First Atomic Store (`lib/store.ts`)**: Persists runs, evidence, comparisons, and patches to `.breakpoint/investigations.json` using atomic temporary file creation (`mode 0o600`) and renaming, protecting against partial writes.
-- **Constrained AI Function Calling (`lib/openai-provider.ts`)**: Integrates with OpenAI's Responses API using strict function definitions (`record_hypothesis`). Server-side validation requires that all cited supporting and contradicting evidence IDs exist in the active investigation; hallucinatory citations result in immediate rejection.
-- **Approval-Gated Safe Patching (`lib/patch-review.ts`)**: Patches are generated as immutable drafts. Before writing to disk, Breakpoint verifies that the target file matches the recorded baseline hash. An approval click is required to apply the patch, and a subsequent rerun must pass before marking the issue "verified".
-- **One-Click Patch Rollback (`lib/patch-review.ts`)**: Restores original baseline file contents cleanly with a single click (`action: "revert-patch"`).
+- **Registered-Project Discovery (`lib/discovery.js`)**: Walks a registered directory (capped), detects the test framework, and builds run commands from the project's own test files and binaries. The browser cannot supply arbitrary shell commands, working directories, or execution parameters.
+- **Argv-Only Process Execution (`lib/spawn-safe.js`)**: Executes real test runs using `child_process.spawn` with `shell: false`, a scrubbed child environment, and executable paths resolved from the project's own `node_modules/.bin`.
+- **Process Safety Controls (`lib/runner.js`)**: Enforces a strict execution timeout via `SIGKILL` and stdout/stderr byte-cap truncation; runs never inherit secrets from the server environment.
+- **TAP/jest Output Parser (`lib/runner.js`)**: Ingests TAP output from Node's native test runner (`node --test`) and jest-style summaries, extracting individual subtest names, run durations, exit codes, and failure assertion messages.
+- **Static Shared-State Analysis (`lib/state-analysis.js`)**: Strips comments and strings, then audits module-level writes, exported mutable handles, global timers and cross-test coupling to rank suspect files and select an investigation target before any run.
+- **Differential Run Comparison Engine (`lib/comparison.js`)**: Contrasts failing and passing runs across the matrix — status, exit codes, execution sequence, and assertion errors. Explicitly creates records with `certainty: "unknown"` for uncaptured runtime memory state.
+- **Single-Tenant Operation Serialization (`lib/lock.js`)**: Mutating actions (`run-workflow`, `ai-review`, `approve-patch`) are protected by an in-memory lock that returns HTTP 409 Conflict if a concurrent mutation is initiated.
+- **Local-First Atomic Store (`lib/store.js`)**: Persists runs, evidence, comparisons, analyses, and patches to `.breakpoint/investigations.json` using atomic temporary file creation (`mode 0o600`) and renaming, protecting against partial writes.
+- **Constrained AI Function Calling (`lib/openai-provider.js`)**: Integrates with OpenAI's Responses API using strict function definitions (`record_hypothesis`). Server-side validation requires that all cited supporting and contradicting evidence IDs exist in the active investigation; hallucinatory citations result in immediate rejection.
+- **Approval-Gated Safe Patching (`lib/patch-review.js`)**: Patches are generated as immutable drafts holding per-file edits. Before writing to disk, Breakpoint verifies that every target file matches its recorded byte-exact baseline. An approval click is required to apply the patch, and a subsequent rerun must pass before marking the issue "verified".
+- **One-Click Patch Rollback (`lib/patch-review.js`)**: Restores every patched file's original baseline contents cleanly with a single click (`action: "revert-patch"`).
 
 ---
 
@@ -243,7 +242,7 @@ Derived directly from `package.json` and active code:
 |---|---|---|
 | **Framework** | Next.js 15.5.28 (App Router) | Server-rendered UI, dynamic route handlers (`/api/investigations`), and static report generation. |
 | **Frontend Library** | React 19.1.10 | Client components for real-time investigation stepper, diff view, and tabbed run inspection. |
-| **Language & Types** | TypeScript 5.x | Strict type safety across investigation models, runner configurations, and API payloads. |
+| **Language & Types** | JavaScript (ESM, Node ≥ 20) | Zero-TypeScript codebase. Data shapes are documented with JSDoc typedefs (`lib/models.js`); everything runs natively without a compile step. |
 | **Test Runner** | Node.js Native Runner (`node --test`) | Native TAP-compliant runner executed via subprocesses without external testing framework dependencies. |
 | **AI Integration** | OpenAI Node SDK (`^6.16.0`) | Structured hypothesis evaluation using the OpenAI Responses API with function tool constraints. |
 | **Styling** | Vanilla CSS | Bespoke design system based on warm paper aesthetic, Outfit and Redaction 35 typography, and hairline borders. |
@@ -305,38 +304,42 @@ Derived directly from `package.json` and active code:
 ```
 codex-breakpoint/
 ├── app/                                 # Next.js App Router
-│   ├── api/investigations/route.ts      # REST API: run-workflow, ai-review, patches
-│   ├── app/page.tsx                     # Project selector and onboarding flow
+│   ├── api/projects/route.js            # REST API: list + register local projects
+│   ├── api/investigations/route.js      # REST API: workflow, triage, AI review, patches
+│   ├── app/page.jsx                     # Project connector (register any local directory)
 │   ├── components/                      # Reusable UI components
-│   │   ├── brand-mark.tsx               # SVG brand marks and glyphs
-│   │   ├── diff-view.tsx                # Patch diff inspector
-│   │   ├── investigation-window.tsx     # Embedded interactive demo window
-│   │   ├── product-chrome.tsx           # Global navigation and status indicators
-│   │   └── site-footer.tsx              # Clean editorial footer
+│   │   ├── brand-mark.jsx               # SVG brand marks and glyphs
+│   │   ├── diff-view.jsx                # Patch diff inspector
+│   │   ├── investigation-window.jsx     # Embedded interactive demo window
+│   │   ├── product-chrome.jsx           # Global navigation and status indicators
+│   │   └── site-footer.jsx              # Clean editorial footer
 │   ├── dashboard/                       # Interactive investigation workspace
 │   │   ├── dashboard.css                # Workspace-specific stylesheets
-│   │   ├── page.tsx                     # Dashboard route entry point
-│   │   └── workspace.tsx                # 5-stage stepper, run tabs, patch reviewer
+│   │   ├── page.jsx                     # Dashboard route entry point
+│   │   └── workspace.jsx                # Guided flow, run tabs, patch reviewer
 │   ├── investigations/
-│   │   └── inv_session_state/
-│   │       ├── page.tsx                 # Redirect helper
-│   │       └── summary/page.tsx         # Comprehensive forensic audit report
-│   ├── layout.tsx                       # Root layout and font declarations
-│   ├── not-found.tsx                    # 404 error page
-│   ├── page.tsx                         # Landing page with interactive live demo
+│   │   ├── inv_session_state/           # Legacy route -> workspace; forensic summary report
+│   │   └── new/page.jsx                 # Fixed execution-matrix run plan
+│   ├── layout.jsx                       # Root layout and font declarations
+│   ├── not-found.jsx                    # 404 error page
+│   ├── page.jsx                         # Landing page with interactive live demo
 │   ├── runtime.css                      # Utility and layout styling
 │   └── styles.css                       # Design system tokens and typography
-├── lib/                                 # Core backend & business logic
-│   ├── agent.ts                         # Deterministic hypothesis builder
-│   ├── comparison.ts                    # Differential run comparison engine
-│   ├── errors.ts                        # Typed application errors (Conflict, AiUnavailable)
-│   ├── investigations.ts                # Orchestrator for workflows, runs, and store
-│   ├── lock.ts                          # Single-tenant in-memory operation lock
-│   ├── models.ts                        # TypeScript interfaces (TestRun, Evidence, Patch)
-│   ├── openai-provider.ts               # OpenAI Responses API function-calling adapter
-│   ├── patch-review.ts                  # Baseline hash checker, patch applier, and reverter
-│   ├── store.ts                         # Atomic JSON persistence (.breakpoint/investigations.json)
-│   └── test-runner.ts                   # Process execution harness (spawn, TAP parser, limits)
+├── lib/                                 # Core backend & business logic (plain ESM JS)
+│   ├── agent.js                         # Deterministic hypothesis builder
+│   ├── comparison.js                    # Matrix-aware differential run comparison
+│   ├── discovery.js                     # File walk, framework detection, argv builder
+│   ├── errors.js                        # Typed application errors (Conflict, AiUnavailable)
+│   ├── investigations.js                # Orchestrator for projects, workflows, and store
+│   ├── lock.js                          # Single-tenant in-memory operation lock
+│   ├── models.js                        # JSDoc typedefs (TestRun, Evidence, Patch, ...)
+│   ├── openai-provider.js               # OpenAI Responses API function-calling adapter
+│   ├── patch-review.js                  # Unified diff engine, patch applier, reverter, verifier
+│   ├── projects.js                      # Registration safety gates + static analysis entry
+│   ├── spawn-safe.js                    # Argv-only spawn helper (no shell, scrubbed env)
+│   ├── state-analysis.js                # Static shared-state scanner + target selection
+│   ├── runner.js                        # Triage/matrix run specs + TAP/jest parsing
+│   └── store.js                         # Atomic JSON persistence (.breakpoint/investigations.json)
 ├── sample-project/                      # Trusted local reproduction target
 │   ├── src/
 │   │   └── session.js                   # Source with shared module-level state
@@ -344,9 +347,36 @@ codex-breakpoint/
 │       ├── reverse-flow.test.js         # Passing reversed test pair
 │       └── session-flow.test.js         # Failing ordered test pair
 ├── public/brand/                        # SVG and PNG brand marks
-├── package.json                         # Dependencies and build scripts
-└── tsconfig.json                        # TypeScript configuration
+├── package.json                         # Dependencies, build scripts, ESM marker
+└── jsconfig.json                        # Path alias (@/*) configuration
 ```
+
+---
+
+## API Surface
+
+### `POST /api/projects`
+| Field | Notes |
+|---|---|
+| `root` | Absolute path of a directory on this machine. Must exist, must not sit inside a forbidden system root (`/etc`, `/usr`, `/bin`, ...). |
+| `trusted` | Opt-in confirmation that Breakpoint may execute this project's tests and, only after explicit patch approval, write inside it. |
+
+Returns `{ project, discovery: { framework, testFiles, truncated } }`.
+
+### `GET /api/investigations`
+Returns the active investigation snapshot: investigation record (including the resolved `target`), owning project, public runs, evidence, comparisons, static analyses, hypotheses, patches and verifications.
+
+### `POST /api/investigations` actions
+| Action | Body | Effect |
+|---|---|---|
+| `start-investigation` | `{ projectId }` | Creates a fresh investigation for a registered project and makes it active. |
+| `scan-project` | `{ projectId? }` | Runs the static shared-state analysis only (no subprocesses) and persists findings as evidence. |
+| `run-workflow` | `{ testFile?, targetTest? }` | Full pipeline: static triage → triage runs → resolved target → focused matrix → comparison → hypothesis. |
+| `run-demo` | — | Legacy alias of `run-workflow` against the bundled trusted sample. |
+| `ai-review` | — | Optional. OpenAI reviews the evidence trail and records a hypothesis via one function call. |
+| `propose-patch` | — | Drafts a minimal multi-file cleanup patch from evidence; stays unapplied. |
+| `approve-patch` | `{ patchId }` | Applies the draft (byte-exact baseline check), reruns the failing pair, records verification. |
+| `revert-patch` | `{ patchId }` | Restores every patched file to its baseline; records the revert. |
 
 ---
 
@@ -358,11 +388,8 @@ All scripts have been verified and tested:
 # Start local development server with Turbopack support
 npm run dev
 
-# Check linting rules across all TypeScript and React files
+# Check linting rules across all source files
 npm run lint
-
-# Verify TypeScript type correctness without emitting code
-npm run typecheck
 
 # Build optimized production bundle
 npm run build
@@ -380,11 +407,12 @@ node --test sample-project/test/session-flow.test.js
 
 ### Subprocess Execution Model
 
-Breakpoint runs test commands using `node:child_process.spawn`:
-- **Shell-free execution**: `shell: false` ensures input strings are not parsed or expanded by bash/sh, eliminating shell injection vulnerabilities.
-- **Fixed allowlist**: The server strictly maps command identifiers (`"isolated"`, `"pair"`, `"reverse"`) to predefined argument arrays. The client cannot specify arbitrary arguments or executables.
-- **Predefined working directory**: Execution is locked to `path.join(process.cwd(), "sample-project")`.
-- **Sanitized environment**: Subprocesses receive a minimal environment (`NODE_ENV: "test"`, `NODE_OPTIONS: "--max-old-space-size=128"`).
+Breakpoint runs test commands using `node:child_process.spawn` via `lib/spawn-safe.js`:
+- **Shell-free execution**: `shell: false` with argv arrays only — input strings are never parsed or expanded by bash/sh, eliminating shell injection vulnerabilities.
+- **Project-local binary allowlist**: Executables come from the project's own `node_modules/.bin` (plus `node`); commands are built by Breakpoint from discovered test files. The browser can never specify arbitrary arguments or executables.
+- **Registered working directory**: Execution is locked to the registered project root. Registration rejects paths inside forbidden system roots (`/etc`, `/usr`, `/bin`, `/sbin`, `/System`, `/Windows`, ...).
+- **Sanitized environment**: Subprocesses receive a minimal, scrubbed environment (`NODE_ENV: "test"`, capped `NODE_OPTIONS`) with no secrets forwarded.
+- **Hard output caps and timeouts**: Every run has a wall-clock timeout and stdout/stderr byte caps, recorded verbatim in the store.
 
 ### Important Security Boundary Disclosures
 
@@ -406,19 +434,19 @@ Breakpoint runs test commands using `node:child_process.spawn`:
 ## Current Status & Limitations
 
 ### Working Today
-- Native Node.js test execution with TAP output parsing.
-- 5-step reproduction workflow (isolated, predecessor, ordered, reversed, repeat).
-- Differential run comparison with explicit "unknown" markers.
-- Deterministic hypothesis formulation.
+- Any local directory can be registered (with explicit trust confirmation) and investigated — not just the bundled sample.
+- Static shared-state analysis produces ranked, evidence-backed findings without executing anything.
+- Node.js test execution with TAP/jest output parsing, driven by triage + focused matrix runs.
+- Differential comparison across the run matrix with explicit "unknown" markers.
+- Deterministic hypothesis formulation with cited analysis evidence.
 - Optional OpenAI Responses API integration with verified evidence citation.
-- Baseline-checked, approval-gated patch proposal, application, and reversion.
-- Post-fix rerun and verification recording.
+- Multi-file, baseline-checked, approval-gated patch proposal, application, and reversion.
+- Post-fix rerun and verification recording against the exact recorded run spec.
 - Comprehensive UI workspace and forensic summary report.
 
 ### Current Limitations
-- **Subprocess Isolation**: Runs locally on the host; not containerized in Docker.
-- **Language Scope**: Currently preconfigured for Node.js (`node --test`). Python (`pytest`), Go (`go test`), and Rust (`cargo test`) are planned.
-- **Project Selection**: Hardcoded to the bundled `sample-project/` demonstration target. Dynamic directory selection is not yet enabled.
+- **Subprocess Isolation**: Runs locally on the host; not containerized in Docker. Trust confirmation gates execution, but it is not a sandbox.
+- **Language Scope**: Currently supports Node.js (`node --test`) plus jest/vitest via their native binaries. Python (`pytest`), Go (`go test`), and Rust (`cargo test`) are planned.
 
 ---
 

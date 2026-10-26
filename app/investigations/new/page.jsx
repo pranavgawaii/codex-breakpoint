@@ -1,35 +1,22 @@
 "use client";
-
 import Link from "next/link";
-import {
-  ArrowRightIcon,
-  ArrowUpRightIcon,
-  CheckIcon,
-  InfoIcon,
-  LockIcon,
-  TerminalIcon
-} from "../../components/icons";
+import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, InfoIcon, LockIcon, TerminalIcon } from "../../components/icons";
 import { ProductHeader, StatusPill } from "../../components/product-chrome";
-
 const plan = [
-  "session test in isolation",
-  "authentication test in isolation",
-  "authentication → session",
-  "session → authentication",
-  "repeat ordered pair"
+    "static shared-state analysis (no execution)",
+    "triage runs — the most suspect files, up to three",
+    "failing target test in isolation",
+    "predecessor test in isolation",
+    "whole file in declared order",
+    "file again — reproducibility probe"
 ];
-
 export default function NewInvestigation() {
-  return (
-    <div className="product-shell">
+    return (<div className="product-shell">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
 
-      <ProductHeader
-        active="workspace"
-        status={{ label: "Run plan ready", tone: "neutral" }}
-      />
+      <ProductHeader active="workspace" status={{ label: "Run plan ready", tone: "neutral" }}/>
 
       <main id="main" className="product-main">
         <div className="frame new-page">
@@ -47,8 +34,8 @@ export default function NewInvestigation() {
                 Configure a <span className="serif">controlled</span> run.
               </h1>
               <p className="setup-lede">
-                Name the target and the question. Breakpoint will only run the fixed, approved Node
-                test commands inside the trusted sample project.
+                The target is resolved from recorded failures, never hand-picked. Breakpoint only
+                runs commands it builds itself from the test files discovered in the project.
               </p>
             </div>
 
@@ -68,27 +55,20 @@ export default function NewInvestigation() {
                   <span className="panel-eyebrow">Investigation setup</span>
                   <h2 id="config-heading">What should Breakpoint investigate?</h2>
                 </div>
-                <StatusPill label="Draft" tone="neutral" />
+                <StatusPill label="Draft" tone="neutral"/>
               </div>
 
               <div className="config-form">
                 <label className="form-field">
                   <span>Target test</span>
-                  <select value="session" disabled>
-                    <option value="session">session starts without a user</option>
-                    <option value="auth">authentication establishes the demo user</option>
-                  </select>
-                  <small>Resolved from the trusted sample test suite; not editable in this prototype.</small>
+                  <input type="text" value="Resolved from triage failures or static analysis" readOnly />
+                  <small>Resolved from recorded failures; not hand-picked from the browser.</small>
                 </label>
 
                 <label className="form-field">
                   <span>Investigation goal</span>
-                  <textarea
-                    value="Find why this test fails depending on execution order."
-                    readOnly
-                    rows={4}
-                  />
-                  <small>Fixed for the demo run so the reason for the investigation stays visible.</small>
+                  <textarea value="Prove which test sequence breaks which test, then verify a cleanup fix." readOnly rows={4}/>
+                  <small>Fixed for every investigation so the reason for it stays visible.</small>
                 </label>
 
                 <div className="form-locked">
@@ -96,8 +76,8 @@ export default function NewInvestigation() {
                   <div>
                     <strong>Commands are not editable.</strong>
                     <p>
-                      This prototype never accepts a shell command or working directory from the
-                      browser. The plan stays fixed to the trusted sample.
+                      Breakpoint never accepts a shell command or working directory from the
+                      browser. Every execution is built from the tests discovered in the project.
                     </p>
                   </div>
                 </div>
@@ -118,7 +98,7 @@ export default function NewInvestigation() {
               <div className="plan-card-head">
                 <div>
                   <span className="panel-eyebrow">Permitted execution plan</span>
-                  <h2 id="plan-heading">Five recorded executions.</h2>
+                  <h2 id="plan-heading">A fixed execution matrix.</h2>
                 </div>
                 <span className="plan-icon" aria-hidden="true">
                   <TerminalIcon />
@@ -126,18 +106,16 @@ export default function NewInvestigation() {
               </div>
 
               <p className="plan-lede">
-                Each command runs in the trusted sample with a minimal environment, a 10-second
-                timeout and capped output.
+                Each command runs inside the connected project directory with a scrubbed
+                environment, a hard timeout and capped output.
               </p>
 
               <ol className="plan-list">
-                {plan.map((step, index) => (
-                  <li key={step}>
+                {plan.map((step, index) => (<li key={step}>
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <p>{step}</p>
                     <CheckIcon />
-                  </li>
-                ))}
+                  </li>))}
               </ol>
 
               <ul className="plan-badges" aria-label="Execution constraints">
@@ -169,7 +147,7 @@ export default function NewInvestigation() {
 
           <footer className="product-page-foot">
             <p>
-              Trusted local demo <span aria-hidden="true">·</span> fixed commands{" "}
+              Trusted local runs <span aria-hidden="true">·</span> fixed commands{" "}
               <span aria-hidden="true">·</span> explicit approval
             </p>
             <Link className="product-foot-link" href="/#workflow">
@@ -179,6 +157,5 @@ export default function NewInvestigation() {
           </footer>
         </div>
       </main>
-    </div>
-  );
+    </div>);
 }

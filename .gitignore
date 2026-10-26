@@ -5,7 +5,6 @@ node_modules
 .env
 .env.local
 !.env.example
-tsconfig.tsbuildinfo
 # External design references; keep them out of the application repository.
 landing-kit/
 breakpoint-v2.html

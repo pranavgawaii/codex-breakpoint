@@ -903,6 +903,23 @@
   font-style: normal;
 }
 
+.workspace-target {
+  max-width: 60ch;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.workspace-target code {
+  border: 1px solid var(--hairline);
+  border-radius: 5px;
+  background: var(--surface-2);
+  padding: 1px 5px;
+  color: var(--accent-ink);
+  font-size: 10.5px;
+}
+
 .workspace-head-actions {
   display: flex;
   flex-direction: column;
@@ -1138,6 +1155,13 @@
   padding: 0 2px;
   color: #c6c6c1;
   font-style: normal;
+}
+
+.flow-head-side {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 14px;
 }
 
 .flow-steps {
@@ -3856,5 +3880,175 @@
   .inline-link,
   .panel-tab {
     transition: none;
+  }
+}
+
+/* ============================================================================
+   Project connect & registered list
+   ========================================================================== */
+
+.connect-card {
+  min-height: 0;
+}
+
+.connect-form {
+  gap: 14px;
+  padding: 22px 0 0;
+}
+
+.form-field input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fdfdfc;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-field input::placeholder {
+  color: #a4a8b3;
+}
+
+.form-field input:focus {
+  border-color: rgba(79, 70, 229, 0.5);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+}
+
+.trust-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fbfbf8;
+  padding: 11px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.trust-check:hover {
+  border-color: #d8d8d2;
+}
+
+.trust-check:has(input:checked) {
+  border-color: rgba(79, 70, 229, 0.35);
+  background: var(--accent-soft);
+}
+
+.trust-check input {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin-top: 1px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.trust-check span {
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
+.connect-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.connect-result {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  color: var(--success-ink);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.connect-result svg {
+  width: 13px;
+  height: 13px;
+}
+
+.connect-result--error {
+  color: var(--danger-ink);
+}
+
+.registered-lede {
+  max-width: 62ch;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.registered-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.registered-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 16px 20px;
+}
+
+.registered-item + .registered-item {
+  border-top: 1px solid var(--hairline);
+}
+
+.registered-item strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.registered-item code {
+  display: block;
+  margin-top: 3px;
+  color: var(--faint);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.registered-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 760px) {
+  .registered-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .registered-meta {
+    width: 100%;
   }
 }

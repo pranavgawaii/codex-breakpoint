@@ -1,8 +1,6 @@
 import Link from "next/link";
-
 export default function NotFound() {
-  return (
-    <main className="product-shell not-found-shell">
+    return (<main className="product-shell not-found-shell">
       <div className="not-found-block">
         <p className="not-found-kicker">404 — Not Found</p>
         <h1 className="not-found-title">Page not found</h1>
@@ -13,6 +11,5 @@ export default function NotFound() {
           Return to Breakpoint home
         </Link>
       </div>
-    </main>
-  );
+    </main>);
 }
