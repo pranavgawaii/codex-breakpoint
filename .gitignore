@@ -9,3 +9,12 @@ node_modules
 landing-kit/
 breakpoint-v2.html
 breakpoint-presentation.html
+
+# Python engine (engine/)
+engine/.venv
+engine/.pytest_cache
+engine/dist
+engine/*.egg-info
+__pycache__/
+*.pyc
+.pytest_cache/

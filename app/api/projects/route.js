@@ -1,23 +1,15 @@
 import { NextResponse } from "next/server";
-import { AppError } from "@/lib/errors";
-import { listProjectsAction, registerProjectAction } from "@/lib/projects";
+import { proxyToEngine } from "../engine-client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Lists registered projects with their discovery metadata.
+ * Lists registered projects (engine-owned).
  * @returns {Promise<NextResponse>}
  */
 export async function GET() {
-  try {
-    return NextResponse.json({ projects: await listProjectsAction() });
-  } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to list projects." },
-      { status: error instanceof AppError ? error.status : 500 },
-    );
-  }
+  return proxyToEngine("/api/projects", { method: "GET" }, "Unable to list projects.");
 }
 
 /**
@@ -27,17 +19,11 @@ export async function GET() {
  * @returns {Promise<NextResponse>}
  */
 export async function POST(request) {
+  let body;
   try {
-    const body = /** @type {{ root?: unknown, trusted?: unknown }} */ (await request.json());
-    if (typeof body.root !== "string") {
-      return NextResponse.json({ error: "A root path string is required." }, { status: 400 });
-    }
-    const result = await registerProjectAction(body.root, body.trusted === true);
-    return NextResponse.json(result, { status: 201 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to register project." },
-      { status: error instanceof AppError ? error.status : 500 },
-    );
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "A JSON body with a root path is required." }, { status: 400 });
   }
+  return proxyToEngine("/api/projects", { method: "POST", body: JSON.stringify(body) }, "Unable to register the project.");
 }

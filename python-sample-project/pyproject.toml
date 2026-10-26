@@ -1,0 +1,11 @@
+[project]
+name = "breakpoint-ledger-demo"
+version = "0.1.0"
+description = "Trusted pytest sample with a real order-dependent failure for Breakpoint."
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+pythonpath = ["."]
+
+[tool.breakpoint]
+sample = "ledger-order-dependence"

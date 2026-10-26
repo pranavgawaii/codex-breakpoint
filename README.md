@@ -20,21 +20,33 @@
 
 ## Quick Start (30 Seconds)
 
-Breakpoint runs a fully functional local debugging workflow out of the box without requiring external API keys:
+Breakpoint is a **standalone Python engine** (the product: service + CLI) with a **thin Next.js web client**. Both run locally with no API keys.
+
+**Engine** (Python 3.12+):
 
 ```bash
-# 1. Clone and enter the repository
-git clone https://github.com/pranavgawaii/codex-breakpoint.git
-cd codex-breakpoint
+cd engine
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+breakpoint serve --port 8000              # engine API for the web UI
+```
 
-# 2. Install dependencies (Node 20+ required)
+**Web client** (Node 20+):
+
+```bash
 npm install
-
-# 3. Start the application
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the overview or [http://localhost:3000/app](http://localhost:3000/app) to connect a project — the bundled trusted sample, or any local directory you register. Then start an investigation and let the controlled workflow reproduce, compare and verify the failure.
+Open [http://localhost:3000](http://localhost:3000) for the overview or [http://localhost:3000/app](http://localhost:3000/app) to connect a project — the bundled trusted samples (`sample-project/` for Node, `python-sample-project/` for pytest), or any local directory you register. Then start an investigation and let the controlled workflow reproduce, compare and verify the failure.
+
+**No browser?** The engine is the product — use it headless:
+
+```bash
+breakpoint register ../python-sample-project --trust
+breakpoint workflow                       # triage → matrix → comparison → hypothesis
+breakpoint patch && breakpoint approve && breakpoint report
+```
 
 ---
 
@@ -93,13 +105,14 @@ sequenceDiagram
     autonumber
     actor Dev as Developer (Browser)
     participant UI as Next.js Workspace (/dashboard)
-    participant API as Route Handler (/api/investigations)
-    participant Disc as Discovery (lib/discovery.js)
-    participant Runner as Run Matrix (lib/runner.js)
-    participant Cmp as Diff Engine (lib/comparison.js)
-    participant Store as JSON Store (lib/store.js)
-    participant AI as OpenAI Adapter (lib/openai-provider.js)
-    participant Patch as Patch Engine (lib/patch-review.js)
+    participant API as Web API proxy (/api/investigations)
+    participant ENG as Breakpoint Engine (FastAPI)
+    participant Disc as Discovery (breakpoint.discovery)
+    participant Runner as Run Matrix (breakpoint.runner)
+    participant Cmp as Diff Engine (breakpoint.comparison)
+    participant Store as JSON Store (breakpoint.store)
+    participant AI as OpenAI Adapter (breakpoint.ai_provider)
+    participant Patch as Patch Engine (breakpoint.patch_review)
 
     Dev->>UI: Connect a project directory (POST /api/projects)
     UI->>API: POST /api/investigations { action: "start-investigation", projectId }
@@ -154,17 +167,17 @@ sequenceDiagram
 
 ## Key Features (Verified in Code)
 
-- **Registered-Project Discovery (`lib/discovery.js`)**: Walks a registered directory (capped), detects the test framework, and builds run commands from the project's own test files and binaries. The browser cannot supply arbitrary shell commands, working directories, or execution parameters.
-- **Argv-Only Process Execution (`lib/spawn-safe.js`)**: Executes real test runs using `child_process.spawn` with `shell: false`, a scrubbed child environment, and executable paths resolved from the project's own `node_modules/.bin`.
-- **Process Safety Controls (`lib/runner.js`)**: Enforces a strict execution timeout via `SIGKILL` and stdout/stderr byte-cap truncation; runs never inherit secrets from the server environment.
-- **TAP/jest Output Parser (`lib/runner.js`)**: Ingests TAP output from Node's native test runner (`node --test`) and jest-style summaries, extracting individual subtest names, run durations, exit codes, and failure assertion messages.
-- **Static Shared-State Analysis (`lib/state-analysis.js`)**: Strips comments and strings, then audits module-level writes, exported mutable handles, global timers and cross-test coupling to rank suspect files and select an investigation target before any run.
-- **Differential Run Comparison Engine (`lib/comparison.js`)**: Contrasts failing and passing runs across the matrix — status, exit codes, execution sequence, and assertion errors. Explicitly creates records with `certainty: "unknown"` for uncaptured runtime memory state.
-- **Single-Tenant Operation Serialization (`lib/lock.js`)**: Mutating actions (`run-workflow`, `ai-review`, `approve-patch`) are protected by an in-memory lock that returns HTTP 409 Conflict if a concurrent mutation is initiated.
-- **Local-First Atomic Store (`lib/store.js`)**: Persists runs, evidence, comparisons, analyses, and patches to `.breakpoint/investigations.json` using atomic temporary file creation (`mode 0o600`) and renaming, protecting against partial writes.
-- **Constrained AI Function Calling (`lib/openai-provider.js`)**: Integrates with OpenAI's Responses API using strict function definitions (`record_hypothesis`). Server-side validation requires that all cited supporting and contradicting evidence IDs exist in the active investigation; hallucinatory citations result in immediate rejection.
-- **Approval-Gated Safe Patching (`lib/patch-review.js`)**: Patches are generated as immutable drafts holding per-file edits. Before writing to disk, Breakpoint verifies that every target file matches its recorded byte-exact baseline. An approval click is required to apply the patch, and a subsequent rerun must pass before marking the issue "verified".
-- **One-Click Patch Rollback (`lib/patch-review.js`)**: Restores every patched file's original baseline contents cleanly with a single click (`action: "revert-patch"`).
+- **Registered-Project Discovery (`breakpoint/discovery.py`)**: Walks a registered directory (capped), detects the test framework, and builds run commands from the project's own test files and binaries. The browser cannot supply arbitrary shell commands, working directories, or execution parameters.
+- **Argv-Only Process Execution (`breakpoint/spawn_safe.py`)**: Executes real test runs using `child_process.spawn` with `shell: false`, a scrubbed child environment, and executable paths resolved from the project's own `node_modules/.bin`.
+- **Process Safety Controls (`breakpoint/runner.py`)**: Enforces a strict execution timeout via `SIGKILL` and stdout/stderr byte-cap truncation; runs never inherit secrets from the server environment.
+- **TAP/junitxml Output Parsers (`breakpoint/runner.py`)**: Ingests TAP output from Node's native test runner (`node --test`), jest-style summaries and pytest junitxml, extracting individual test names, run durations, exit codes, and failure assertion messages.
+- **Static Shared-State Analysis (`breakpoint/state_analysis.py`)**: Python sources are scanned with the `ast` module (exact module-level assignments, mutating functions, reset candidates); JS sources via the ported noise-stripping scanner. Ranks suspect files and selects the investigation target before any run.
+- **Differential Run Comparison Engine (`breakpoint/comparison.py`)**: Contrasts failing and passing runs across the matrix — status, exit codes, execution sequence, and assertion errors. Explicitly creates records with `certainty: "unknown"` for uncaptured runtime memory state.
+- **Single-Tenant Operation Serialization (`breakpoint/lock.py`)**: Mutating actions (`run-workflow`, `ai-review`, `approve-patch`) are protected by an in-memory lock that returns HTTP 409 Conflict if a concurrent mutation is initiated.
+- **Local-First Atomic Store (`breakpoint/store.py`)**: Persists runs, evidence, comparisons, analyses, and patches to `.breakpoint/investigations.json` using atomic temporary file creation (`mode 0o600`) and renaming, protecting against partial writes.
+- **Constrained AI Function Calling (`breakpoint/ai_provider.py`)**: Integrates with OpenAI's Responses API using strict function definitions (`record_hypothesis`). Server-side validation requires that all cited supporting and contradicting evidence IDs exist in the active investigation; hallucinatory citations result in immediate rejection. Optional extra: `pip install -e ".[ai]"`.
+- **Approval-Gated Safe Patching (`breakpoint/patch_review.py`)**: Patches are generated as immutable drafts holding per-file edits. Before writing to disk, Breakpoint verifies that every target file matches its recorded byte-exact baseline. An approval click is required to apply the patch, and a subsequent rerun must pass before marking the issue "verified".
+- **One-Click Patch Rollback (`breakpoint/patch_review.py`)**: Restores every patched file's original baseline contents cleanly with a single click (`action: "revert-patch"`).
 
 ---
 
@@ -232,6 +245,8 @@ test("session starts without a user", () => {
   ```
 - Applies the patch, reruns the failing ordered pair, confirms exit code 0, and archives the investigation as **Verified**.
 
+The same flow runs unchanged against the **pytest sample** in `python-sample-project/`: `billing._ledger` is the module-level state, `test_expected_total` is the failing target, and the drafted patch wires the existing `reset_ledger()` into an autouse fixture (see [`python-sample-project/README.md`](python-sample-project/README.md)).
+
 ---
 
 ## Technology Stack
@@ -240,13 +255,15 @@ Derived directly from `package.json` and active code:
 
 | Component | Technology | Purpose |
 |---|---|---|
-| **Framework** | Next.js 15.5.28 (App Router) | Server-rendered UI, dynamic route handlers (`/api/investigations`), and static report generation. |
-| **Frontend Library** | React 19.1.10 | Client components for real-time investigation stepper, diff view, and tabbed run inspection. |
-| **Language & Types** | JavaScript (ESM, Node ≥ 20) | Zero-TypeScript codebase. Data shapes are documented with JSDoc typedefs (`lib/models.js`); everything runs natively without a compile step. |
-| **Test Runner** | Node.js Native Runner (`node --test`) | Native TAP-compliant runner executed via subprocesses without external testing framework dependencies. |
-| **AI Integration** | OpenAI Node SDK (`^6.16.0`) | Structured hypothesis evaluation using the OpenAI Responses API with function tool constraints. |
+| **Engine** | Python 3.12+ (stdlib-first) | The product: discovery, static analysis, run matrix, comparison, patch engine, atomic store. `ast`-based scanning for Python sources, ported scanner for JS/TS. |
+| **Engine Service** | FastAPI + Uvicorn | Same JSON API the web UI consumes, plus Server-Sent-Events live run streaming (`/api/events`). |
+| **Engine CLI** | Typer | `breakpoint register/scan/workflow/patch/approve/revert/report/serve` — the full product headless. |
+| **Test Runners** | pytest (junitxml), `node --test` (TAP), jest, vitest | Executed as argv-only subprocesses; output parsed into per-test records. |
+| **Web Client** | Next.js 15.5.28 (App Router), React 19 | Thin client: proxies `/api/*` to the engine (`BREAKPOINT_ENGINE_URL`, default `127.0.0.1:8000`). |
+| **Client Language** | JavaScript (ESM) | Zero-TypeScript in the client; shapes documented in `engine/breakpoint/` docstrings. |
+| **AI Integration** | OpenAI Python SDK (optional extra `ai`) | Structured hypothesis evaluation via the Responses API with function-tool constraints. |
 | **Styling** | Vanilla CSS | Bespoke design system based on warm paper aesthetic, Outfit and Redaction 35 typography, and hairline borders. |
-| **Persistence** | Node.js `fs/promises` | Atomic local file writes to `.breakpoint/investigations.json`. |
+| **Persistence** | Python `json` + atomic `os.replace` | Engine store at `.breakpoint/investigations.json` (mode 0600), owner-only permissions. |
 
 ---
 
@@ -266,29 +283,29 @@ Derived directly from `package.json` and active code:
    cd codex-breakpoint
    ```
 
-2. Install dependencies:
+2. Install the web client and the engine:
    ```bash
-   npm install
+   npm install                             # web client
+   cd engine
+   python3 -m venv .venv && source .venv/bin/activate
+   pip install -e ".[dev]"                 # engine (add ,ai for AI review)
+   cd ..
    ```
 
-3. Configure environment variables (optional):
+3. Engine environment variables (optional):
    ```bash
-   cp .env.example .env.local
+   # Only for AI-assisted evidence review (engine venv)
+   export OPENAI_API_KEY=your_openai_api_key_here
+   export OPENAI_MODEL=gpt-4.1-mini       # optional model override
+
+   # Engine store directory (defaults to .breakpoint/)
+   # export BREAKPOINT_DATA_DIR=/path/to/custom/dir
+
+   # Web client -> engine URL (default is fine locally)
+   # export BREAKPOINT_ENGINE_URL=http://127.0.0.1:8000
    ```
 
-   Edit `.env.local` to enable optional AI hypothesis review:
-   ```bash
-   # Required only if you want AI-assisted evidence review
-   OPENAI_API_KEY=your_openai_api_key_here
-
-   # Optional: Model override (defaults to gpt-5.4)
-   OPENAI_MODEL=gpt-5.4
-
-   # Optional: Override investigation store directory (defaults to .breakpoint/)
-   # BREAKPOINT_DATA_DIR=/path/to/custom/dir
-   ```
-
-   > **Note**: An OpenAI API key is **not required** to use Breakpoint. The full five-step controlled workflow, differential comparison engine, deterministic hypothesis generation, patch proposal, and fix verification operate 100% locally and deterministically.
+   > **Note**: An OpenAI API key is **not required** to use Breakpoint. The full five-step controlled workflow, differential comparison engine, deterministic hypothesis generation, patch proposal, and fix verification operate 100% locally and deterministically. `OPENAI_MODEL` defaults to `gpt-4.1-mini`.
 
 4. Start the development server:
    ```bash
@@ -303,52 +320,59 @@ Derived directly from `package.json` and active code:
 
 ```
 codex-breakpoint/
-├── app/                                 # Next.js App Router
-│   ├── api/projects/route.js            # REST API: list + register local projects
-│   ├── api/investigations/route.js      # REST API: workflow, triage, AI review, patches
-│   ├── app/page.jsx                     # Project connector (register any local directory)
-│   ├── components/                      # Reusable UI components
-│   │   ├── brand-mark.jsx               # SVG brand marks and glyphs
-│   │   ├── diff-view.jsx                # Patch diff inspector
-│   │   ├── investigation-window.jsx     # Embedded interactive demo window
-│   │   ├── product-chrome.jsx           # Global navigation and status indicators
-│   │   └── site-footer.jsx              # Clean editorial footer
-│   ├── dashboard/                       # Interactive investigation workspace
-│   │   ├── dashboard.css                # Workspace-specific stylesheets
-│   │   ├── page.jsx                     # Dashboard route entry point
-│   │   └── workspace.jsx                # Guided flow, run tabs, patch reviewer
+├── engine/                                 # The product: Python engine (service + CLI)
+│   ├── pyproject.toml                      # `breakpoint-debug` package definition
+│   ├── README.md                           # Engine-specific quick start
+│   ├── breakpoint/                         # The engine package
+│   │   ├── api.py                          # FastAPI app: /api/projects, /api/investigations, /api/events (SSE)
+│   │   ├── cli.py                          # Typer CLI: register, scan, workflow, patch, approve, revert, report, serve
+│   │   ├── agent.py                        # Deterministic hypothesis builder
+│   │   ├── ai_provider.py                  # Optional OpenAI Responses adapter (evidence-cited)
+│   │   ├── comparison.py                   # Matrix-aware differential run comparison
+│   │   ├── discovery.py                    # File walk, framework detection (pytest/node/jest/vitest), argv builder
+│   │   ├── errors.py                       # Typed application errors (Conflict, Forbidden, ...)
+│   │   ├── events.py                       # In-process pub/sub for the SSE live stream
+│   │   ├── investigations.py               # Orchestrator: all 8 actions
+│   │   ├── lock.py                         # Single-tenant operation lock (409 on overlap)
+│   │   ├── patch_review.py                 # Unified diff, byte-exact baseline apply/revert, verifier
+│   │   ├── projects.py                     # Registration safety gates + analysis entry
+│   │   ├── runner.py                       # Triage/matrix specs, TAP/jest/junitxml parsers
+│   │   ├── spawn_safe.py                   # Argv-only subprocess (no shell, scrubbed env, output caps)
+│   │   ├── state_analysis.py               # Shared-state scanner (ast for Python, ported scanner for JS)
+│   │   └── store.py                        # Atomic JSON persistence (.breakpoint/investigations.json)
+│   └── tests/                              # The engine's own pytest suite (16 tests)
+├── app/                                    # Next.js web client (thin proxy to the engine)
+│   ├── api/engine-client.js                # Engine proxy helper (BREAKPOINT_ENGINE_URL)
+│   ├── api/projects/route.js               # REST proxy: list + register local projects
+│   ├── api/investigations/route.js         # REST proxy: workflow, triage, AI review, patches
+│   ├── app/page.jsx                        # Project connector (register any local directory)
+│   ├── components/                         # Reusable UI components
+│   │   ├── brand-mark.jsx                  # SVG brand marks and glyphs
+│   │   ├── diff-view.jsx                   # Patch diff inspector
+│   │   ├── investigation-window.jsx        # Embedded interactive demo window
+│   │   ├── product-chrome.jsx              # Global navigation and status indicators
+│   │   └── site-footer.jsx                 # Clean editorial footer
+│   ├── dashboard/                          # Interactive investigation workspace
+│   │   ├── dashboard.css                   # Workspace-specific stylesheets
+│   │   ├── page.jsx                        # Dashboard route entry point
+│   │   └── workspace.jsx                   # Guided flow, run tabs, patch reviewer
 │   ├── investigations/
-│   │   ├── inv_session_state/           # Legacy route -> workspace; forensic summary report
-│   │   └── new/page.jsx                 # Fixed execution-matrix run plan
-│   ├── layout.jsx                       # Root layout and font declarations
-│   ├── not-found.jsx                    # 404 error page
-│   ├── page.jsx                         # Landing page with interactive live demo
-│   ├── runtime.css                      # Utility and layout styling
-│   └── styles.css                       # Design system tokens and typography
-├── lib/                                 # Core backend & business logic (plain ESM JS)
-│   ├── agent.js                         # Deterministic hypothesis builder
-│   ├── comparison.js                    # Matrix-aware differential run comparison
-│   ├── discovery.js                     # File walk, framework detection, argv builder
-│   ├── errors.js                        # Typed application errors (Conflict, AiUnavailable)
-│   ├── investigations.js                # Orchestrator for projects, workflows, and store
-│   ├── lock.js                          # Single-tenant in-memory operation lock
-│   ├── models.js                        # JSDoc typedefs (TestRun, Evidence, Patch, ...)
-│   ├── openai-provider.js               # OpenAI Responses API function-calling adapter
-│   ├── patch-review.js                  # Unified diff engine, patch applier, reverter, verifier
-│   ├── projects.js                      # Registration safety gates + static analysis entry
-│   ├── spawn-safe.js                    # Argv-only spawn helper (no shell, scrubbed env)
-│   ├── state-analysis.js                # Static shared-state scanner + target selection
-│   ├── runner.js                        # Triage/matrix run specs + TAP/jest parsing
-│   └── store.js                         # Atomic JSON persistence (.breakpoint/investigations.json)
-├── sample-project/                      # Trusted local reproduction target
-│   ├── src/
-│   │   └── session.js                   # Source with shared module-level state
-│   └── test/
-│       ├── reverse-flow.test.js         # Passing reversed test pair
-│       └── session-flow.test.js         # Failing ordered test pair
-├── public/brand/                        # SVG and PNG brand marks
-├── package.json                         # Dependencies, build scripts, ESM marker
-└── jsconfig.json                        # Path alias (@/*) configuration
+│   │   ├── inv_session_state/              # Legacy route -> workspace; forensic summary report
+│   │   └── new/page.jsx                    # Fixed execution-matrix run plan
+│   ├── layout.jsx                          # Root layout and font declarations
+│   ├── not-found.jsx                       # 404 error page
+│   ├── page.jsx                            # Landing page with interactive live demo
+│   ├── runtime.css                         # Utility and layout styling
+│   └── styles.css                          # Design system tokens and typography
+├── sample-project/                         # Trusted Node sample (order-dependent session state)
+│   ├── src/session.js                      # Source with shared module-level state
+│   └── test/                               # session-flow (fails in order) / reverse-flow (passes)
+├── python-sample-project/                  # Trusted pytest sample (order-dependent ledger)
+│   ├── billing.py                          # Module-level _ledger + exported mutators/reset
+│   └── tests/test_ledger_flow.py           # Failing ordered pair
+├── public/brand/                           # SVG and PNG brand marks
+├── package.json                            # Web client dependencies, build scripts, ESM marker
+└── jsconfig.json                           # Path alias (@/*) configuration
 ```
 
 ---
@@ -385,20 +409,25 @@ Returns the active investigation snapshot: investigation record (including the r
 All scripts have been verified and tested:
 
 ```bash
-# Start local development server with Turbopack support
-npm run dev
+# Web client (from the repo root)
+npm run dev                   # local development server
+npm run lint                  # lint all source files
+npm run build                 # production build
+npm run start                 # production server
 
-# Check linting rules across all source files
-npm run lint
+# Engine (from engine/ with the venv active)
+breakpoint serve --port 8000  # engine API for the web UI
+breakpoint register <root> --trust
+breakpoint workflow           # full pipeline headless
+breakpoint patch              # draft the cleanup patch
+breakpoint approve            # apply + verify
+breakpoint revert             # roll back
+breakpoint report             # print the audit trail
+python -m pytest tests/ -q    # run the engine's own test suite
 
-# Build optimized production bundle
-npm run build
-
-# Start production server
-npm run start
-
-# Run the sample project's tests directly in Node.js
+# The bundled samples directly
 node --test sample-project/test/session-flow.test.js
+cd python-sample-project && python3 -m pytest tests/ -v
 ```
 
 ---
@@ -407,16 +436,16 @@ node --test sample-project/test/session-flow.test.js
 
 ### Subprocess Execution Model
 
-Breakpoint runs test commands using `node:child_process.spawn` via `lib/spawn-safe.js`:
-- **Shell-free execution**: `shell: false` with argv arrays only — input strings are never parsed or expanded by bash/sh, eliminating shell injection vulnerabilities.
-- **Project-local binary allowlist**: Executables come from the project's own `node_modules/.bin` (plus `node`); commands are built by Breakpoint from discovered test files. The browser can never specify arbitrary arguments or executables.
-- **Registered working directory**: Execution is locked to the registered project root. Registration rejects paths inside forbidden system roots (`/etc`, `/usr`, `/bin`, `/sbin`, `/System`, `/Windows`, ...).
-- **Sanitized environment**: Subprocesses receive a minimal, scrubbed environment (`NODE_ENV: "test"`, capped `NODE_OPTIONS`) with no secrets forwarded.
-- **Hard output caps and timeouts**: Every run has a wall-clock timeout and stdout/stderr byte caps, recorded verbatim in the store.
+Breakpoint runs test commands from the engine using `subprocess.Popen` via `engine/breakpoint/spawn_safe.py`:
+- **Shell-free execution**: argv arrays only with `shell=False` — input strings are never parsed or expanded by bash/sh, eliminating shell injection vulnerabilities.
+- **Project-local binaries**: pytest runs use the project's own virtualenv interpreter when present; jest/vitest binaries come from the project's `node_modules/.bin`; commands are built by the engine from discovered test files. The browser can never specify arbitrary arguments or executables.
+- **Registered working directory**: Execution is locked to the registered project root. Registration rejects paths inside forbidden system roots (`/etc`, `/usr`, `/bin`, `/sbin`, `/System`, ...).
+- **Sanitized environment**: Subprocesses receive a minimal, scrubbed environment (`TZ: UTC`, `PYTHONDONTWRITEBYTECODE`, capped `NODE_OPTIONS`) with no secrets forwarded.
+- **Hard output caps and timeouts**: Every run has a wall-clock timeout (process-group kill) and stdout/stderr byte caps, recorded verbatim in the store.
 
 ### Important Security Boundary Disclosures
 
-> **Warning: This prototype runs Node.js subprocesses on the host machine.**
+> **Warning: The engine runs test subprocesses on the host machine.**
 > 
 > Ordinary child process execution with restricted parameters is a **harness boundary**, not a **virtualized sandbox**. Subprocesses running on the host retain filesystem access permitted by user permissions. 
 > 
@@ -434,9 +463,12 @@ Breakpoint runs test commands using `node:child_process.spawn` via `lib/spawn-sa
 ## Current Status & Limitations
 
 ### Working Today
-- Any local directory can be registered (with explicit trust confirmation) and investigated — not just the bundled sample.
+- **Standalone Python engine** (FastAPI service + Typer CLI): the full product works with or without the web UI.
+- **pytest first-class**: junitxml ingestion, `file::test` node-id narrowing, `ast`-based Python source analysis, project-venv interpreter preference.
+- **Node suites**: `node --test` (TAP), jest, vitest via their native binaries with the same pipeline.
+- Any local directory can be registered (with explicit trust confirmation) and investigated — not just the bundled samples.
 - Static shared-state analysis produces ranked, evidence-backed findings without executing anything.
-- Node.js test execution with TAP/jest output parsing, driven by triage + focused matrix runs.
+- Live run streaming over Server-Sent Events (`GET /api/events`).
 - Differential comparison across the run matrix with explicit "unknown" markers.
 - Deterministic hypothesis formulation with cited analysis evidence.
 - Optional OpenAI Responses API integration with verified evidence citation.
@@ -446,17 +478,15 @@ Breakpoint runs test commands using `node:child_process.spawn` via `lib/spawn-sa
 
 ### Current Limitations
 - **Subprocess Isolation**: Runs locally on the host; not containerized in Docker. Trust confirmation gates execution, but it is not a sandbox.
-- **Language Scope**: Currently supports Node.js (`node --test`) plus jest/vitest via their native binaries. Python (`pytest`), Go (`go test`), and Rust (`cargo test`) are planned.
+- **Go / Rust suites**: `go test` and `cargo test` adapters are planned; the engine's adapter model accepts any argv + parser pair.
 
 ---
 
 ## Roadmap
 
 - [ ] **Docker / MicroVM Sandboxing**: Execute test commands inside ephemeral containers to safely analyze untrusted repositories.
-- [ ] **Multi-Language Runner Adapters**:
-  - Python (`pytest --junitxml`)
-  - Go (`go test -json`)
-  - Rust (`cargo test -- --format=json`)
+- [ ] **More Runner Adapters**: Go (`go test -json`), Rust (`cargo test -- --format=json`).
+- [ ] **PyPI Publish**: Ship `breakpoint-debug` for `pipx install` distribution.
 - [ ] **Automated Bisecting for Order Dependencies**: Automatically execute permutations of test sequences to isolate the exact predecessor test that causes state corruption.
 - [ ] **GitHub Actions / CI Bot**: Run Breakpoint automatically when a flaky test failure is detected in CI, attaching a full investigation snapshot to the pull request.
 
