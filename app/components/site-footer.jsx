@@ -37,5 +37,5 @@ export function SiteFooter() {
             background: "#E8E8E2",
             ink: "#0A0A0F",
             warm: "#4F46E5"
-        }} fontFamily='"Outfit", system-ui, sans-serif' fontWeight={800} monoFamily='"Outfit", system-ui, sans-serif' height="clamp(480px, 34vw, 520px)"/>);
+        }} fontFamily='"Outfit", system-ui, sans-serif' fontWeight={800} monoFamily='"Outfit", system-ui, sans-serif' crop={-0.12} height="clamp(560px, 44vw, 660px)"/>);
 }

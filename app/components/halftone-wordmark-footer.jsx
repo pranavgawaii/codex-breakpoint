@@ -10,6 +10,11 @@
 // One file, React only. A 2D canvas for the dots and the grain, real anchors
 // for the links. Every rule in the scoped <style> is .hwf- prefixed and nothing
 // is fetched: the faces come from the host page or the fallback stacks.
+//
+// The `crop` prop sets how the word meets the bottom edge: a positive value
+// hangs that fraction of the cap height below the edge (print-crop look); a
+// negative value keeps the entire word — descender included — visible with
+// |crop| as the bottom margin.
 import * as React from "react";
 const PRESETS = {
     night: { background: "#0c0c0b", ink: "#e9e4da", warm: "#e9762b" },
@@ -171,10 +176,14 @@ export default function HalftoneWordmarkFooter({ wordmark = "halden", label = "H
             m.font = o.fontWeight + " " + fit + "px " + o.fontFamily;
             const box = m.measureText(word);
             const cap = box.actualBoundingBoxAscent || fit * 0.72;
-            const c = Math.max(0, Math.min(0.6, o.crop));
+            const desc = box.actualBoundingBoxDescent || fit * 0.22;
+            // crop >= 0: fraction of cap height hung BELOW the bottom edge
+            // (deliberate print-crop). crop < 0: keep the whole word — descender
+            // included — visible, with |crop|·cap as the bottom margin.
+            const c = Math.max(-1, Math.min(0.6, o.crop));
             m.fillStyle = "#000";
             m.textBaseline = "alphabetic";
-            m.fillText(word, (w - box.width) / 2, h + cap * c);
+            m.fillText(word, (w - box.width) / 2, c < 0 ? h - desc + cap * c : h + cap * c);
             const img = m.getImageData(0, 0, w, h).data;
             const gap = Math.max(3, o.dotGap);
             const cols = Math.ceil(w / gap);
