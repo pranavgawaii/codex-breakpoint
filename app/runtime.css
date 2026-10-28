@@ -310,7 +310,7 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  background: #fafafa;
+  background: #090c14;
   padding: 16px;
 }
 
@@ -321,7 +321,7 @@
   height: 38px;
   flex: none;
   overflow-x: auto;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 14px;
 }
 
@@ -331,21 +331,21 @@
   border: 0;
   border-bottom: 2px solid transparent;
   background: none;
-  color: #858a93;
+  color: var(--muted);
   font-family: var(--sans);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .console-tab:hover {
-  color: var(--ink);
+  color: #f1f5f9;
 }
 
 .console-tab.active {
-  border-color: var(--ink);
-  color: var(--ink);
+  border-color: var(--accent-glow);
+  color: var(--accent-glow);
 }
 
 .window-file {
@@ -353,19 +353,19 @@
   min-width: 0;
   overflow: hidden;
   margin-left: auto;
-  color: #9a9ea6;
+  color: var(--faint);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .result-card {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  background: #fff;
+  background: #0d121f;
   padding: 18px;
-  box-shadow: 0 1px 2px rgba(10, 10, 15, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .panel-heading {
@@ -380,9 +380,9 @@
 }
 
 .panel-label {
-  color: var(--accent);
+  color: var(--accent-glow);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 0.14em;
@@ -391,9 +391,9 @@
 
 .panel-heading h3 {
   margin-top: 6px;
-  color: var(--ink);
+  color: #f8fafc;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.35;
   letter-spacing: -0.01em;
   text-wrap: balance;
@@ -402,29 +402,31 @@
 .confidence {
   flex: none;
   border-radius: 999px;
-  background: var(--accent-soft);
-  padding: 3px 8px;
-  color: var(--accent-ink);
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 3px 10px;
+  color: #38bdf8;
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.4;
   text-transform: uppercase;
   white-space: nowrap;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
 }
 
 .findings {
   margin-top: 16px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .findings > div {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  border-bottom: 1px solid var(--line);
-  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 11px 0;
 }
 
 .findings .claim {
@@ -433,16 +435,16 @@
 
 .findings p {
   margin: 0;
-  color: var(--muted);
-  font-size: 11.5px;
+  color: #cbd5e1;
+  font-size: 12px;
   line-height: 1.55;
 }
 
 .findings code {
   margin-left: 6px;
-  color: var(--faint);
+  color: var(--accent-glow);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
 }
 
 .empty-panel {
@@ -458,24 +460,26 @@
   gap: 8px;
   overflow: hidden;
   margin-top: 14px;
-  border-radius: 6px;
-  background: #191c23;
-  padding: 9px 11px;
-  color: #e7e9ed;
+  border-radius: 8px;
+  background: #06080d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 9px 12px;
+  color: #f1f5f9;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1.4;
 }
 
 .command-line > span {
   flex: none;
-  color: #9ca3af;
+  color: var(--accent-glow);
+  font-weight: 700;
 }
 
 .command-line code {
   min-width: 0;
   overflow: hidden;
-  color: #e7e9ed;
+  color: #e2e8f0;
   font-family: inherit;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -484,8 +488,8 @@
 .command-line b {
   flex: none;
   margin-left: auto;
-  color: #ee8585;
-  font-weight: 500;
+  color: #fb7185;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -498,8 +502,8 @@
 
 .panel-action {
   border-radius: 6px;
-  padding: 7px 12px;
-  font-size: 11.5px;
+  padding: 7px 14px;
+  font-size: 12px;
 }
 
 .run-columns {
