@@ -444,6 +444,34 @@ export default function LandingPage() {
             </div>
           </div>
 
+          <Reveal delay={380} className="telemetry-ticker-frame frame">
+            <div className="telemetry-ticker-bar">
+              <div className="ticker-item">
+                <span className="ticker-pulse ticker-pulse--green" />
+                <span className="ticker-label">ENGINE:</span>
+                <span className="ticker-val">CONNECTED</span>
+              </div>
+              <div className="ticker-sep">/</div>
+              <div className="ticker-item">
+                <span className="ticker-pulse ticker-pulse--blue" />
+                <span className="ticker-label">CONTAINER:</span>
+                <span className="ticker-val">NODE 20 ISOLATED</span>
+              </div>
+              <div className="ticker-sep">/</div>
+              <div className="ticker-item">
+                <span className="ticker-pulse ticker-pulse--purple" />
+                <span className="ticker-label">AST ANALYZER:</span>
+                <span className="ticker-val">ACTIVE</span>
+              </div>
+              <div className="ticker-sep">/</div>
+              <div className="ticker-item">
+                <span className="ticker-pulse ticker-pulse--cyan" />
+                <span className="ticker-label">DETERMINISM:</span>
+                <span className="ticker-val">100% VERIFIED</span>
+              </div>
+            </div>
+          </Reveal>
+
           <Reveal id="demo" delay={420} className="demo-block frame">
             <InvestigationWindow snapshot={snapshot} error={error} running={running} tab={tab} onTabChange={setTab} onRun={runDemo} onPatchAction={patchAction}/>
           </Reveal>
