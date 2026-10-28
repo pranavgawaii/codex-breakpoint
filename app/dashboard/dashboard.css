@@ -2019,29 +2019,36 @@
 }
 
 .patch-summary h3 {
-  color: var(--ink);
-  font-size: 13.5px;
-  font-weight: 500;
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.4;
 }
 
 .patch-summary p {
   margin-top: 4px;
-  color: var(--faint);
-  font-size: 10px;
+  color: var(--muted);
+  font-size: 10.5px;
   line-height: 1.5;
 }
 
 .patch-summary code {
-  color: var(--muted);
-  font-size: 9px;
+  color: var(--accent-glow);
+  font-family: var(--mono);
+  font-size: 9.5px;
 }
 
 .patch-id {
   flex: none;
-  color: #a8a8a2;
-  font-size: 8.5px;
+  color: var(--accent-glow);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
 }
 
 .diff-view {
@@ -2130,32 +2137,39 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   margin-top: 14px;
 }
 
 .patch-actions .btn {
-  min-height: 35px;
-  padding: 8px 12px;
-  font-size: 11.5px;
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
 }
 
 .patch-actions .btn svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
 }
 
 .patch-note {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   margin-left: auto;
-  color: #a2a29c;
-  font-size: 9.5px;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 10px;
   line-height: 1.4;
 }
 
 .patch-note svg {
+  width: 12px;
+  height: 12px;
+  color: var(--accent-glow);
+}
   width: 11px;
   height: 11px;
 }
