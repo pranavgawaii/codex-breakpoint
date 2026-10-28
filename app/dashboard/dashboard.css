@@ -1890,47 +1890,49 @@
 .comparison-runs {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-top: 12px;
-  border-top: 1px solid var(--hairline);
-  padding-top: 10px;
+  gap: 8px;
+  margin-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
 }
 
 .comparison-runs > div {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 9.5px;
+  gap: 8px;
+  color: #f1f5f9;
+  font-size: 11px;
   line-height: 1.4;
 }
 
 .comparison-run-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   flex: none;
   border-radius: 50%;
 }
 
 .comparison-run-dot--fail {
-  background: var(--danger);
+  background: #f43f5e;
+  box-shadow: 0 0 6px #f43f5e;
 }
 
 .comparison-run-dot--pass {
-  background: var(--success);
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
 }
 
 .comparison-findings {
-  margin-top: 10px;
-  border-top: 1px solid var(--hairline);
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .comparison-findings li {
   display: flex;
   align-items: flex-start;
-  gap: 7px;
-  border-bottom: 1px solid var(--hairline);
-  padding: 8px 0;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 0;
 }
 
 .comparison-findings li:last-child {
@@ -1941,29 +1943,31 @@
 .finding-tag {
   display: inline-flex;
   flex: none;
-  border-radius: 3px;
-  padding: 2px 4px;
+  border-radius: 4px;
+  padding: 2px 6px;
   font-family: var(--mono);
-  font-size: 6.5px;
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   line-height: 1.3;
   text-transform: uppercase;
 }
 
 .finding-tag--observed {
-  background: #edf4ff;
-  color: #3266b6;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .finding-tag--unknown {
-  background: #eff1f4;
-  color: #707784;
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 .comparison-findings p {
-  color: var(--muted);
-  font-size: 9.5px;
+  color: #cbd5e1;
+  font-size: 11px;
   line-height: 1.5;
 }
 
