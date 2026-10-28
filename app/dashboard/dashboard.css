@@ -561,10 +561,8 @@
 
 .project-card--primary {
   border-color: var(--accent);
-  background:
-    radial-gradient(ellipse at top left, var(--accent-soft) 0%, transparent 60%),
-    linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
-  box-shadow: var(--shadow-lift);
+  background: var(--surface-elevated);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .project-card--muted {
