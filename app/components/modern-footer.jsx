@@ -12,13 +12,23 @@ export function ModernFooter() {
           <div className="footer-brand-col">
             <div className="footer-logo">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <polygon
-                  points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"
-                  stroke="#00f0ff"
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="4"
+                  stroke="#F59E0B"
                   strokeWidth="2"
-                  fill="rgba(0, 240, 255, 0.1)"
+                  fill="rgba(245, 158, 11, 0.08)"
                 />
-                <circle cx="12" cy="12" r="3.5" fill="#00f0ff" />
+                <path
+                  d="M9 8L15 12L9 16"
+                  stroke="#F5F2EB"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               <span className="footer-brand-name">BREAKPOINT</span>
             </div>
