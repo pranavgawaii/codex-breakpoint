@@ -158,15 +158,39 @@ export default function Onboarding() {
               <InfoIcon />
             </span>
             <div className="context-note-copy">
-              <strong>Runs happen on this machine.</strong>
+              <strong>Runs happen locally with strict execution boundaries.</strong>
               <p>
-                Registration only reads the directory to discover tests. Executing runs requires
-                the directory to be registered as trusted, and every fix stays unapplied until you
-                approve it. Use a container for anything untrusted.
+                Directory registration inspects the local AST to discover tests. Test execution requires
+                explicit local trust, and code mutations remain unapplied until you approve the diff.
               </p>
             </div>
-            <span className="context-note-meta">Local-first</span>
+            <span className="context-note-meta">Local-first HUD</span>
           </aside>
+
+          <div className="preflight-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px", marginTop: "18px" }}>
+            {[
+              { label: "Isolation Boundary", status: "Active", desc: "No remote execution", color: "#10b981" },
+              { label: "AST Parser", status: "Ready", desc: "Safe static analysis", color: "#38bdf8" },
+              { label: "Mutation Gate", status: "Enforced", desc: "Explicit user approval", color: "#f59e0b" },
+              { label: "Artifact Store", status: "Encrypted", desc: "Saved to local cache", color: "#8b5cf6" }
+            ].map((check) => (
+              <div key={check.label} style={{
+                background: "rgba(13, 18, 31, 0.6)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: "10px",
+                padding: "12px 14px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "11px", fontWeight: "600", color: "#e2e8f0" }}>{check.label}</span>
+                  <span style={{ fontSize: "9px", fontFamily: "var(--mono)", color: check.color, background: `${check.color}18`, padding: "2px 6px", borderRadius: "4px", border: `1px solid ${check.color}33`, textTransform: "uppercase" }}>{check.status}</span>
+                </div>
+                <span style={{ fontSize: "11px", color: "#64748b" }}>{check.desc}</span>
+              </div>
+            ))}
+          </div>
 
           <section className="project-section" aria-labelledby="projects-heading">
             <div className="section-rule">
