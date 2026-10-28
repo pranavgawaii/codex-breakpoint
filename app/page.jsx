@@ -388,12 +388,15 @@ export default function LandingPage() {
           <HeroTelemetryMatrix />
           <div className="frame">
             <div className="hero-grid">
-              <Reveal delay={100}>
-                <span className="kicker">Evidence-first debugging · powered by Codex</span>
+              <Reveal delay={100} className="hero-headline-group">
+                <div className="hero-pill-badge">
+                  <span className="status-beacon-pulse" />
+                  <span className="hero-pill-text">EVIDENCE ENGINE · DETERMINISTIC TEST REPLAY</span>
+                  <span className="hero-pill-tag">CODEX v2</span>
+                </div>
                 <h1 className="hero-title">
-                  Don&apos;t guess the bug.
-                  <br />
-                  <span className="serif">Prove</span> it.
+                  Turn flaky failures into
+                  <span className="hero-title-accent"> mathematical proof.</span>
                 </h1>
               </Reveal>
 
