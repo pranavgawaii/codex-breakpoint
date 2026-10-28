@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mark } from "./components/brand-mark";
 import { InvestigationWindow } from "./components/investigation-window";
 import { SiteFooter } from "./components/site-footer";
+import { ThemeToggle } from "./components/theme-toggle";
 const navLinksLeft = [
     { label: "Workflow", href: "#workflow" },
     { label: "Evidence", href: "#evidence" }
@@ -353,6 +354,7 @@ export default function LandingPage() {
           </div>
 
           <div className="nav-right">
+            <ThemeToggle />
             <a className="nav-cta" href="/app">
               <span className="cta-inner">
                 <svg className="cta-icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -379,6 +381,9 @@ export default function LandingPage() {
               {mobileLinks.map((link) => (<a key={link.href} className="nav-link link-underline" href={link.href} onClick={() => setMenu(false)}>
                   {link.label}
                 </a>))}
+              <div style={{ padding: "12px 0", borderTop: "1px solid var(--line)", display: "flex", justifyContent: "center" }}>
+                <ThemeToggle />
+              </div>
             </div>
           </div>)}
       </header>

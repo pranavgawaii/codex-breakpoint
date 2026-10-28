@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRightIcon, ChevronRightIcon } from "./icons";
+import { ThemeToggle } from "./theme-toggle";
 export function BrandMark({ className = "" }) {
     return (<span className={`bp-mark ${className}`.trim()} aria-hidden="true">
       <span className="bp-mark-reticle" />
@@ -40,6 +41,7 @@ export function ProductHeader({ active = "projects", status, projectName = "Work
             <span>Deterministic engine</span>
           </span>
           {status && <StatusPill label={status.label} tone={status.tone}/>}
+          <ThemeToggle />
           <Link className="product-exit" href="/">
             <span>Exit to site</span>
             <ArrowUpRightIcon />
