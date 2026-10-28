@@ -21,19 +21,23 @@ export function ModernNav() {
         <Link href="/" className="modern-brand">
           <span className="brand-cyber-hex" aria-hidden="true">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <polygon
-                points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"
-                stroke="url(#hex-cyan-grad)"
+              <rect
+                x="3"
+                y="3"
+                width="18"
+                height="18"
+                rx="4"
+                stroke="#F59E0B"
                 strokeWidth="2"
-                fill="rgba(0, 240, 255, 0.08)"
+                fill="rgba(245, 158, 11, 0.08)"
               />
-              <circle cx="12" cy="12" r="3.5" fill="#00f0ff" />
-              <defs>
-                <linearGradient id="hex-cyan-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#00f0ff" />
-                  <stop offset="1" stopColor="#7928ca" />
-                </linearGradient>
-              </defs>
+              <path
+                d="M9 8L15 12L9 16"
+                stroke="#F5F2EB"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </span>
           <span className="brand-text">
