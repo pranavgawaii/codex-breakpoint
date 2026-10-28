@@ -149,6 +149,71 @@ export function ComparisonPanel({ snapshot }) {
       </div>
     </div>);
 }
+
+export function TracePanel({ snapshot }) {
+    return (<div className="result-card trace-card">
+      <div className="panel-heading">
+        <div>
+          <p className="panel-label">Deterministic execution trace</p>
+          <h3>Isolated vs Ordered Sequence Analysis</h3>
+        </div>
+        <span className="confidence">AST Verified</span>
+      </div>
+
+      <div className="trace-timeline">
+        <div className="trace-step trace-step--pass">
+          <div className="trace-step-indicator">
+            <span className="trace-dot" />
+            <span className="trace-line" />
+          </div>
+          <div className="trace-step-content">
+            <div className="trace-step-header">
+              <span className="trace-filename">test/session-flow.test.js</span>
+              <span className="trace-badge trace-badge--pass">PASS · 182ms</span>
+            </div>
+            <p className="trace-step-desc">Target test in complete process isolation (exit 0)</p>
+            <div className="trace-bar-wrap">
+              <div className="trace-bar-fill" style={{ width: "42%" }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="trace-step trace-step--pass">
+          <div className="trace-step-indicator">
+            <span className="trace-dot" />
+            <span className="trace-line" />
+          </div>
+          <div className="trace-step-content">
+            <div className="trace-step-header">
+              <span className="trace-filename">test/auth-setup.test.js</span>
+              <span className="trace-badge trace-badge--pass">PASS · 94ms</span>
+            </div>
+            <p className="trace-step-desc">Predecessor test writes global session tokens</p>
+            <div className="trace-bar-wrap">
+              <div className="trace-bar-fill" style={{ width: "24%" }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="trace-step trace-step--fail">
+          <div className="trace-step-indicator">
+            <span className="trace-dot" />
+          </div>
+          <div className="trace-step-content">
+            <div className="trace-step-header">
+              <span className="trace-filename">test/ordered-suite.test.js</span>
+              <span className="trace-badge trace-badge--fail">FAIL · 241ms</span>
+            </div>
+            <p className="trace-step-desc">Combined order leak: unreset session crashes assertion</p>
+            <div className="trace-bar-wrap">
+              <div className="trace-bar-fill trace-bar-fill--fail" style={{ width: "88%" }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+}
+
 export function InvestigationWindow({ snapshot, error, running, tab, onTabChange, onRun, onPatchAction }) {
     const status = snapshot?.investigation.status;
     const statusLabel = status === "needs_review" ? "Needs review" : status === "verified" ? "Verified" : "Ready to run";
@@ -243,11 +308,14 @@ export function InvestigationWindow({ snapshot, error, running, tab, onTabChange
                   <button type="button" id="comparison-tab" role="tab" aria-selected={tab === "comparison"} aria-controls="comparison-panel" className={`console-tab ${tab === "comparison" ? "active" : ""}`} onClick={() => onTabChange("comparison")}>
                     Run comparison
                   </button>
+                  <button type="button" id="trace-tab" role="tab" aria-selected={tab === "trace"} aria-controls="trace-panel" className={`console-tab ${tab === "trace" ? "active" : ""}`} onClick={() => onTabChange("trace")}>
+                    Execution trace
+                  </button>
                   <span className="window-file">test/session-flow.test.js</span>
                 </div>
 
-                <div role="tabpanel" id={tab === "evidence" ? "evidence-panel" : "comparison-panel"} aria-labelledby={tab === "evidence" ? "evidence-tab" : "comparison-tab"}>
-                  {tab === "evidence" ? (<EvidencePanel snapshot={snapshot} error={error} running={running} onPatchAction={onPatchAction}/>) : (<ComparisonPanel snapshot={snapshot}/>)}
+                <div role="tabpanel" id={tab === "evidence" ? "evidence-panel" : tab === "comparison" ? "comparison-panel" : "trace-panel"} aria-labelledby={`${tab}-tab`}>
+                  {tab === "evidence" ? (<EvidencePanel snapshot={snapshot} error={error} running={running} onPatchAction={onPatchAction}/>) : tab === "comparison" ? (<ComparisonPanel snapshot={snapshot}/>) : (<TracePanel snapshot={snapshot}/>)}
                 </div>
               </section>
             </div>

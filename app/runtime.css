@@ -676,3 +676,127 @@
     padding-right: 6px;
   }
 }
+
+/* ============================================================================
+   Trace visualizer
+   ========================================================================== */
+
+.trace-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.trace-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.trace-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.trace-step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+  flex: none;
+  padding-top: 5px;
+}
+
+.trace-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  box-shadow: 0 0 6px currentColor;
+}
+
+.trace-step--pass .trace-dot {
+  background: #10b981;
+  color: #10b981;
+}
+
+.trace-step--fail .trace-dot {
+  background: #f43f5e;
+  color: #f43f5e;
+}
+
+.trace-line {
+  width: 1px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-top: 6px;
+}
+
+.trace-step-content {
+  flex: 1;
+  min-width: 0;
+  background: rgba(14, 19, 31, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.trace-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.trace-filename {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.trace-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.trace-badge--pass {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.trace-badge--fail {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.trace-step-desc {
+  margin: 4px 0 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.trace-bar-wrap {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.trace-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+}
+
+.trace-bar-fill--fail {
+  background: linear-gradient(90deg, #f43f5e, #fb7185);
+}
