@@ -1562,15 +1562,21 @@
    ========================================================================== */
 
 .run-list {
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .run-row {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  border-bottom: 1px solid var(--hairline);
-  padding: 11px 0;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 12px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.run-row:hover {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .run-row:last-child {
@@ -1578,21 +1584,21 @@
 }
 
 .run-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   flex: none;
   border-radius: 50%;
   margin-top: 6px;
 }
 
 .run-dot--pass {
-  background: var(--success);
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.09);
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
 }
 
 .run-dot--fail {
-  background: var(--danger);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+  background: #f43f5e;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.7);
 }
 
 .run-main {
@@ -1602,16 +1608,16 @@
 
 .run-title-line {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   min-width: 0;
 }
 
 .run-label {
   overflow: hidden;
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 500;
+  color: #f1f5f9;
+  font-size: 13px;
+  font-weight: 600;
   line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1619,9 +1625,14 @@
 
 .run-id {
   overflow: hidden;
-  color: #a8a8a2;
-  font-size: 8.5px;
-  font-weight: 400;
+  color: var(--accent-glow);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
   line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1630,10 +1641,10 @@
 .run-command {
   display: block;
   overflow: hidden;
-  margin-top: 2px;
-  color: var(--faint);
+  margin-top: 3px;
+  color: #94a3b8;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1.45;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1644,29 +1655,32 @@
   flex: none;
   flex-direction: column;
   align-items: flex-end;
-  gap: 3px;
+  gap: 4px;
   padding-top: 1px;
 }
 
 .run-exit {
   border-radius: 4px;
-  background: #f0f7f2;
-  padding: 3px 5px;
-  color: var(--success-ink);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 2px 7px;
+  color: #34d399;
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 9px;
+  font-weight: 700;
   line-height: 1.2;
 }
 
 .run-exit--fail {
-  background: #fdf0f0;
-  color: var(--danger-ink);
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fb7185;
 }
 
 .run-duration {
-  color: #a5a5a0;
+  color: var(--faint);
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   line-height: 1.2;
 }
 
