@@ -570,21 +570,20 @@ button {
   gap: 10px;
   padding: 8px 14px;
   border-radius: 10px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.03);
-  transition: all 0.2s ease;
+  border: 1px solid rgba(245, 242, 235, 0.08);
+  background: var(--surface-elevated);
+  transition: all 0.15s ease;
   text-align: left;
 }
 
 .scenario-btn:hover {
-  border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(245, 242, 235, 0.2);
+  background: var(--surface-hover);
 }
 
 .scenario-btn.active {
   border-color: var(--accent);
-  background: rgba(0, 240, 255, 0.08);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
+  background: rgba(245, 158, 11, 0.08);
 }
 
 .scenario-dot {
@@ -592,12 +591,11 @@ button {
   height: 8px;
   border-radius: 50%;
   background: var(--ink-faint);
-  transition: background 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .scenario-btn.active .scenario-dot {
   background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
 }
 
 .scenario-btn-text {
