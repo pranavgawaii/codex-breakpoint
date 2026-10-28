@@ -31,11 +31,17 @@ export function SiteFooter() {
     return (<HalftoneWordmarkFooter wordmark="breakpoint" label={<>
           <Mark />
           Breakpoint
-        </>} meta="Evidence-first debugging, powered by Codex." columns={columns} backToTop note={<>
-          © {year} Breakpoint · Built for the DevDay Exchange Community Metro Hackathon · Pune 2026
+        </>} meta={<div className="footer-telemetry-meta">
+          <span className="footer-status-pill">
+            <span className="pulse-dot-green" aria-hidden="true" />
+            ENGINE v2.4 ONLINE
+          </span>
+          <span>The evidence engine for flaky and order-dependent bugs.</span>
+        </div>} columns={columns} backToTop note={<>
+          © {year} Breakpoint · Precision Debugging Runtime · Built for DevDay Exchange Metro Hackathon
         </>} palette={{
-            background: "#E8E8E2",
-            ink: "#0A0A0F",
-            warm: "#4F46E5"
+            background: "#080a0f",
+            ink: "#f1f5f9",
+            warm: "#0ea5e9"
         }} fontFamily='"Outfit", system-ui, sans-serif' fontWeight={800} monoFamily='"Outfit", system-ui, sans-serif' crop={-0.12} height="clamp(560px, 44vw, 660px)"/>);
 }
