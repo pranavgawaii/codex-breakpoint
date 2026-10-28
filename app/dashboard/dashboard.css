@@ -2197,9 +2197,6 @@
   height: 12px;
   color: var(--accent-glow);
 }
-  width: 11px;
-  height: 11px;
-}
 
 /* ============================================================================
    Verification
@@ -2209,34 +2206,44 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  border: 1px solid #d8ecdf;
-  border-radius: 11px;
-  background: #f5fbf7;
-  padding: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at top left, rgba(16, 185, 129, 0.12) 0%, transparent 70%),
+    rgba(6, 22, 16, 0.85);
+  padding: 18px;
+  box-shadow: 0 0 24px -6px rgba(16, 185, 129, 0.25);
 }
 
 .verification-hero--not_verified,
 .verification-hero--unknown {
-  border-color: #f0d7d7;
-  background: #fff8f8;
+  border-color: rgba(244, 63, 94, 0.35);
+  background:
+    radial-gradient(ellipse at top left, rgba(244, 63, 94, 0.12) 0%, transparent 70%),
+    rgba(24, 8, 14, 0.85);
+  box-shadow: 0 0 24px -6px rgba(244, 63, 94, 0.2);
 }
 
 .verification-icon {
   display: inline-flex;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   flex: none;
   align-items: center;
   justify-content: center;
-  border-radius: 9px;
-  background: #fff;
-  color: var(--success-ink);
-  box-shadow: 0 1px 2px rgba(20, 115, 61, 0.09);
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.3);
 }
 
 .verification-hero--not_verified .verification-icon,
 .verification-hero--unknown .verification-icon {
-  color: var(--danger-ink);
+  color: #fb7185;
+  border-color: rgba(244, 63, 94, 0.4);
+  background: rgba(244, 63, 94, 0.15);
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.2);
 }
 
 .verification-icon svg {
