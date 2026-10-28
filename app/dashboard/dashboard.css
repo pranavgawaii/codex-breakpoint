@@ -442,13 +442,12 @@
   align-items: flex-start;
   gap: 14px;
   margin-top: 34px;
-  border: 1px solid rgba(14, 165, 233, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.25);
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(14, 165, 233, 0.08) 0%, rgba(13, 18, 31, 0.8) 100%);
+  background: var(--surface-elevated);
   padding: 16px 20px;
   color: var(--ink);
-  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .context-note-icon {
@@ -459,10 +458,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(14, 165, 233, 0.15);
-  border: 1px solid rgba(14, 165, 233, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   color: var(--accent);
-  box-shadow: 0 0 14px rgba(14, 165, 233, 0.2);
 }
 
 .context-note-icon svg {
@@ -803,10 +801,8 @@
 }
 
 .journey-step.is-current {
-  background:
-    radial-gradient(ellipse at top left, rgba(14, 165, 233, 0.15) 0%, transparent 70%),
-    rgba(14, 21, 38, 0.9);
-  box-shadow: inset 0 2px 0 var(--accent), 0 0 20px -5px rgba(14, 165, 233, 0.2);
+  background: var(--surface-hover);
+  box-shadow: inset 0 2px 0 var(--accent);
 }
 
 .journey-step-top {
