@@ -404,16 +404,15 @@ button {
   gap: 10px;
   padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(12, 17, 29, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
+  border: 1px solid rgba(245, 242, 235, 0.12);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .cli-command-pill:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+  background: var(--surface-hover);
 }
 
 .cli-prompt {
@@ -426,7 +425,7 @@ button {
 .cli-code {
   font-family: var(--font-mono);
   font-size: 12.5px;
-  color: #f1f5f9;
+  color: var(--ink);
 }
 
 .cli-copy-btn {
@@ -437,7 +436,7 @@ button {
 }
 
 .cli-copy-btn:hover {
-  color: #ffffff;
+  color: var(--ink);
 }
 
 .copy-success {
