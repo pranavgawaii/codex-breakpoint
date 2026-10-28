@@ -97,65 +97,33 @@ function Reveal({ children, delay = 0, className = "", id }) {
       {children}
     </div>);
 }
-/* ---------- Hero orbital ambient visual (matching reference design) ---------- */
-function HeroVisual() {
-    return (<div className="hero-visual" aria-hidden="true">
-      {/* Left orbital system (anchored near 'Don't guess the bug. Prove it.') */}
-      <div className="hero-orbit-system hero-orbit-system--left">
-        <div className="orbit-ring orbit-ring--1"/>
-        <div className="orbit-ring orbit-ring--2"/>
-        <div className="orbit-ring orbit-ring--3"/>
-        <div className="orbit-ring orbit-ring--4"/>
-        
-        {/* Central focal node */}
-        <div className="orbit-core-dot"/>
-
-        {/* Orbiting nodes & labels on rings */}
-        <div className="orbit-rotator orbit-rotator--slow">
-          <div className="orbit-satellite orbit-satellite--1">
-            <span className="orbit-dot"/>
-            <span className="orbit-tag">run_0184</span>
-          </div>
-        </div>
-
-        <div className="orbit-rotator orbit-rotator--reverse">
-          <div className="orbit-satellite orbit-satellite--2">
-            <span className="orbit-dot orbit-dot--accent"/>
-            <span className="orbit-tag">observed</span>
-          </div>
-        </div>
+/* ---------- Hero Telemetry Matrix & Cybernetic Diagnostic Radar ---------- */
+function HeroTelemetryMatrix() {
+    return (<div className="hero-telemetry-matrix" aria-hidden="true">
+      <div className="telemetry-ray telemetry-ray--cyan" />
+      <div className="telemetry-ray telemetry-ray--purple" />
+      
+      <div className="telemetry-radar-grid">
+        <div className="radar-circle radar-circle--outer" />
+        <div className="radar-circle radar-circle--inner" />
+        <div className="radar-crosshair-h" />
+        <div className="radar-crosshair-v" />
+        <div className="radar-sweep-beam" />
       </div>
 
-      {/* Right orbital system (anchored behind hero-side / top right) */}
-      <div className="hero-orbit-system hero-orbit-system--right">
-        <div className="orbit-ring orbit-ring--1"/>
-        <div className="orbit-ring orbit-ring--2"/>
-        <div className="orbit-ring orbit-ring--3"/>
-        <div className="orbit-ring orbit-ring--4"/>
+      <div className="telemetry-node telemetry-node--1">
+        <span className="telemetry-beacon beacon-cyan" />
+        <span className="telemetry-code">REPLAY: DETERMINISTIC</span>
+      </div>
 
-        {/* Core & orbiting telemetry */}
-        <div className="orbit-core-dot orbit-core-dot--accent"/>
+      <div className="telemetry-node telemetry-node--2">
+        <span className="telemetry-beacon beacon-emerald" />
+        <span className="telemetry-code">SANDBOX: ISOLATED</span>
+      </div>
 
-        <div className="orbit-rotator orbit-rotator--medium">
-          <div className="orbit-satellite orbit-satellite--right-1">
-            <span className="orbit-dot orbit-dot--indigo"/>
-            <span className="orbit-tag">exit 0 · pass</span>
-          </div>
-        </div>
-
-        <div className="orbit-rotator orbit-rotator--slow">
-          <div className="orbit-satellite orbit-satellite--right-2">
-            <span className="orbit-dot"/>
-            <span className="orbit-tag">ev_1042 · diff</span>
-          </div>
-        </div>
-
-        <div className="orbit-rotator orbit-rotator--reverse-slow">
-          <div className="orbit-satellite orbit-satellite--right-3">
-            <span className="orbit-dot orbit-dot--accent"/>
-            <span className="orbit-tag">verified · 180ms</span>
-          </div>
-        </div>
+      <div className="telemetry-node telemetry-node--3">
+        <span className="telemetry-beacon beacon-crimson" />
+        <span className="telemetry-code">DIFF: ORDER_POLLUTION</span>
       </div>
     </div>);
 }
@@ -417,7 +385,7 @@ export default function LandingPage() {
 
       <main id="main">
         <section className="hero" id="top">
-          <HeroVisual />
+          <HeroTelemetryMatrix />
           <div className="frame">
             <div className="hero-grid">
               <Reveal delay={100}>
