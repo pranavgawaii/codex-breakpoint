@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { BrandMark } from "./components/brand-mark";
-import { ArrowRightIcon, TerminalIcon, ShieldCheckIcon } from "./components/icons";
+import { ArrowRightIcon, ShieldCheckIcon } from "./components/icons";
+import { ThemeToggle } from "./components/theme-toggle";
 
 export default function NotFound() {
   return (
@@ -9,19 +9,23 @@ export default function NotFound() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      background: "radial-gradient(ellipse at center, rgba(14, 165, 233, 0.08) 0%, #080A0F 70%)",
+      background: "var(--background)",
       padding: "24px",
       position: "relative"
     }}>
+      <div style={{ position: "absolute", top: "24px", right: "24px" }}>
+        <ThemeToggle />
+      </div>
+
       <div className="not-found-block" style={{
         maxWidth: "540px",
         width: "100%",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
+        border: "1px solid var(--line-strong)",
         borderRadius: "20px",
-        background: "rgba(13, 18, 31, 0.75)",
+        background: "var(--surface-glass)",
         backdropFilter: "blur(20px)",
         padding: "36px 32px",
-        boxShadow: "0 24px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px -10px rgba(14, 165, 233, 0.15)",
+        boxShadow: "var(--shadow-lift)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden"
@@ -32,12 +36,12 @@ export default function NotFound() {
           left: 0,
           right: 0,
           height: "2px",
-          background: "linear-gradient(90deg, transparent, #0ea5e9, #f43f5e, transparent)"
+          background: "linear-gradient(90deg, transparent, var(--accent), var(--danger), transparent)"
         }} />
 
-        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "rgba(244, 63, 94, 0.1)", border: "1px solid rgba(244, 63, 94, 0.3)", marginBottom: "20px" }}>
-          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#f43f5e", boxShadow: "0 0 8px #f43f5e" }} />
-          <span style={{ fontFamily: "var(--mono)", fontSize: "11px", fontWeight: "700", color: "#fb7185", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "var(--danger-soft)", border: "1px solid var(--danger)", marginBottom: "20px" }}>
+          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--danger)", boxShadow: "0 0 8px var(--danger)" }} />
+          <span style={{ fontFamily: "var(--mono)", fontSize: "11px", fontWeight: "700", color: "var(--danger-ink)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
             Anomaly Vector · 404 Not Found
           </span>
         </div>
@@ -45,7 +49,7 @@ export default function NotFound() {
         <h1 style={{
           fontSize: "32px",
           fontWeight: "700",
-          color: "#f8fafc",
+          color: "var(--ink)",
           letterSpacing: "-0.03em",
           marginBottom: "12px",
           lineHeight: "1.2"
@@ -54,7 +58,7 @@ export default function NotFound() {
         </h1>
 
         <p style={{
-          color: "#94a3b8",
+          color: "var(--muted)",
           fontSize: "14px",
           lineHeight: "1.65",
           marginBottom: "28px"
@@ -63,19 +67,19 @@ export default function NotFound() {
         </p>
 
         <div style={{
-          background: "rgba(9, 12, 20, 0.8)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "var(--surface-2)",
+          border: "1px solid var(--line)",
           borderRadius: "10px",
           padding: "14px 16px",
           textAlign: "left",
           marginBottom: "28px",
           fontFamily: "var(--mono)",
           fontSize: "11px",
-          color: "#64748b"
+          color: "var(--faint)"
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-            <span style={{ color: "#38bdf8" }}>STATUS: TRACE_RESOLVE_FAIL</span>
-            <span style={{ color: "#f43f5e" }}>ERR_404</span>
+            <span style={{ color: "var(--accent)" }}>STATUS: TRACE_RESOLVE_FAIL</span>
+            <span style={{ color: "var(--danger)" }}>ERR_404</span>
           </div>
           <div>TRACE: kernel::route_table::lookup() -&gt; null</div>
           <div>RECOVERY: fallback to primary telemetry hub</div>
@@ -91,8 +95,8 @@ export default function NotFound() {
           </Link>
         </div>
 
-        <div style={{ marginTop: "28px", paddingTop: "20px", borderTop: "1px solid rgba(255, 255, 255, 0.06)", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", color: "#64748b", fontSize: "11px", fontFamily: "var(--mono)" }}>
-          <ShieldCheckIcon style={{ width: "13px", height: "13px", color: "#10b981" }} />
+        <div style={{ marginTop: "28px", paddingTop: "20px", borderTop: "1px solid var(--hairline)", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", color: "var(--faint)", fontSize: "11px", fontFamily: "var(--mono)" }}>
+          <ShieldCheckIcon style={{ width: "13px", height: "13px", color: "var(--success)" }} />
           Local session state preserved · zero data loss
         </div>
       </div>

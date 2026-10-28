@@ -39,7 +39,7 @@
 
 .glow span:nth-child(1) {
   left: -50px;
-  background: #0ea5e9;
+  background: var(--accent);
 }
 
 .glow span:nth-child(2) {
@@ -47,14 +47,14 @@
   top: 60px;
   width: min(580px, 60%);
   transform: translateX(-50%);
-  background: #8b5cf6;
-  opacity: 0.22;
+  background: var(--warning);
+  opacity: 0.18;
 }
 
 .glow span:nth-child(3) {
   right: -50px;
-  background: #06b6d4;
-  opacity: 0.25;
+  background: var(--accent-cyan);
+  opacity: 0.2;
 }
 
 .window {
@@ -62,11 +62,11 @@
   z-index: 1;
   display: flex;
   width: 100%;
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  border: 1px solid var(--line-strong);
   border-radius: 20px;
-  background: rgba(14, 19, 31, 0.82);
+  background: var(--surface-glass);
   padding: 0 8px 8px 0;
-  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.85), 0 0 30px rgba(14, 165, 233, 0.15);
+  box-shadow: var(--shadow-lift);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
 }
@@ -112,14 +112,14 @@
 }
 
 .rail-icon:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--accent-glow);
+  background: var(--line-strong);
+  color: var(--accent);
 }
 
 .rail-icon.active {
-  color: var(--accent-glow);
-  background: rgba(14, 165, 233, 0.15);
-  box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+  color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-soft);
 }
 
 .window-inner {
@@ -128,10 +128,10 @@
   min-width: 0;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   border-radius: 14px;
-  background: #090c14;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
 }
 
 .window-head {
@@ -139,8 +139,8 @@
   align-items: center;
   height: 54px;
   flex: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(14, 19, 31, 0.95);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
   padding: 0 20px;
   color: var(--muted);
   font-size: 13px;
@@ -176,7 +176,7 @@
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  color: #f8fafc;
+  color: var(--ink);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -187,11 +187,11 @@
   align-items: center;
   gap: 6px;
   flex: none;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid var(--success-soft);
   border-radius: 6px;
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--success-soft);
   padding: 4px 10px;
-  color: #34d399;
+  color: var(--success-ink);
   font-size: 11.5px;
   font-weight: 600;
   line-height: 1.3;
@@ -209,8 +209,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
 }
 
 .window-body {
@@ -224,13 +224,13 @@
   min-width: 0;
   flex-direction: column;
   gap: 16px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(11, 15, 25, 0.7);
+  border-right: 1px solid var(--line);
+  background: var(--surface-2);
   padding: 20px;
 }
 
 .window-meta .label {
-  color: var(--accent-glow);
+  color: var(--accent);
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
@@ -241,7 +241,7 @@
 
 .window-meta h3 {
   margin-top: 6px;
-  color: #f1f5f9;
+  color: var(--ink);
   font-size: 16px;
   font-weight: 600;
   line-height: 1.3;
@@ -269,7 +269,7 @@
   height: 6px;
   flex: none;
   border-radius: 50%;
-  background: #9ca3af;
+  background: var(--faint);
 }
 
 .status-dot.warning {
@@ -281,7 +281,7 @@
 }
 
 .status-dot.neutral {
-  background: #9ca3af;
+  background: var(--faint);
 }
 
 .meta-rule {
@@ -310,7 +310,7 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  background: #090c14;
+  background: var(--surface);
   padding: 16px;
 }
 
@@ -321,7 +321,7 @@
   height: 38px;
   flex: none;
   overflow-x: auto;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--line);
   margin-bottom: 14px;
 }
 
@@ -340,12 +340,12 @@
 }
 
 .console-tab:hover {
-  color: #f1f5f9;
+  color: var(--ink);
 }
 
 .console-tab.active {
-  border-color: var(--accent-glow);
-  color: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .window-file {
@@ -391,7 +391,7 @@
 
 .panel-heading h3 {
   margin-top: 6px;
-  color: #f8fafc;
+  color: var(--ink);
   font-size: 16px;
   font-weight: 600;
   line-height: 1.35;
@@ -402,10 +402,10 @@
 .confidence {
   flex: none;
   border-radius: 999px;
-  background: rgba(14, 165, 233, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
   padding: 3px 10px;
-  color: #38bdf8;
+  color: var(--accent-ink);
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
@@ -413,19 +413,19 @@
   line-height: 1.4;
   text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+  box-shadow: var(--shadow-soft);
 }
 
 .findings {
   margin-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--line);
 }
 
 .findings > div {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--hairline);
   padding: 11px 0;
 }
 
@@ -435,14 +435,14 @@
 
 .findings p {
   margin: 0;
-  color: #cbd5e1;
+  color: var(--ink-secondary);
   font-size: 12px;
   line-height: 1.55;
 }
 
 .findings code {
   margin-left: 6px;
-  color: var(--accent-glow);
+  color: var(--accent);
   font-family: var(--mono);
   font-size: 9.5px;
 }
@@ -730,15 +730,15 @@
 .trace-line {
   width: 1px;
   height: 48px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--line);
   margin-top: 6px;
 }
 
 .trace-step-content {
   flex: 1;
   min-width: 0;
-  background: rgba(14, 19, 31, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px 14px;
 }
@@ -754,7 +754,7 @@
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--ink);
 }
 
 .trace-badge {

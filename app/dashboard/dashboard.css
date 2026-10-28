@@ -562,18 +562,16 @@
 }
 
 .project-card--primary {
-  border-color: rgba(14, 165, 233, 0.4);
+  border-color: var(--accent);
   background:
-    radial-gradient(ellipse at top left, rgba(14, 165, 233, 0.12) 0%, transparent 60%),
-    linear-gradient(180deg, #0e1526 0%, #090c15 100%);
-  box-shadow: 0 16px 40px -12px rgba(14, 165, 233, 0.25), inset 0 1px 0 rgba(56, 189, 248, 0.3);
+    radial-gradient(ellipse at top left, var(--accent-soft) 0%, transparent 60%),
+    linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+  box-shadow: var(--shadow-lift);
 }
 
 .project-card--muted {
-  background:
-    radial-gradient(ellipse at top right, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
-    linear-gradient(180deg, #0c101c 0%, #080b13 100%);
-  border-color: rgba(255, 255, 255, 0.09);
+  background: var(--surface);
+  border-color: var(--line);
 }
 
 .project-card-top {
