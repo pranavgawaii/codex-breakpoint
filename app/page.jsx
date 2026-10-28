@@ -130,7 +130,7 @@ export default function Home() {
 
           <h1 className="hero-giant-title">
             Tame Flaky Tests With <br />
-            <span className="gradient-cyan-purple">Cryptographic Isolation.</span>
+            <span className="hero-warm-accent">Cryptographic Isolation.</span>
           </h1>
 
           <p className="hero-description">

@@ -306,16 +306,7 @@ button {
 }
 
 .hero-radial-glow {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 700px;
-  height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(0, 240, 255, 0.12) 0%, rgba(121, 40, 202, 0.08) 50%, transparent 75%);
-  filter: blur(60px);
-  pointer-events: none;
+  display: none;
 }
 
 .hero-badge-pill {
@@ -324,10 +315,10 @@ button {
   gap: 8px;
   padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(0, 240, 255, 0.06);
-  border: 1px solid rgba(0, 240, 255, 0.25);
+  background: var(--surface);
+  border: 1px solid rgba(245, 242, 235, 0.12);
   margin-bottom: 24px;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .badge-glow-dot {
@@ -335,14 +326,13 @@ button {
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
 }
 
 .badge-text {
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--accent);
 }
 
@@ -352,8 +342,8 @@ button {
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: rgba(245, 242, 235, 0.08);
+  color: var(--ink);
 }
 
 .hero-giant-title {
@@ -362,9 +352,13 @@ button {
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.04em;
-  color: #ffffff;
+  color: var(--ink);
   max-width: 960px;
   margin: 0 auto 20px;
+}
+
+.hero-warm-accent {
+  color: var(--accent);
 }
 
 .hero-description {
