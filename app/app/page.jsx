@@ -170,13 +170,13 @@ export default function Onboarding() {
           <div className="preflight-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px", marginTop: "18px" }}>
             {[
               { label: "Isolation Boundary", status: "Active", desc: "No remote execution", color: "#10b981" },
-              { label: "AST Parser", status: "Ready", desc: "Safe static analysis", color: "#38bdf8" },
-              { label: "Mutation Gate", status: "Enforced", desc: "Explicit user approval", color: "#f59e0b" },
-              { label: "Artifact Store", status: "Encrypted", desc: "Saved to local cache", color: "#8b5cf6" }
+              { label: "AST Parser", status: "Ready", desc: "Safe static analysis", color: "#f59e0b" },
+              { label: "Mutation Gate", status: "Enforced", desc: "Explicit user approval", color: "#d97706" },
+              { label: "Artifact Store", status: "Encrypted", desc: "Saved to local cache", color: "#a8a29e" }
             ].map((check) => (
               <div key={check.label} style={{
-                background: "rgba(13, 18, 31, 0.6)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
                 borderRadius: "10px",
                 padding: "12px 14px",
                 display: "flex",
@@ -184,10 +184,10 @@ export default function Onboarding() {
                 gap: "4px"
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "11px", fontWeight: "600", color: "#e2e8f0" }}>{check.label}</span>
+                  <span style={{ fontSize: "11px", fontWeight: "600", color: "var(--foreground)" }}>{check.label}</span>
                   <span style={{ fontSize: "9px", fontFamily: "var(--mono)", color: check.color, background: `${check.color}18`, padding: "2px 6px", borderRadius: "4px", border: `1px solid ${check.color}33`, textTransform: "uppercase" }}>{check.status}</span>
                 </div>
-                <span style={{ fontSize: "11px", color: "#64748b" }}>{check.desc}</span>
+                <span style={{ fontSize: "11px", color: "var(--muted)" }}>{check.desc}</span>
               </div>
             ))}
           </div>

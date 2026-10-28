@@ -45,6 +45,15 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
+
+  --surface-2: #22201d;
+  --muted: #8e877d;
+  --faint: #5e5850;
+  --accent-ink: #f59e0b;
+  --success-ink: #10b981;
+  --danger-ink: #f43f5e;
 
   --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(245, 242, 235, 0.06);
   --shadow-lift: 0 16px 36px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(245, 242, 235, 0.1);
@@ -102,11 +111,22 @@ button {
   background-size: 64px 64px, 64px 64px;
 }
 
-.modern-container {
+.modern-container,
+.frame {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding-left: 32px;
+  padding-right: 32px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .modern-container,
+  .frame {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
 }
 
 /* Typography Utilities - Warm Minimalist Editorial Scale (No Gradients) */
