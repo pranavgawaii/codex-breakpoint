@@ -1225,14 +1225,12 @@ button {
 }
 
 .manifesto-card {
-  border: 1px solid rgba(121, 40, 202, 0.35);
+  border: 1px solid rgba(245, 242, 235, 0.1);
   border-radius: 20px;
-  background: 
-    radial-gradient(circle at top center, rgba(121, 40, 202, 0.15) 0%, transparent 70%),
-    var(--surface);
+  background: var(--surface);
   padding: 44px 36px;
   text-align: center;
-  box-shadow: var(--shadow-purple);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 .manifesto-badge {
@@ -1240,7 +1238,7 @@ button {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #a78bfa;
+  color: var(--accent);
   margin-bottom: 16px;
   display: inline-block;
 }
@@ -1250,7 +1248,7 @@ button {
   font-size: clamp(20px, 2.8vw, 30px);
   font-weight: 600;
   line-height: 1.35;
-  color: #ffffff;
+  color: var(--ink);
   max-width: 860px;
   margin: 0 auto 24px;
 }
