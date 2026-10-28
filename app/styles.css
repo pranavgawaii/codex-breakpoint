@@ -111,17 +111,26 @@ button {
   padding: 0 24px;
 }
 
-/* Typography Utilities */
+/* Typography Utilities - Warm Minimalist Editorial Scale (No Gradients) */
 .gradient-cyan-purple {
-  background: linear-gradient(135deg, #00f0ff 0%, #7928ca 50%, #ff007a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--accent);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: var(--accent);
 }
 
+.warm-emphasis {
+  color: var(--accent);
+}
+
+.text-amber { color: var(--accent) !important; }
 .text-cyan { color: var(--accent) !important; }
 .text-emerald { color: var(--success) !important; }
 .text-magenta { color: var(--danger) !important; }
-.text-white { color: #ffffff !important; }
+.text-rose { color: var(--danger) !important; }
+.text-alabaster { color: var(--ink) !important; }
+.text-white { color: var(--ink) !important; }
+.text-muted-warm { color: var(--ink-muted) !important; }
 
 /* ============================================================================
    Floating Modern Navigation Island
