@@ -1446,9 +1446,9 @@ svg {
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  background: var(--surface-2);
+  background: #0e1320;
   padding: 12px 14px;
 }
 
@@ -1464,13 +1464,15 @@ svg {
 }
 
 .run-state.pass {
-  background: #effaf3;
-  color: var(--success-ink);
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .run-state.fail {
-  background: #fef2f2;
-  color: var(--danger-ink);
+  background: rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
 }
 
 .run-row > div {
@@ -1481,9 +1483,9 @@ svg {
 .run-row b {
   display: block;
   overflow: hidden;
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 500;
+  color: #f1f5f9;
+  font-size: 12.5px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1496,7 +1498,7 @@ svg {
 
 .run-row code {
   flex: none;
-  color: var(--faint);
+  color: var(--accent-glow);
   font-family: var(--mono);
   font-size: 9.5px;
 }
@@ -1506,24 +1508,31 @@ svg {
   align-items: center;
   gap: 8px;
   overflow: hidden;
-  border-radius: 6px;
-  background: #191c23;
-  padding: 10px 12px;
-  color: #e7e9ed;
+  border-radius: 8px;
+  background: #06080d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 14px;
+  color: #f1f5f9;
   font-family: var(--mono);
   font-size: 10px;
+}
+
+.mini-terminal > span:first-child {
+  color: var(--accent-glow);
+  font-weight: 700;
 }
 
 .mini-terminal > span:nth-child(2) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #cbd5e1;
 }
 
 .mini-terminal b {
   margin-left: auto;
-  color: #86e0b0;
-  font-weight: 500;
+  color: #34d399;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -1532,9 +1541,9 @@ svg {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding: 9px 0;
-  font-size: 11px;
+  font-size: 11.5px;
 }
 
 .diff-row:first-child {
@@ -1546,16 +1555,16 @@ svg {
 }
 
 .diff-row > span {
-  color: var(--faint);
+  color: var(--muted);
 }
 
 .diff-row b {
-  color: var(--ink);
-  font-weight: 500;
+  color: #f1f5f9;
+  font-weight: 600;
 }
 
 .diff-row b em {
-  color: var(--accent-ink);
+  color: var(--accent-glow);
   font-style: normal;
 }
 
@@ -1568,9 +1577,9 @@ svg {
 }
 
 .evidence-mini {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  background: var(--surface-2);
+  background: #0e1320;
   padding: 10px 12px;
 }
 
@@ -1583,18 +1592,18 @@ svg {
 
 .evidence-mini p {
   margin-top: 7px;
-  color: var(--muted);
+  color: #cbd5e1;
   font-size: 11.5px;
   line-height: 1.5;
 }
 
 .diff-block {
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  background: var(--surface-2);
+  background: #06080d;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 11px;
 }
 
 .diff-block > div {
