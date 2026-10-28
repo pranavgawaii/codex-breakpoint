@@ -5,13 +5,23 @@ export function BrandMark({ className = "" }) {
   return (
     <span className={`brand-cyber-hex ${className}`.trim()} aria-hidden="true" style={{ display: "inline-flex", verticalAlign: "middle" }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <polygon
-          points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"
-          stroke="#00f0ff"
+        <rect
+          x="3"
+          y="3"
+          width="18"
+          height="18"
+          rx="4"
+          stroke="#F59E0B"
           strokeWidth="2"
-          fill="rgba(0, 240, 255, 0.12)"
+          fill="rgba(245, 158, 11, 0.08)"
         />
-        <circle cx="12" cy="12" r="3" fill="#00f0ff" />
+        <path
+          d="M9 8L15 12L9 16"
+          stroke="#F5F2EB"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </span>
   );
