@@ -275,8 +275,11 @@ svg {
   position: fixed;
   inset: 0 0 auto;
   z-index: 50;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-  background: var(--background);
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 10, 15, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
 .nav-inner {
@@ -411,22 +414,20 @@ svg {
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 36px;
+  height: 38px;
   flex: none;
   overflow: hidden;
   border-radius: 999px;
-  background: linear-gradient(180deg, #232331 0%, #0f0f18 55%, #0a0a0f 100%);
-  padding: 0 14px 0 12px;
-  color: #fafafa;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  padding: 0 16px 0 14px;
+  color: #ffffff;
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.01em;
-  outline: 1px solid rgba(255, 255, 255, 0.15);
-  outline-offset: -1px;
-  box-shadow: 0 1px 2px rgba(10, 10, 15, 0.2), 0 10px 24px -12px rgba(10, 10, 15, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 16px rgba(14, 165, 233, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
   white-space: nowrap;
 }
 
