@@ -1091,20 +1091,27 @@ button {
 }
 
 .pipeline-card {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(245, 242, 235, 0.08);
   border-radius: 16px;
   background: var(--surface);
   padding: 26px;
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.pipeline-card:hover {
+  background: var(--surface-hover);
+  border-color: rgba(245, 242, 235, 0.16);
+  transform: translateY(-2px);
 }
 
 .pipeline-num-badge {
   font-family: var(--font-display);
   font-size: 28px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.12);
+  color: rgba(245, 242, 235, 0.15);
   margin-bottom: 6px;
 }
 
@@ -1120,7 +1127,7 @@ button {
 .pipeline-title {
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--ink);
   margin-bottom: 10px;
   line-height: 1.35;
 }
