@@ -995,37 +995,22 @@ button {
 }
 
 .failure-card {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(245, 242, 235, 0.08);
   border-radius: 16px;
   background: var(--surface);
   padding: 26px;
   display: flex;
   flex-direction: column;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
 
-.failure-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
 .failure-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(0, 240, 255, 0.3);
-  box-shadow: 0 16px 36px -12px rgba(0, 240, 255, 0.15);
-}
-
-.failure-card:hover::before {
-  opacity: 1;
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6);
 }
 
 .failure-card-top {
@@ -1039,8 +1024,8 @@ button {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: var(--accent-soft);
-  border: 1px solid rgba(0, 240, 255, 0.25);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
   color: var(--accent);
   display: flex;
   align-items: center;
@@ -1058,7 +1043,7 @@ button {
 .failure-title {
   font-size: 18px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--ink);
   margin-bottom: 8px;
 }
 
