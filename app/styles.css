@@ -1273,17 +1273,13 @@ button {
 
 .section-cta {
   padding: 60px 0 100px;
-}
-
-.cta-cockpit-box {
-  border: 1px solid rgba(0, 240, 255, 0.3);
+}.cta-cockpit-box {
+  border: 1px solid rgba(245, 242, 235, 0.12);
   border-radius: 24px;
-  background: 
-    radial-gradient(circle at top right, rgba(0, 240, 255, 0.12) 0%, transparent 60%),
-    linear-gradient(180deg, #0d121f 0%, #060910 100%);
+  background: var(--surface);
   padding: 56px 40px;
   text-align: center;
-  box-shadow: 0 24px 60px -15px rgba(0, 240, 255, 0.2);
+  box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.7);
   position: relative;
   overflow: hidden;
 }
@@ -1303,7 +1299,7 @@ button {
   font-size: clamp(30px, 4vw, 44px);
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #ffffff;
+  color: var(--ink);
   margin-bottom: 16px;
 }
 
@@ -1328,17 +1324,17 @@ button {
   align-items: center;
   padding: 12px 24px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--line-strong);
-  color: #ffffff;
+  background: var(--surface-elevated);
+  border: 1px solid rgba(245, 242, 235, 0.12);
+  color: var(--ink);
   font-size: 13.5px;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .btn-cta-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #ffffff;
+  background: var(--surface-hover);
+  border-color: rgba(245, 242, 235, 0.25);
 }
 
 /* ============================================================================
