@@ -451,10 +451,9 @@ button {
   grid-template-columns: repeat(4, 1fr);
   max-width: 860px;
   margin: 0 auto;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(245, 242, 235, 0.1);
   border-radius: 16px;
-  background: rgba(12, 17, 29, 0.5);
-  backdrop-filter: blur(16px);
+  background: var(--surface);
   overflow: hidden;
   box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
 }
@@ -464,7 +463,13 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border-right: 1px solid var(--line);
+  border-right: 1px solid rgba(245, 242, 235, 0.08);
+  background: var(--surface);
+  transition: background 0.15s ease;
+}
+
+.metric-item:hover {
+  background: var(--surface-hover);
 }
 
 .metric-item:last-child {
@@ -476,6 +481,7 @@ button {
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 .metric-lbl {
