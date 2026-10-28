@@ -402,27 +402,43 @@ export default function LandingPage() {
 
               <div className="hero-side">
                 <Reveal delay={200}>
-                  <p>
-                    Breakpoint gives inconsistent test failures a structured investigation: reproduce the
-                    condition, compare the evidence, test the hypothesis, and verify the result.
+                  <p className="hero-description">
+                    Isolate order-dependent mutations, state leaks, and async race conditions.
+                    Breakpoint executes controlled differential runs, binds proof to stored telemetry,
+                    and gates every patch on verified reruns.
                   </p>
                 </Reveal>
 
-                <Reveal delay={300} className="hero-actions">
-                  <a className="btn btn-secondary" href="#workflow">
-                    Explore the workflow <span aria-hidden="true">↓</span>
+                <Reveal delay={280} className="hero-command-pill">
+                  <span className="command-prompt">$</span>
+                  <code>npx breakpoint verify --isolated</code>
+                  <span className="command-tag">LOCAL ENGINE</span>
+                </Reveal>
+
+                <Reveal delay={340} className="hero-actions">
+                  <a className="btn btn-primary hero-btn-main" href="#demo">
+                    <span>Inspect live investigation</span>
+                    <span className="btn-arrow" aria-hidden="true">→</span>
                   </a>
-                  <a className="btn btn-primary" href="#demo">
-                    See the investigation <span aria-hidden="true">→</span>
+                  <a className="btn btn-secondary hero-btn-sub" href="#workflow">
+                    <span>Diagnostic pipeline</span>
+                    <span className="btn-arrow" aria-hidden="true">↓</span>
                   </a>
                 </Reveal>
 
-                <Reveal delay={360} className="hero-note">
-                  <span>Local runs</span>
-                  <span className="sep">·</span>
-                  <span>Linked evidence</span>
-                  <span className="sep">·</span>
-                  <span>Approval-gated fixes</span>
+                <Reveal delay={400} className="hero-telemetry-specs">
+                  <div className="telemetry-spec-item">
+                    <span className="spec-dot spec-dot--cyan" />
+                    <span>Deterministic isolation</span>
+                  </div>
+                  <div className="telemetry-spec-item">
+                    <span className="spec-dot spec-dot--emerald" />
+                    <span>Run telemetry linked</span>
+                  </div>
+                  <div className="telemetry-spec-item">
+                    <span className="spec-dot spec-dot--purple" />
+                    <span>Approval-gated patch</span>
+                  </div>
                 </Reveal>
               </div>
             </div>
