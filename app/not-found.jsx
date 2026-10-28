@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRightIcon, ShieldCheckIcon } from "./components/icons";
-import { ThemeToggle } from "./components/theme-toggle";
 
 export default function NotFound() {
   return (
@@ -13,9 +12,6 @@ export default function NotFound() {
       padding: "24px",
       position: "relative"
     }}>
-      <div style={{ position: "absolute", top: "24px", right: "24px" }}>
-        <ThemeToggle />
-      </div>
 
       <div className="not-found-block" style={{
         maxWidth: "540px",
