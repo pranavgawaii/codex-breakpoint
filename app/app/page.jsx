@@ -243,7 +243,10 @@ export default function Onboarding() {
 
                   <form className="config-form connect-form" onSubmit={connectProject}>
                     <label className="form-field">
-                      <span>Absolute project path</span>
+                      <div className="form-field-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "6px" }}>
+                        <span style={{ fontSize: "11px", fontFamily: "var(--mono)", textTransform: "uppercase", letterSpacing: "0.08em", color: "#94a3b8" }}>Target directory path</span>
+                        <span style={{ fontSize: "10px", fontFamily: "var(--mono)", color: "#0ea5e9" }}>{stage === "registering" ? "SCANNING AST..." : "READY"}</span>
+                      </div>
                       <input
                         type="text"
                         inputMode="url"
@@ -253,18 +256,51 @@ export default function Onboarding() {
                         value={root}
                         onChange={(event) => setRoot(event.target.value)}
                         required
+                        style={{
+                          background: "rgba(10, 14, 23, 0.8)",
+                          border: "1px solid rgba(14, 165, 233, 0.3)",
+                          color: "#f8fafc",
+                          fontFamily: "var(--mono)",
+                          fontSize: "12.5px",
+                          borderRadius: "8px",
+                          padding: "10px 14px",
+                          boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)"
+                        }}
                       />
                     </label>
-                    <label className="trust-check">
-                      <input type="checkbox" checked={trusted} onChange={(event) => setTrusted(event.target.checked)} />
-                      <span>
-                        Trust this directory: allow Breakpoint to execute its tests and, after my
-                        explicit approval, apply a cleanup patch inside it.
+
+                    <div className="path-presets" style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
+                      <span style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--mono)", alignSelf: "center" }}>Quick presets:</span>
+                      {["sample-project", "/packages/auth-engine", "/services/telemetry"].map((pathPreset) => (
+                        <button
+                          key={pathPreset}
+                          type="button"
+                          onClick={() => setRoot(pathPreset)}
+                          style={{
+                            background: "rgba(255, 255, 255, 0.05)",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            color: "#94a3b8",
+                            fontSize: "10px",
+                            fontFamily: "var(--mono)",
+                            padding: "3px 8px",
+                            borderRadius: "4px",
+                            cursor: "pointer"
+                          }}
+                        >
+                          {pathPreset}
+                        </button>
+                      ))}
+                    </div>
+
+                    <label className="trust-check" style={{ marginTop: "14px", display: "flex", gap: "10px", alignItems: "flex-start", cursor: "pointer" }}>
+                      <input type="checkbox" checked={trusted} onChange={(event) => setTrusted(event.target.checked)} style={{ marginTop: "3px", accentColor: "#0ea5e9" }} />
+                      <span style={{ fontSize: "11.5px", color: "#94a3b8", lineHeight: "1.5" }}>
+                        Trust this directory: allow Breakpoint to execute test runners locally and inspect execution state safely.
                       </span>
                     </label>
-                    <div className="connect-actions">
+                    <div className="connect-actions" style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
                       <button className="btn btn-secondary project-cta" type="submit" disabled={stage !== "idle" && stage !== "registered"}>
-                        {stage === "registering" ? "Discovering…" : registered ? "Re-scan" : "Connect project"}
+                        {stage === "registering" ? "Scanning files…" : registered ? "Re-scan directory" : "Scan & connect"}
                       </button>
                       {registered && stage !== "starting" ? (
                         <button className="btn btn-primary project-cta" type="button" onClick={() => beginInvestigation(registered.project.id)}>
