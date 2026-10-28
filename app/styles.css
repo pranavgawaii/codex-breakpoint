@@ -1340,7 +1340,18 @@ svg {
 .workflow-row {
   display: flex;
   align-items: center;
-  gap: 80px;
+  gap: 64px;
+  padding: 32px;
+  border-radius: 20px;
+  background: rgba(14, 19, 31, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.workflow-row:hover {
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
 }
 
 .workflow-row.reverse {
@@ -1354,10 +1365,10 @@ svg {
 
 .workflow-copy h3 {
   margin-top: 12px;
-  color: var(--ink);
-  font-size: clamp(26px, 2.8vw, 30px);
-  font-weight: 500;
-  line-height: 1.2;
+  color: #f8fafc;
+  font-size: clamp(26px, 2.8vw, 32px);
+  font-weight: 600;
+  line-height: 1.25;
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
@@ -1365,18 +1376,18 @@ svg {
 .workflow-copy > p:not(.workflow-inout) {
   max-width: 480px;
   margin-top: 16px;
-  color: var(--muted);
-  font-size: 14.5px;
+  color: #94a3b8;
+  font-size: 15px;
   line-height: 1.75;
 }
 
 .workflow-inout {
-  margin-top: 20px;
-  border-top: 1px solid var(--hairline);
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 16px;
-  color: var(--faint);
+  color: var(--accent-glow);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 11.5px;
   line-height: 1.5;
 }
 
@@ -1384,24 +1395,24 @@ svg {
   flex: 1;
   width: 100%;
   min-width: 0;
-  max-width: 500px;
+  max-width: 520px;
 }
 
 .step-visual {
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: #090c14;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 .step-visual-head {
   display: flex;
   align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface-2);
-  padding: 12px 16px;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(14, 19, 31, 0.9);
+  padding: 12px 18px;
 }
 
 .step-visual-dot {
@@ -1409,14 +1420,16 @@ svg {
   height: 8px;
   flex: none;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-glow);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 .step-visual-tag {
   margin-left: auto;
-  color: var(--faint);
+  color: var(--accent-glow);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
