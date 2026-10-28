@@ -2652,10 +2652,10 @@
 
 .config-card,
 .plan-card {
-  border: 1px solid var(--line);
-  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .config-card {
@@ -2667,16 +2667,17 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
-  border-bottom: 1px solid var(--line);
-  padding: 20px 22px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 22px 26px 20px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .config-card-head h2,
 .plan-card-head h2 {
-  margin-top: 7px;
-  color: var(--ink);
-  font-size: 18px;
-  font-weight: 500;
+  margin-top: 8px;
+  color: #f8fafc;
+  font-size: 19px;
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.35;
 }
@@ -2684,33 +2685,35 @@
 .config-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 22px;
+  gap: 22px;
+  padding: 26px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .form-field > span {
-  color: var(--ink);
-  font-size: 11.5px;
-  font-weight: 500;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   line-height: 1.3;
 }
 
+.form-field input,
 .form-field select,
 .form-field textarea {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fdfdfc;
-  padding: 10px 12px;
-  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(10, 14, 23, 0.8);
+  padding: 12px 14px;
+  color: #f8fafc;
   font-family: var(--sans);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -2732,49 +2735,51 @@
   resize: vertical;
 }
 
+.form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
-  border-color: rgba(79, 70, 229, 0.5);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+  border-color: rgba(14, 165, 233, 0.6);
+  background: rgba(14, 21, 38, 0.9);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
 }
 
 .form-field small {
-  color: var(--faint);
-  font-size: 9.5px;
+  color: #64748b;
+  font-size: 11px;
   line-height: 1.5;
 }
 
 .form-locked {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  border: 1px solid #eceae2;
-  border-radius: 9px;
-  background: #fbfbf8;
-  padding: 12px 13px;
-  color: var(--faint);
+  gap: 12px;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  border-radius: 10px;
+  background: rgba(14, 165, 233, 0.05);
+  padding: 14px 16px;
+  color: #94a3b8;
 }
 
 .form-locked > svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   flex: none;
-  margin-top: 1px;
+  margin-top: 2px;
+  color: #38bdf8;
 }
 
 .form-locked strong {
   display: block;
-  color: var(--muted);
-  font-size: 10.5px;
-  font-weight: 500;
+  color: #f1f5f9;
+  font-size: 12px;
+  font-weight: 600;
   line-height: 1.4;
 }
 
 .form-locked p {
-  margin-top: 2px;
-  color: var(--faint);
-  font-size: 10px;
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 11.5px;
   line-height: 1.55;
 }
 
@@ -2782,25 +2787,25 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 9px;
-  border-top: 1px solid var(--line);
-  background: #fcfcfa;
-  padding: 14px 22px;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 26px;
 }
 
 .config-card-foot .btn {
-  min-height: 37px;
-  padding: 8px 14px;
-  font-size: 11.5px;
+  min-height: 38px;
+  padding: 8px 16px;
+  font-size: 12.5px;
 }
 
 .config-card-foot .btn svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
 }
 
 .plan-card {
-  padding: 20px 22px;
+  padding: 24px 26px;
 }
 
 .plan-card-head {
@@ -2812,79 +2817,80 @@
 
 .plan-icon {
   display: inline-flex;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   flex: none;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e0e1fa;
-  border-radius: 8px;
-  background: #f5f5ff;
-  color: var(--accent-ink);
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  border-radius: 10px;
+  background: rgba(14, 165, 233, 0.12);
+  color: var(--accent);
 }
 
 .plan-icon svg {
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
 }
 
 .plan-lede {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 11px;
+  margin-top: 14px;
+  color: #94a3b8;
+  font-size: 12px;
   line-height: 1.6;
 }
 
 .plan-list {
-  margin-top: 18px;
-  border-top: 1px solid var(--hairline);
+  margin-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .plan-list li {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) 12px;
+  grid-template-columns: 26px minmax(0, 1fr) 14px;
   align-items: center;
-  gap: 7px;
-  border-bottom: 1px solid var(--hairline);
-  padding: 10px 0;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 12px 0;
 }
 
 .plan-list li > span {
-  color: #b0b0aa;
+  color: #64748b;
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .plan-list li > p {
-  color: var(--muted);
+  color: #cbd5e1;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
 .plan-list li > svg {
-  width: 10px;
-  height: 10px;
-  color: var(--success-ink);
+  width: 12px;
+  height: 12px;
+  color: #34d399;
 }
 
 .plan-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 15px;
+  gap: 8px;
+  margin-top: 18px;
 }
 
 .plan-badges li {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface-2);
-  padding: 4px 6px;
-  color: var(--faint);
-  font-size: 8.5px;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 5px 8px;
+  color: #94a3b8;
+  font-size: 10px;
   line-height: 1.2;
 }
 
