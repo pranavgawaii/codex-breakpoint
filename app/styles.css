@@ -32,30 +32,48 @@
    ========================================================================== */
 
 :root {
-  --background: #f7f7f5;
-  --surface: #ffffff;
-  --surface-2: #fcfcfb;
+  --background: #080a0f;
+  --surface: #0e131f;
+  --surface-2: #141b2d;
+  --surface-glass: rgba(14, 19, 31, 0.75);
+  --surface-hover: #1a2238;
 
-  --ink: #0a0a0f;
-  --muted: #5e6472;
-  --faint: #69707e;
+  --ink: #f1f5f9;
+  --ink-secondary: #cbd5e1;
+  --muted: #94a3b8;
+  --faint: #64748b;
 
-  --line: #e5e5e5;
-  --hairline: #efefec;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --hairline: rgba(255, 255, 255, 0.04);
 
-  --accent: #4f46e5;
-  --accent-soft: #eef0ff;
-  --accent-ink: #3730a3;
+  --accent: #0ea5e9;
+  --accent-glow: #38bdf8;
+  --accent-soft: rgba(14, 165, 233, 0.15);
+  --accent-ink: #38bdf8;
+  --accent-cyan: #06b6d4;
 
-  --btn: #18181b;
-  --btn-hover: #27272a;
+  --btn: #0ea5e9;
+  --btn-hover: #0284c7;
 
-  --success: #22c55e;
-  --success-ink: #15803d;
-  --danger: #ef4444;
-  --danger-ink: #b91c1c;
+  --success: #10b981;
+  --success-glow: #34d399;
+  --success-soft: rgba(16, 185, 129, 0.15);
+  --success-ink: #34d399;
+
+  --danger: #f43f5e;
+  --danger-glow: #fb7185;
+  --danger-soft: rgba(244, 63, 94, 0.15);
+  --danger-ink: #fb7185;
+
   --warning: #f59e0b;
-  --warning-ink: #b45309;
+  --warning-glow: #fbbf24;
+  --warning-soft: rgba(245, 158, 11, 0.15);
+  --warning-ink: #fbbf24;
+
+  --purple: #8b5cf6;
+  --purple-glow: #a78bfa;
+  --purple-soft: rgba(139, 92, 246, 0.15);
 
   --sans: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --serif: "Redaction 35", Georgia, "Times New Roman", serif;
@@ -64,10 +82,11 @@
   --frame: 1200px;
   --gutter: 24px;
 
-  --shadow-soft: 0 1px 2px rgba(10, 10, 15, 0.04), 0 8px 24px -12px rgba(10, 10, 15, 0.1);
-  --shadow-lift: 0 1px 2px rgba(10, 10, 15, 0.05), 0 20px 40px -24px rgba(10, 10, 15, 0.18);
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-lift: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 30px -5px rgba(14, 165, 233, 0.2);
+  --glow-azure: 0 0 25px rgba(14, 165, 233, 0.35);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 /* ============================================================================
