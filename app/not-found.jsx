@@ -31,8 +31,8 @@ export default function NotFound() {
           top: 0,
           left: 0,
           right: 0,
-          height: "2px",
-          background: "linear-gradient(90deg, transparent, var(--accent), var(--danger), transparent)"
+          height: "1px",
+          background: "var(--line)"
         }} />
 
         <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "var(--danger-soft)", border: "1px solid var(--danger)", marginBottom: "20px" }}>
