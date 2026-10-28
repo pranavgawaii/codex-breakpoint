@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRightIcon, ChevronRightIcon } from "./icons";
 export function BrandMark({ className = "" }) {
     return (<span className={`bp-mark ${className}`.trim()} aria-hidden="true">
+      <span className="bp-mark-reticle" />
       <i />
       <i />
       <i />
@@ -10,7 +11,7 @@ export function BrandMark({ className = "" }) {
 export function StatusPill({ label, tone = "neutral", className = "" }) {
     return (<span className={`status-pill status-pill--${tone} ${className}`.trim()}>
       <span className="status-pill-dot" aria-hidden="true"/>
-      {label}
+      <span className="status-pill-text">{label}</span>
     </span>);
 }
 export function ProductHeader({ active = "projects", status, projectName = "Workspace" }) {
@@ -35,12 +36,12 @@ export function ProductHeader({ active = "projects", status, projectName = "Work
 
         <div className="product-bar-actions">
           <span className="local-chip">
-            <span aria-hidden="true"/>
-            Local only
+            <span className="pulse-dot-green" aria-hidden="true"/>
+            <span>Deterministic engine</span>
           </span>
           {status && <StatusPill label={status.label} tone={status.tone}/>}
           <Link className="product-exit" href="/">
-            Exit to site
+            <span>Exit to site</span>
             <ArrowUpRightIcon />
           </Link>
         </div>
