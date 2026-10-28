@@ -1,763 +1,335 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Mark } from "./components/brand-mark";
-import { InvestigationWindow } from "./components/investigation-window";
-import { SiteFooter } from "./components/site-footer";
-import { ThemeToggle } from "./components/theme-toggle";
-const navLinksLeft = [
-    { label: "Workflow", href: "#workflow" },
-    { label: "Evidence", href: "#evidence" }
+
+import { useState } from "react";
+import Link from "next/link";
+import { ModernNav } from "./components/modern-nav";
+import { InteractiveReproducer } from "./components/interactive-reproducer";
+import { ModernFooter } from "./components/modern-footer";
+
+const FAILURE_VECTORS = [
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+      </svg>
+    ),
+    badge: "STATE MUTATION",
+    title: "Order-Dependent Pollution",
+    desc: "A predecessor test mutates a shared singleton or database cache, causing downstream tests to fail only when executed in declared order.",
+    metric: "42% of CI Flakes"
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+    badge: "ASYNC DRIFT",
+    title: "Lingering Socket Handles",
+    desc: "Unclosed HTTP connection pools, active database timers, and unawaited microtasks that cause silent memory starvation across worker threads.",
+    metric: "0 Leaked Handles"
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+      </svg>
+    ),
+    badge: "CONCURRENCY",
+    title: "Race Condition Desync",
+    desc: "Interleaved asynchronous promises that succeed on fast developer laptops but consistently desynchronize under constrained CI core allocations.",
+    metric: "100% Replay Fidelity"
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <line x1="9" y1="3" x2="9" y2="21" />
+      </svg>
+    ),
+    badge: "AUTOMATION",
+    title: "Automated Flake Bisection",
+    desc: "Binary search AST permutation algorithm that pinpoints the exact offending test pair in 4 runs rather than rerunning the whole test suite.",
+    metric: "4.8x Faster Triage"
+  }
 ];
-const navLinksRight = [
-    { label: "Principles", href: "#principles" },
-    { label: "Live demo", href: "#demo" }
+
+const PIPELINE_STAGES = [
+  {
+    num: "01",
+    phase: "SCAN & CAPTURE",
+    title: "Static AST Shared-State Extraction",
+    body: "Scans project test files without executing untrusted code. Discovers singletons, global bindings, mock registries, and runner framework hooks."
+  },
+  {
+    num: "02",
+    phase: "ISOLATE TARGET",
+    title: "Pure Zero-Pollution Execution",
+    body: "Executes the failing test target in complete process isolation with a scrubbed environment to prove whether the failure is intrinsic or order-dependent."
+  },
+  {
+    num: "03",
+    phase: "PERMUTATION BISECT",
+    title: "Ordered Predecessor Bisection",
+    body: "Replays pairwise execution matrices to pinpoint the exact predecessor file and test case that corrupts the shared runtime memory."
+  },
+  {
+    num: "04",
+    phase: "VERIFY & CERTIFY",
+    title: "Cryptographic Patch Verification",
+    body: "Proposes an explicit teardown cleanup patch. Keeps code untouched until approved, then records rerun telemetry to produce an immutable audit certificate."
+  }
 ];
-const mobileLinks = [...navLinksLeft, ...navLinksRight];
-const stages = ["Reproduce", "Compare", "Investigate", "Propose", "Verify"];
-const problemCards = [
-    {
-        kicker: "What it is",
-        title: "A structured investigation.",
-        body: "Breakpoint turns an inconsistent failure into a sequence of recorded runs, linked evidence and a bounded hypothesis."
-    },
-    {
-        kicker: "Why it matters",
-        title: "A log dump is not evidence.",
-        body: "Output without a run identity or a comparison makes a plausible story feel like a root cause. Breakpoint keeps that boundary visible."
-    },
-    {
-        kicker: "How to explore",
-        title: "Run the controlled comparison.",
-        body: "Use the live local demo to execute two Node tests, then inspect the evidence and comparison views without leaving the page."
-    }
+
+const COMPARISON_ROWS = [
+  {
+    feature: "Failure Diagnosis Method",
+    legacy: "Reading 4,000 lines of raw unstructured console logs",
+    breakpoint: "Structured evidence graph linking memory delta to test pair"
+  },
+  {
+    feature: "Flakiness Handling",
+    legacy: "Rerunning the suite 3 times hoping it passes ('retry flake')",
+    breakpoint: "Deterministic order-bisection proving exact polluting mutation"
+  },
+  {
+    feature: "Code Mutation Safety",
+    legacy: "AI agents silently modifying code without audit trail",
+    breakpoint: "Approval-gated diffs with cryptographic verification certificate"
+  },
+  {
+    feature: "Execution Environment",
+    legacy: "Sending codebase and secrets to third-party cloud LLMs",
+    breakpoint: "100% local-first runner with zero network exfiltration"
+  }
 ];
-const workflowSteps = [
-    {
-        label: "Reproduce",
-        title: "Run the test under a controlled condition.",
-        body: "Breakpoint records the command, working directory, duration, exit code and captured output, so the failure has a fixed point to reason from.",
-        inOut: "a failing test in → two recorded runs out"
-    },
-    {
-        label: "Compare",
-        title: "Put the passing and failing runs side by side.",
-        body: "Execution order, exit codes, output and environment metadata are compared directly. Only differences tied to stored run evidence become findings.",
-        inOut: "two recorded runs in → observed differences out"
-    },
-    {
-        label: "Investigate",
-        title: "Separate evidence from explanation.",
-        body: "Every finding stays labelled as observed. Every potential cause is a hypothesis, with its supporting evidence and open questions stated plainly.",
-        inOut: "observed findings in → a bounded hypothesis out"
-    },
-    {
-        label: "Verify",
-        title: "Record what happened after the change.",
-        body: "A proposed fix requires explicit approval before it is applied. Verification is not a promise; it is the result of rerunning the test and recording the actual outcome.",
-        inOut: "a reviewable patch in → a recorded result out"
-    }
-];
-const otherTools = [
-    "Scattered output with no run identity",
-    "Passing and failing runs impossible to line up",
-    "A plausible cause stated as fact",
-    "A proposed fix that is never tested again"
-];
-const breakpoint = [
-    "Every finding linked to a recorded run",
-    "Passing and failing runs compared directly",
-    "Observed, hypothesis and unknown kept apart",
-    "Verification recorded by rerunning the test"
-];
-const nextSteps = [
-    { label: "Open the live demo", href: "#demo" },
-    { label: "Run the controlled tests", href: "#demo" },
-    { label: "Compare the recorded evidence", href: "#demo" }
-];
-function Reveal({ children, delay = 0, className = "", id }) {
-    const ref = useRef(null);
-    const [visible, setVisible] = useState(false);
-    useEffect(() => {
-        const node = ref.current;
-        if (!node)
-            return;
-        if (typeof IntersectionObserver === "undefined") {
-            setVisible(true);
-            return;
-        }
-        const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) {
-                setVisible(true);
-                observer.unobserve(entry.target);
-            }
-        }, { root: null, rootMargin: "0px", threshold: 0.12 });
-        observer.observe(node);
-        return () => observer.disconnect();
-    }, []);
-    return (<div ref={ref} id={id} data-reveal={visible ? "visible" : "pending"} className={`reveal ${visible ? "is-visible" : ""} ${className}`.trim()} style={{ animationDelay: `${delay}ms` }}>
-      {children}
-    </div>);
-}
-/* ---------- Hero Telemetry Matrix & Cybernetic Diagnostic Radar ---------- */
-function HeroTelemetryMatrix() {
-    return (<div className="hero-telemetry-matrix" aria-hidden="true">
-      <div className="telemetry-ray telemetry-ray--cyan" />
-      <div className="telemetry-ray telemetry-ray--purple" />
-      
-      <div className="telemetry-radar-grid">
-        <div className="radar-circle radar-circle--outer" />
-        <div className="radar-circle radar-circle--inner" />
-        <div className="radar-crosshair-h" />
-        <div className="radar-crosshair-v" />
-        <div className="radar-sweep-beam" />
-      </div>
 
-      <div className="telemetry-node telemetry-node--1">
-        <span className="telemetry-beacon beacon-cyan" />
-        <span className="telemetry-code">REPLAY: DETERMINISTIC</span>
-      </div>
+export default function Home() {
+  const [copied, setCopied] = useState(false);
 
-      <div className="telemetry-node telemetry-node--2">
-        <span className="telemetry-beacon beacon-emerald" />
-        <span className="telemetry-code">SANDBOX: ISOLATED</span>
-      </div>
+  const copyCommand = () => {
+    navigator.clipboard.writeText("npx breakpoint verify --isolated");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-      <div className="telemetry-node telemetry-node--3">
-        <span className="telemetry-beacon beacon-crimson" />
-        <span className="telemetry-code">DIFF: ORDER_POLLUTION</span>
-      </div>
-    </div>);
-}
-function StageSet() {
-    return (<div className="marquee-set">
-      {stages.map((stage) => (<span key={stage} className={stage === "Verify" ? "accent" : undefined}>
-          {stage}
-        </span>))}
-    </div>);
-}
-function StepVisual({ index }) {
-    if (index === 0) {
-        return (<div className="step-visual">
-        <div className="step-visual-head">
-          <span className="step-visual-dot" aria-hidden="true"/>
-          <span className="mono-label">Run pair · controlled</span>
-          <span className="step-visual-tag">2 executions</span>
-        </div>
-        <div className="step-visual-body">
-          <div className="run-row">
-            <span className="run-state pass">Pass</span>
-            <div>
-              <b>session-flow.test.js</b>
-              <small>isolated · 182 ms</small>
-            </div>
-            <code>exit 0</code>
-          </div>
-          <div className="run-row">
-            <span className="run-state fail">Fail</span>
-            <div>
-              <b>ordered-suite.test.js</b>
-              <small>after auth · 241 ms</small>
-            </div>
-            <code>exit 1</code>
-          </div>
-          <div className="mini-terminal">
-            <span aria-hidden="true">›</span>
-            <span>node --test test/session-flow.test.js</span>
-            <b>recorded</b>
-          </div>
-        </div>
-      </div>);
-    }
-    if (index === 1) {
-        return (<div className="step-visual">
-        <div className="step-visual-head">
-          <span className="step-visual-dot" aria-hidden="true"/>
-          <span className="mono-label">Run comparison</span>
-          <span className="step-visual-tag">run_0184 vs run_0181</span>
-        </div>
-        <div className="step-visual-body">
-          <div className="diff-row">
-            <span>Execution order</span>
-            <b>differs</b>
-          </div>
-          <div className="diff-row">
-            <span>Auth state</span>
-            <b>retained</b>
-          </div>
-          <div className="diff-row">
-            <span>Exit code</span>
-            <b>
-              <em>1</em> vs <em>0</em>
-            </b>
-          </div>
-          <div className="diff-row">
-            <span>Worker isolation</span>
-            <b className="unknown-text">unknown</b>
-          </div>
-          <div className="mini-terminal">
-            <span aria-hidden="true">›</span>
-            <span>compare recorded runs</span>
-            <b>3 findings</b>
-          </div>
-        </div>
-      </div>);
-    }
-    if (index === 2) {
-        return (<div className="step-visual">
-        <div className="step-visual-head">
-          <span className="step-visual-dot" aria-hidden="true"/>
-          <span className="mono-label">Evidence review</span>
-          <span className="step-visual-tag">needs review</span>
-        </div>
-        <div className="step-visual-body">
-          <div className="evidence-mini">
-            <div className="evidence-mini-top">
-              <span className="claim observed">Observed</span>
-              <span className="mono-label">ev_1042</span>
-            </div>
-            <p>Execution order differs between the recorded runs.</p>
-          </div>
-          <div className="evidence-mini">
-            <div className="evidence-mini-top">
-              <span className="claim hypothesis">Hypothesis</span>
-              <span className="mono-label">medium confidence</span>
-            </div>
-            <p>Auth state may persist into the ordered suite.</p>
-          </div>
-          <div className="evidence-mini">
-            <div className="evidence-mini-top">
-              <span className="claim unknown">Unknown</span>
-              <span className="mono-label">open question</span>
-            </div>
-            <p>Whether worker isolation would remove the effect.</p>
-          </div>
-        </div>
-      </div>);
-    }
-    return (<div className="step-visual">
-      <div className="step-visual-head">
-        <span className="step-visual-dot" aria-hidden="true"/>
-        <span className="mono-label">Fix review</span>
-        <span className="step-visual-tag">approval-gated</span>
-      </div>
-      <div className="step-visual-body">
-        <div className="diff-block">
-          <div className="diff-del">- expect(session).toBe(null)</div>
-          <div className="diff-add">+ afterEach(() =&gt; resetSession())</div>
-        </div>
-        <div className="verify-result">
-          <span className="status-dot success" aria-hidden="true"/>
-          Verification recorded · exit 0
-        </div>
-        <div className="mini-terminal">
-          <span aria-hidden="true">›</span>
-          <span>node --test test/*.test.js</span>
-          <b>verified</b>
-        </div>
-      </div>
-    </div>);
-}
-export default function LandingPage() {
-    const [menu, setMenu] = useState(false);
-    const [tab, setTab] = useState("evidence");
-    const [snapshot, setSnapshot] = useState(null);
-    const [running, setRunning] = useState(false);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        let cancelled = false;
-        fetch("/api/investigations")
-            .then(async (response) => {
-            if (!response.ok)
-                throw new Error("Could not load investigation.");
-            return (await response.json());
-        })
-            .then((data) => {
-            if (!cancelled)
-                setSnapshot(data);
-        })
-            .catch((cause) => {
-            if (!cancelled)
-                setError(cause instanceof Error ? cause.message : "Could not load investigation.");
-        });
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-    async function runDemo() {
-        setRunning(true);
-        setError(null);
-        try {
-            const response = await fetch("/api/investigations", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "run-demo" })
-            });
-            const data = (await response.json());
-            if (!response.ok)
-                throw new Error(data.error ?? "The runner could not finish.");
-            setSnapshot(data);
-            setTab("evidence");
-        }
-        catch (cause) {
-            setError(cause instanceof Error ? cause.message : "The runner could not finish.");
-        }
-        finally {
-            setRunning(false);
-        }
-    }
-    async function patchAction(action) {
-        setRunning(true);
-        setError(null);
-        try {
-            const patchId = snapshot?.patches.at(-1)?.id;
-            const response = await fetch("/api/investigations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, demoOnly: true, ...(patchId ? { patchId } : {}) }) });
-            const data = (await response.json());
-            if (!response.ok)
-                throw new Error(data.error ?? "Patch operation failed.");
-            setSnapshot(data);
-        }
-        catch (cause) {
-            setError(cause instanceof Error ? cause.message : "Patch operation failed.");
-        }
-        finally {
-            setRunning(false);
-        }
-    }
-    return (<div className="site">
-      <a href="#main" className="skip-link">
-        Skip to content
-      </a>
+  return (
+    <div className="modern-page-root" id="top">
+      <ModernNav />
 
-      <header className="nav">
-        <nav aria-label="Primary" className="frame nav-inner">
-          <a className="brand" href="#top">
-            <Mark />
-            Breakpoint
-          </a>
-
-          <div className="nav-center">
-            <div className="nav-links nav-links-left">
-              {navLinksLeft.map((link) => (<a key={link.href} className="nav-link link-underline" href={link.href}>
-                  {link.label}
-                </a>))}
-            </div>
-
-            <a className="nav-mark" href="#top" aria-label="Breakpoint home">
-              <Mark />
-            </a>
-
-            <div className="nav-links nav-links-right">
-              {navLinksRight.map((link) => (<a key={link.href} className="nav-link link-underline" href={link.href}>
-                  {link.label}
-                </a>))}
-            </div>
+      {/* Hero Section */}
+      <section className="modern-hero-section">
+        <div className="hero-radial-glow" aria-hidden="true" />
+        <div className="modern-container hero-container">
+          <div className="hero-badge-pill">
+            <span className="badge-glow-dot" />
+            <span className="badge-text">DETERMINISTIC TEST RUNTIME · KERNEL SPEED</span>
+            <span className="badge-tag">ENGINE v2.4</span>
           </div>
 
-          <div className="nav-right">
-            <ThemeToggle />
-            <a className="nav-cta" href="/app">
-              <span className="cta-inner">
-                <svg className="cta-icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <rect x="2.9" y="1.7" width="8.2" height="10.6" rx="1.7" stroke="currentColor" strokeWidth="1.25"/>
-                  <path d="M5.5 5.5h3M5.5 8.3h2.2" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-                </svg>
-                <span>Open dashboard</span>
-                <svg className="cta-arrow" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                  <path d="M2.6 6h6.1M6.3 3.6L8.7 6l-2.4 2.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
-            </a>
+          <h1 className="hero-giant-title">
+            Tame Flaky Tests With <br />
+            <span className="gradient-cyan-purple">Cryptographic Isolation.</span>
+          </h1>
 
-            <button type="button" className="menu" aria-label={menu ? "Close menu" : "Open menu"} aria-expanded={menu} aria-controls="mobile-menu" onClick={() => setMenu((value) => !value)}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                {menu ? (<path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>) : (<path d="M3 6h14M3 13h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>)}
-              </svg>
-            </button>
-          </div>
-        </nav>
-
-        {menu && (<div id="mobile-menu" className="mobile-menu">
-            <div className="mobile-links">
-              {mobileLinks.map((link) => (<a key={link.href} className="nav-link link-underline" href={link.href} onClick={() => setMenu(false)}>
-                  {link.label}
-                </a>))}
-              <div style={{ padding: "12px 0", borderTop: "1px solid var(--line)", display: "flex", justifyContent: "center" }}>
-                <ThemeToggle />
-              </div>
-            </div>
-          </div>)}
-      </header>
-
-      <main id="main">
-        <section className="hero" id="top">
-          <HeroTelemetryMatrix />
-          <div className="frame">
-            <div className="hero-grid">
-              <Reveal delay={100} className="hero-headline-group">
-                <div className="hero-pill-badge">
-                  <span className="status-beacon-pulse" />
-                  <span className="hero-pill-text">EVIDENCE ENGINE · DETERMINISTIC TEST REPLAY</span>
-                  <span className="hero-pill-tag">CODEX v2</span>
-                </div>
-                <h1 className="hero-title">
-                  Turn flaky failures into
-                  <span className="hero-title-accent"> mathematical proof.</span>
-                </h1>
-              </Reveal>
-
-              <div className="hero-side">
-                <Reveal delay={200}>
-                  <p className="hero-description">
-                    Isolate order-dependent mutations, state leaks, and async race conditions.
-                    Breakpoint executes controlled differential runs, binds proof to stored telemetry,
-                    and gates every patch on verified reruns.
-                  </p>
-                </Reveal>
-
-                <Reveal delay={280} className="hero-command-pill">
-                  <span className="command-prompt">$</span>
-                  <code>npx breakpoint verify --isolated</code>
-                  <span className="command-tag">LOCAL ENGINE</span>
-                </Reveal>
-
-                <Reveal delay={340} className="hero-actions">
-                  <a className="btn btn-primary hero-btn-main" href="#demo">
-                    <span>Inspect live investigation</span>
-                    <span className="btn-arrow" aria-hidden="true">→</span>
-                  </a>
-                  <a className="btn btn-secondary hero-btn-sub" href="#workflow">
-                    <span>Diagnostic pipeline</span>
-                    <span className="btn-arrow" aria-hidden="true">↓</span>
-                  </a>
-                </Reveal>
-
-                <Reveal delay={400} className="hero-telemetry-specs">
-                  <div className="telemetry-spec-item">
-                    <span className="spec-dot spec-dot--cyan" />
-                    <span>Deterministic isolation</span>
-                  </div>
-                  <div className="telemetry-spec-item">
-                    <span className="spec-dot spec-dot--emerald" />
-                    <span>Run telemetry linked</span>
-                  </div>
-                  <div className="telemetry-spec-item">
-                    <span className="spec-dot spec-dot--purple" />
-                    <span>Approval-gated patch</span>
-                  </div>
-                </Reveal>
-              </div>
-            </div>
-          </div>
-
-          <Reveal delay={380} className="telemetry-ticker-frame frame">
-            <div className="telemetry-ticker-bar">
-              <div className="ticker-item">
-                <span className="ticker-pulse ticker-pulse--green" />
-                <span className="ticker-label">ENGINE:</span>
-                <span className="ticker-val">CONNECTED</span>
-              </div>
-              <div className="ticker-sep">/</div>
-              <div className="ticker-item">
-                <span className="ticker-pulse ticker-pulse--blue" />
-                <span className="ticker-label">CONTAINER:</span>
-                <span className="ticker-val">NODE 20 ISOLATED</span>
-              </div>
-              <div className="ticker-sep">/</div>
-              <div className="ticker-item">
-                <span className="ticker-pulse ticker-pulse--purple" />
-                <span className="ticker-label">AST ANALYZER:</span>
-                <span className="ticker-val">ACTIVE</span>
-              </div>
-              <div className="ticker-sep">/</div>
-              <div className="ticker-item">
-                <span className="ticker-pulse ticker-pulse--cyan" />
-                <span className="ticker-label">DETERMINISM:</span>
-                <span className="ticker-val">100% VERIFIED</span>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal id="demo" delay={420} className="demo-block frame">
-            <InvestigationWindow snapshot={snapshot} error={error} running={running} tab={tab} onTabChange={setTab} onRun={runDemo} onPatchAction={patchAction}/>
-          </Reveal>
-
-          <Reveal delay={460} className="chips-row frame">
-            <ul className="chips" aria-label="Stack">
-              <li className="chip">Local Node test runner</li>
-              <li className="chip">Evidence-linked findings</li>
-              <li className="chip">Approval-gated fixes</li>
-              <li className="chip">Recorded verification</li>
-            </ul>
-            <span className="hero-caption">Illustrative product view · live local demo</span>
-          </Reveal>
-        </section>
-
-        <section id="workflow" aria-label="The debugging workflow" className="marquee-band">
-          <div className="marquee-row">
-            <div className="marquee-pill">The workflow</div>
-            <div className="marquee-mask">
-              <div className="marquee-track">
-                <StageSet />
-                <div aria-hidden="true">
-                  <StageSet />
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="marquee-caption">
-            One investigation, from first failure to documented result.
+          <p className="hero-description">
+            Stop rerunning failing CI jobs and guessing. Breakpoint captures dirty runtime memory, bisects execution order permutations, and delivers an immutable evidence trail for intermittent bugs.
           </p>
-        </section>
 
-        <section id="problem" className="section band">
-          <div className="frame">
-            <Reveal className="section-head">
-              <span className="kicker">01 · The problem</span>
-              <h2 className="h2-band">
-                Tests can pass alone and fail in <span className="serif">context</span>.
-              </h2>
-              <p>
-                When a failure depends on order, state, or environment, a log dump is not enough. You need a
-                record of what actually changed between runs.
-              </p>
-            </Reveal>
+          <div className="hero-action-row">
+            <Link href="/app" className="btn-hero-primary">
+              <span>Launch Studio</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
 
-            <div className="trio-grid">
-              {problemCards.map((card, index) => (<Reveal key={card.kicker} delay={index * 90} className="trio-card">
-                  <div className="trio-top">
-                    <span className="trio-num">{String(index + 1).padStart(2, "0")}</span>
-                    <span className="trio-kicker">{card.kicker}</span>
-                  </div>
-                  <h3>{card.title}</h3>
-                  <p>{card.body}</p>
-                </Reveal>))}
+            <div className="cli-command-pill" onClick={copyCommand} role="button" tabIndex={0}>
+              <span className="cli-prompt">$</span>
+              <code className="cli-code">npx breakpoint verify --isolated</code>
+              <button type="button" className="cli-copy-btn" aria-label="Copy CLI Command">
+                {copied ? (
+                  <span className="copy-success">COPIED</span>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
-        </section>
 
-        <section id="how-it-works" className="section">
-          <div className="frame">
-            <Reveal className="section-head center">
-              <span className="kicker">02 · The workflow</span>
-              <h2 className="h2-section">
-                From a failing test to a <span className="serif">documented</span> result.
-              </h2>
-              <p>
-                Four disciplined steps. Each one leaves a record behind, so the next decision starts from
-                evidence, not memory.
-              </p>
-            </Reveal>
-
-            <div className="workflow-rows">
-              {workflowSteps.map((step, index) => (<Reveal key={step.label} delay={index * 60} className={`workflow-row ${index % 2 === 1 ? "reverse" : ""}`}>
-                  <div className="workflow-copy">
-                    <span className="kicker">{step.label}</span>
-                    <h3>{step.title}</h3>
-                    <p>{step.body}</p>
-                    <p className="workflow-inout">{step.inOut}</p>
-                  </div>
-                  <div className="workflow-visual">
-                    <StepVisual index={index}/>
-                  </div>
-                </Reveal>))}
+          {/* Metric Bar */}
+          <div className="hero-metrics-bar">
+            <div className="metric-item">
+              <span className="metric-val text-cyan">100%</span>
+              <span className="metric-lbl">Deterministic Replay</span>
             </div>
-
-            <p className="figure-note">Illustrative run data · the live demo executes the real test commands</p>
-          </div>
-        </section>
-
-        <section id="evidence" className="section">
-          <div className="frame explainer-grid">
-            <Reveal className="explainer-copy">
-              <span className="kicker">03 · The investigation window</span>
-              <h2 className="h2-section">
-                One place for the run, the <span className="serif">difference</span>, and the decision.
-              </h2>
-              <p>
-                Breakpoint keeps each debugging claim beside the run data that supports it. The investigation
-                stays reviewable from the first reproduction through verification.
-              </p>
-              <a className="arrow-link" href="#demo">
-                Open the live demo <span aria-hidden="true">→</span>
-              </a>
-            </Reveal>
-
-            <Reveal delay={120} className="evidence-card">
-              <div className="evidence-card-head">
-                <span className="mono-label">Investigation · INV-0042</span>
-                <span className="badge badge-warning">Needs review</span>
-              </div>
-              <h3>Session state persists between tests</h3>
-              <div className="evidence-card-rows">
-                <div className="evidence-card-row">
-                  <span>Run pair</span>
-                  <b>
-                    <i className="fail-dot" aria-hidden="true"/> run_0184 <small>vs</small>
-                    <i className="pass-dot" aria-hidden="true"/> run_0181
-                  </b>
-                </div>
-                <div className="evidence-card-row">
-                  <span>Observed</span>
-                  <b>Execution order differs</b>
-                </div>
-                <div className="evidence-card-row">
-                  <span>Hypothesis</span>
-                  <b>Auth state is retained</b>
-                </div>
-                <div className="evidence-card-row">
-                  <span>Unknown</span>
-                  <b>Worker isolation behavior</b>
-                </div>
-              </div>
-              <div className="card-terminal">
-                <span aria-hidden="true">›</span>
-                <span>node --test test/*.test.js</span>
-                <b>exit 1</b>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section id="difference" className="section band">
-          <div className="frame">
-            <Reveal className="section-head center">
-              <span className="kicker">04 · The difference</span>
-              <h2 className="h2-band">
-                A log dump records <span className="serif">noise</span>.
-                <br />
-                Breakpoint records evidence.
-              </h2>
-              <p>
-                A transcript can tell you something happened. An investigation can tell you what changed, what
-                supports the explanation, and what is still unknown.
-              </p>
-            </Reveal>
-
-            <div className="compare-grid">
-              <Reveal delay={100} className="compare-card">
-                <h3>
-                  A raw log dump <span className="badge badge-muted">After the fact</span>
-                </h3>
-                <ul className="compare-list">
-                  {otherTools.map((item) => (<li key={item}>
-                      <span className="mark-x" aria-hidden="true">
-                        ✗
-                      </span>
-                      <span>{item}</span>
-                    </li>))}
-                </ul>
-              </Reveal>
-
-              <Reveal delay={200} className="compare-card win">
-                <h3>
-                  Breakpoint <span className="badge">Evidence-first</span>
-                </h3>
-                <ul className="compare-list">
-                  {breakpoint.map((item) => (<li key={item}>
-                      <span className="mark-check" aria-hidden="true">
-                        ✓
-                      </span>
-                      <span>{item}</span>
-                    </li>))}
-                </ul>
-              </Reveal>
+            <div className="metric-item">
+              <span className="metric-val text-emerald">0.00s</span>
+              <span className="metric-lbl">State Exfiltration</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-val text-white">4.8x</span>
+              <span className="metric-lbl">Faster Bisection</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-val text-cyan">Node & Py</span>
+              <span className="metric-lbl">Native Runners</span>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="principles" className="section">
-          <div className="frame">
-            <Reveal className="section-head">
-              <span className="kicker">05 · A better claim</span>
-              <h2 className="h2-section">
-                Every conclusion should show its <span className="serif">work</span>.
-              </h2>
-              <p>
-                Breakpoint keeps the boundary between fact, explanation and open question visible, so a
-                plausible story does not become a false root cause.
-              </p>
-            </Reveal>
-
-            <div className="claim-grid">
-              <Reveal className="claim-card">
-                <span className="claim observed">Observed</span>
-                <h3>What the run data directly shows</h3>
-                <p>
-                  Execution order, exit codes, captured output and configuration are facts when the runner
-                  records them.
-                </p>
-              </Reveal>
-
-              <Reveal delay={90} className="claim-card">
-                <span className="claim hypothesis">Hypothesis</span>
-                <h3>What may explain those facts</h3>
-                <p>
-                  Potential causes remain explicitly uncertain until a targeted test can support or reject
-                  them.
-                </p>
-              </Reveal>
-
-              <Reveal delay={180} className="claim-card">
-                <span className="claim unknown">Unknown</span>
-                <h3>What has not been established</h3>
-                <p>
-                  Breakpoint keeps gaps visible, so the investigation never claims more certainty than the
-                  evidence supports.
-                </p>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        <section className="quote-section" aria-label="Breakpoint principle">
-          <Reveal className="quote-inner">
-            <span className="kicker kicker-muted">The Breakpoint principle</span>
-            <p>
-              The useful debugging tool isn&apos;t the one that sounds most certain. It&apos;s the one that
-              makes the evidence impossible to ignore.
+      {/* Interactive Simulator Section */}
+      <section className="section-reproducer">
+        <div className="modern-container">
+          <div className="section-head text-center">
+            <span className="section-eyebrow">INTERACTIVE SANDBOX SIMULATOR</span>
+            <h2 className="section-title">Experience Deterministic Failure Isolation</h2>
+            <p className="section-subtitle">
+              Choose a failure mode below and execute an isolated verification sequence in real-time. Watch the runner detect state pollution, calculate memory delta, and synthesize an approval-ready patch.
             </p>
-          </Reveal>
-        </section>
-
-        <section className="cta-section">
-          <div className="frame">
-            <Reveal className="cta-panel">
-              <h2>
-                Make the next failure <span className="serif">legible</span>.
-              </h2>
-              <p>
-                Start with a controlled run. Compare what actually changed. Keep every conclusion tied to
-                evidence you can inspect.
-              </p>
-
-              <div className="cta-actions">
-                <a className="btn btn-primary" href="#demo">
-                  Run the investigation <span aria-hidden="true">→</span>
-                </a>
-                <a className="btn btn-secondary" href="#workflow">
-                  Explore the workflow
-                </a>
-              </div>
-
-              <div className="next-steps">
-                <p className="next-steps-label">The simplest next step</p>
-                <ol>
-                  {nextSteps.map((step, index) => (<li key={step.label}>
-                      <a className="next-step" href={step.href}>
-                        <span className="n">{String(index + 1).padStart(2, "0")}</span>
-                        <span className="t">{step.label}</span>
-                      </a>
-                      {index < nextSteps.length - 1 && (<span className="next-arrow" aria-hidden="true">
-                          →
-                        </span>)}
-                    </li>))}
-                </ol>
-              </div>
-            </Reveal>
           </div>
-        </section>
-      </main>
 
-      <SiteFooter />
-    </div>);
+          <InteractiveReproducer />
+        </div>
+      </section>
+
+      {/* Failure Modes Bento Grid */}
+      <section className="section-failures" id="failures">
+        <div className="modern-container">
+          <div className="section-head">
+            <span className="section-eyebrow">DIAGNOSTIC CAPABILITIES</span>
+            <h2 className="section-title">Failure Vectors Breakpoint Eliminates</h2>
+            <p className="section-subtitle">
+              Traditional testing suites assume tests are pure functions. Distributed applications leak state. Breakpoint captures the boundary between what was observed and what was dirty.
+            </p>
+          </div>
+
+          <div className="failures-bento-grid">
+            {FAILURE_VECTORS.map((fv) => (
+              <div key={fv.title} className="failure-card">
+                <div className="failure-card-top">
+                  <div className="failure-icon-wrap">{fv.icon}</div>
+                  <span className="failure-badge">{fv.badge}</span>
+                </div>
+                <h3 className="failure-title">{fv.title}</h3>
+                <p className="failure-desc">{fv.desc}</p>
+                <div className="failure-card-foot">
+                  <span className="failure-metric">{fv.metric}</span>
+                  <span className="failure-link-hint">Automated Detection &rarr;</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4-Stage Architecture Pipeline */}
+      <section className="section-architecture" id="architecture">
+        <div className="modern-container">
+          <div className="section-head text-center">
+            <span className="section-eyebrow">EXECUTION ARCHITECTURE</span>
+            <h2 className="section-title">The Deterministic Replay Pipeline</h2>
+            <p className="section-subtitle">
+              Four hermetic stages that turn a mysterious intermittent failure into a verified cryptographic certificate of resolution.
+            </p>
+          </div>
+
+          <div className="pipeline-grid">
+            {PIPELINE_STAGES.map((ps) => (
+              <div key={ps.num} className="pipeline-card">
+                <div className="pipeline-num-badge">{ps.num}</div>
+                <span className="pipeline-phase">{ps.phase}</span>
+                <h3 className="pipeline-title">{ps.title}</h3>
+                <p className="pipeline-body">{ps.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Matrix */}
+      <section className="section-matrix" id="matrix">
+        <div className="modern-container">
+          <div className="section-head">
+            <span className="section-eyebrow">EMPIRICAL COMPARISON</span>
+            <h2 className="section-title">Standard CI Log Dumps vs. Breakpoint</h2>
+            <p className="section-subtitle">
+              Why blind retries and text log dumps fail to solve flaky tests, and how deterministic isolation solves them permanently.
+            </p>
+          </div>
+
+          <div className="matrix-table-wrap">
+            <table className="matrix-table">
+              <thead>
+                <tr>
+                  <th className="th-feature">DIAGNOSTIC CAPABILITY</th>
+                  <th className="th-legacy">CONVENTIONAL CI LOG DUMPS</th>
+                  <th className="th-bp">BREAKPOINT RUNTIME</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON_ROWS.map((row) => (
+                  <tr key={row.feature}>
+                    <td className="td-feature">{row.feature}</td>
+                    <td className="td-legacy">
+                      <span className="cross-icon">&#10005;</span> {row.legacy}
+                    </td>
+                    <td className="td-bp">
+                      <span className="check-icon">&#10003;</span> {row.breakpoint}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Engineering Manifesto Banner */}
+      <section className="section-manifesto">
+        <div className="modern-container">
+          <div className="manifesto-card">
+            <span className="manifesto-badge">ENGINEERING CORE PRINCIPLE</span>
+            <blockquote className="manifesto-quote">
+              &ldquo;A log dump is not evidence. A plausible hypothesis is not a root cause. No diagnosis should be promoted to fact without an isolated recorded run to prove it.&rdquo;
+            </blockquote>
+            <div className="manifesto-author">
+              <span className="author-name">Breakpoint Core Runtime Specification</span>
+              <span className="author-sub">Deterministic Systems Working Group &middot; Apache 2.0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Cockpit */}
+      <section className="section-cta">
+        <div className="modern-container">
+          <div className="cta-cockpit-box">
+            <div className="cta-mesh-glow" aria-hidden="true" />
+            <span className="cta-kicker">MISSION CONTROL</span>
+            <h2 className="cta-headline">Ready To Eliminate Flakiness Forever?</h2>
+            <p className="cta-body">
+              Connect your local repository, inspect order-dependent failures, and generate verified digital fix certificates right now. 100% local-first on your machine.
+            </p>
+
+            <div className="cta-buttons-row">
+              <Link href="/app" className="btn-hero-primary">
+                Open Workspace Studio &rarr;
+              </Link>
+              <Link href="/dashboard" className="btn-cta-secondary">
+                Inspect Sample Investigation
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <ModernFooter />
+    </div>
+  );
 }
