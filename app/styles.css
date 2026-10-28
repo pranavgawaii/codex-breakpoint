@@ -1148,11 +1148,11 @@ button {
 }
 
 .matrix-table-wrap {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(245, 242, 235, 0.08);
   border-radius: 16px;
   overflow: hidden;
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .matrix-table {
@@ -1167,8 +1167,8 @@ button {
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(245, 242, 235, 0.08);
+  background: var(--surface-elevated);
 }
 
 .th-feature { color: var(--ink-faint); width: 28%; }
@@ -1177,9 +1177,13 @@ button {
 
 .matrix-table td {
   padding: 18px 24px;
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid rgba(245, 242, 235, 0.04);
   font-size: 13px;
   line-height: 1.5;
+}
+
+.matrix-table tr:hover td {
+  background: var(--surface-hover);
 }
 
 .matrix-table tr:last-child td {
@@ -1188,7 +1192,7 @@ button {
 
 .td-feature {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--ink);
 }
 
 .td-legacy {
@@ -1196,8 +1200,8 @@ button {
 }
 
 .td-bp {
-  color: #e2e8f0;
-  background: rgba(0, 240, 255, 0.02);
+  color: var(--ink-secondary);
+  background: rgba(245, 158, 11, 0.03);
 }
 
 .check-icon {
