@@ -265,7 +265,15 @@ def scan_project(project_id: str | None = None, on_event=None) -> dict:
     data = read_store()
     bootstrap(data)
     if project_id:
-        active = next((item for item in data["investigations"] if item.get("projectId") == project_id), None) or current_investigation(data)
+        active = next((item for item in data["investigations"] if item.get("projectId") == project_id), None)
+        if active is None:
+            project_match = next((item for item in data.get("projects", []) if item.get("id") == project_id), None)
+            if project_match is not None:
+                start_investigation(project_id)
+                data = read_store()
+                active = next((item for item in data["investigations"] if item.get("projectId") == project_id), None)
+            else:
+                active = current_investigation(data)
     else:
         active = current_investigation(data)
     if active is None:

@@ -125,3 +125,21 @@ def test_demo_only_scopes_to_demo_investigation(isolated_store, node_sample):
     assert current["investigation"]["id"] == started["investigation"]["id"]
     assert len(current["runs"]) == 0
     _verify_project_clean(NODE_SAMPLE)
+
+
+def test_investigation_action_validation():
+    from fastapi.testclient import TestClient
+    from breakpoint.api import app
+
+    client = TestClient(app)
+    resp = client.post("/api/investigations", json={"action": "start-investigation"})
+    assert resp.status_code == 400
+    assert "projectId is required" in resp.json()["error"]
+
+    resp = client.post("/api/investigations", json={"action": "approve-patch"})
+    assert resp.status_code == 400
+    assert "patchId is required" in resp.json()["error"]
+
+    resp = client.post("/api/investigations", json={"action": "revert-patch"})
+    assert resp.status_code == 400
+    assert "patchId is required" in resp.json()["error"]

@@ -18,7 +18,7 @@ from .store import read_store, write_store
 
 FORBIDDEN_ROOTS = [
     "/", "/etc", "/usr", "/bin", "/sbin", "/var", "/System", "/Library",
-    "/private/etc", "/opt/homebrew", "/Applications", "/cores", "/dev",
+    "/private/etc", "/opt/homebrew", "/Applications", "/cores",
     "/boot", "/proc", "/sys", "/dev",
 ]
 MAX_ROOT_LENGTH = 512

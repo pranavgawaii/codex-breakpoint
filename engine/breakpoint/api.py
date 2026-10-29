@@ -104,18 +104,24 @@ async def investigation_action(request: Request) -> JSONResponse:
             )))
         if action == "scan-project":
             return JSONResponse(run_exclusive("scan-project", lambda: investigations.scan_project(project_id, on_event=events.publish)))
-        if action == "start-investigation" and project_id:
+        if action == "start-investigation":
+            if not project_id:
+                return JSONResponse({"error": "projectId is required for start-investigation."}, status_code=400)
             return JSONResponse(run_exclusive("start-investigation", lambda: investigations.start_investigation(project_id)))
         if action == "ai-review":
             return JSONResponse(run_exclusive("ai-review", lambda: investigations.run_ai_review(demo_only)))
         if action == "propose-patch":
             return JSONResponse(run_exclusive("propose-patch", lambda: investigations.propose_patch(demo_only)))
-        if action == "approve-patch" and patch_id:
+        if action == "approve-patch":
+            if not patch_id:
+                return JSONResponse({"error": "patchId is required for approve-patch."}, status_code=400)
             return JSONResponse(run_exclusive("approve-patch", lambda: investigations.approve_and_verify_patch(
                 patch_id, demo_only, on_event=events.publish,
                 on_line=lambda line: events.publish({"type": "run_line", "line": line}),
             )))
-        if action == "revert-patch" and patch_id:
+        if action == "revert-patch":
+            if not patch_id:
+                return JSONResponse({"error": "patchId is required for revert-patch."}, status_code=400)
             return JSONResponse(run_exclusive("revert-patch", lambda: investigations.revert_patch_action(patch_id, demo_only)))
         return JSONResponse({"error": "Unsupported investigation action."}, status_code=400)
     except Exception as error:
