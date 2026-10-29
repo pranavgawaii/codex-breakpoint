@@ -38,7 +38,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the overview or [http://localhost:3000/app](http://localhost:3000/app) to connect a project — the bundled trusted samples (`sample-project/` for Node, `python-sample-project/` for pytest), or any local directory you register. Then start an investigation and let the controlled workflow reproduce, compare and verify the failure.
+Open [http://localhost:3000](http://localhost:3000) for the overview or [http://localhost:3000/app](http://localhost:3000/app) to connect a project — the bundled trusted samples (`sample-project/` for Node, `python-sample-project/` for pytest), or any local directory you register. If the Python engine service is in standby or offline, the web UI automatically enables the interactive sandbox simulation mode, allowing full UI exploration without blocking onboarding.
 
 **No browser?** The engine is the product — use it headless:
 
@@ -474,7 +474,8 @@ Breakpoint runs test commands from the engine using `subprocess.Popen` via `engi
 - Optional OpenAI Responses API integration with verified evidence citation.
 - Multi-file, baseline-checked, approval-gated patch proposal, application, and reversion.
 - Post-fix rerun and verification recording against the exact recorded run spec.
-- Comprehensive UI workspace and forensic summary report.
+- Strict action parameter validation (`projectId` required for `start-investigation`, `patchId` required for `approve-patch` and `revert-patch`).
+- Comprehensive UI workspace with resilient offline simulation sandbox and forensic summary report.
 
 ### Current Limitations
 - **Subprocess Isolation**: Runs locally on the host; not containerized in Docker. Trust confirmation gates execution, but it is not a sandbox.

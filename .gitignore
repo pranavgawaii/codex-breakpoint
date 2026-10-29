@@ -8,6 +8,7 @@ node_modules
 # External design references; keep them out of the application repository.
 landing-kit/
 breakpoint-v2.html
+breakpoint-v2.pdf
 breakpoint-presentation.html
 
 # Python engine (engine/)
