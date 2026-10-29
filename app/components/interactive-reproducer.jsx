@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const SCENARIOS = [
   {
@@ -75,16 +75,25 @@ export function InteractiveReproducer() {
   const [activeTab, setActiveTab] = useState("trace"); // trace | diff | memory
   const [isRunning, setIsRunning] = useState(false);
   const [runProgress, setRunProgress] = useState(4);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const triggerReplay = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
     setIsRunning(true);
     setRunProgress(0);
     let current = 0;
-    const interval = setInterval(() => {
+    timerRef.current = setInterval(() => {
       current += 1;
       setRunProgress(current);
       if (current >= 4) {
-        clearInterval(interval);
+        clearInterval(timerRef.current);
+        timerRef.current = null;
         setIsRunning(false);
       }
     }, 380);
@@ -101,6 +110,11 @@ export function InteractiveReproducer() {
               type="button"
               className={`scenario-btn ${selectedScenario.id === sc.id ? "active" : ""}`}
               onClick={() => {
+                if (timerRef.current) {
+                  clearInterval(timerRef.current);
+                  timerRef.current = null;
+                  setIsRunning(false);
+                }
                 setSelectedScenario(sc);
                 setRunProgress(4);
               }}

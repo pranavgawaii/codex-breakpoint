@@ -74,6 +74,10 @@ export default function Summary() {
                 if (!cancelled) {
                     setData(SAMPLE_INVESTIGATION_SNAPSHOT);
                 }
+            }).catch(() => {
+                if (!cancelled) {
+                    setError("Unable to load investigation data.");
+                }
             });
         });
         return () => {
