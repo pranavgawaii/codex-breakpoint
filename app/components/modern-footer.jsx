@@ -67,7 +67,7 @@ export function ModernFooter() {
           <div className="footer-links-col">
             <span className="footer-col-title">ECOSYSTEM</span>
             <ul className="footer-link-list">
-              <li><a href="https://github.com/pranavgawaii/codex-breakpoint" target="_blank" rel="noreferrer">GitHub Repository</a></li>
+              <li><a href="https://github.com/pranavgawaii/codex-breakpoint" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
               <li><Link href="/investigations/inv_session_state/summary">Sample Audit Certificate</Link></li>
               <li><Link href="/dashboard">CI Failure Replay</Link></li>
               <li><a href="#top">Back to Top &uarr;</a></li>

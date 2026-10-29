@@ -71,6 +71,8 @@ export function ModernNav() {
             type="button"
             className="mobile-hamburger-btn mobile-only"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation-drawer"
             onClick={() => setMobileMenuOpen((v) => !v)}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -85,7 +87,7 @@ export function ModernNav() {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="mobile-drawer">
+        <div className="mobile-drawer" id="mobile-navigation-drawer" aria-label="Mobile Navigation">
           <a href="#reproducer" onClick={() => setMobileMenuOpen(false)}>Replay Engine</a>
           <a href="#failures" onClick={() => setMobileMenuOpen(false)}>Failure Modes</a>
           <a href="#architecture" onClick={() => setMobileMenuOpen(false)}>Architecture</a>
