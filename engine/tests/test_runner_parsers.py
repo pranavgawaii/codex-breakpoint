@@ -85,3 +85,11 @@ def test_make_unified_diff_hunks():
     diff = make_unified_diff(before, after, "file.txt")
     assert diff.startswith("--- a/file.txt\n+++ b/file.txt\n")
     assert "-b" in diff and "+B" in diff
+
+
+def test_parse_junitxml_single_root_testcase():
+    single = '<testcase name="standalone_probe" time="0.005"/>'
+    tests = parse_junitxml(single)
+    assert len(tests) == 1
+    assert tests[0]["name"] == "standalone_probe"
+    assert tests[0]["status"] == "passed"

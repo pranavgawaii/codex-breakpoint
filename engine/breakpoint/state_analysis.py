@@ -39,8 +39,6 @@ def strip_noise(text: str, keep_strings: bool = False) -> str:
             out.append("\n")
             if mode == "line":
                 mode = "code"
-            if mode == "template":
-                out.append("\n")
             index += 1
             continue
         if mode == "line":
@@ -66,7 +64,7 @@ def strip_noise(text: str, keep_strings: bool = False) -> str:
                 out.append("  ")
                 index += 1
             elif char == '"':
-                out.append('"')
+                out.append('"' if keep_strings else " ")
                 mode = "code"
             else:
                 out.append(char if keep_strings else " ")
@@ -92,7 +90,7 @@ def strip_noise(text: str, keep_strings: bool = False) -> str:
                 out.append("'" if keep_strings else " ")
                 mode = "single"
             elif char == '"':
-                out.append('"')
+                out.append("\"" if keep_strings else " ")
                 mode = "double"
             elif char == "`":
                 out.append("`" if keep_strings else " ")

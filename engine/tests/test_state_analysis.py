@@ -109,3 +109,16 @@ def test_analyze_project_scores_and_findings():
     assert target["testFile"] == "tests/test_ledger_flow.py"
     assert target["targetTest"] == "test_expected_total"
     assert target["predecessorTest"] == "test_charge_is_recorded"
+
+
+def test_strip_noise_template_strings_multiline_preserve():
+    raw = "const x = `hello\nworld\n!`;\nconst y = 2;\n"
+    cleaned = strip_noise(raw)
+    assert cleaned.count("\n") == raw.count("\n")
+
+
+def test_strip_noise_double_quotes_blanked():
+    raw = "const greeting = \"hello world\";\n"
+    cleaned = strip_noise(raw, keep_strings=False)
+    assert "\"" not in cleaned
+    assert cleaned.count("\n") == raw.count("\n")

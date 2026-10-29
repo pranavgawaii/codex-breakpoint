@@ -110,9 +110,8 @@ def parse_junitxml(text: str) -> list[dict]:
         return tag.rsplit("}", 1)[-1]
 
     results: list[dict] = []
-    containers = [root] if local_name(root.tag) == "testcase" else []
-    stack = list(root.iter())
-    for element in stack:
+    containers: list[ET.Element] = []
+    for element in root.iter():
         if local_name(element.tag) == "testcase":
             containers.append(element)
     for case in containers:
