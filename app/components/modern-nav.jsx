@@ -27,9 +27,9 @@ export function ModernNav() {
                 width="18"
                 height="18"
                 rx="4"
-                stroke="#F59E0B"
+                stroke="#38BDF8"
                 strokeWidth="2"
-                fill="rgba(245, 158, 11, 0.08)"
+                fill="rgba(56, 189, 248, 0.12)"
               />
               <path
                 d="M9 8L15 12L9 16"
