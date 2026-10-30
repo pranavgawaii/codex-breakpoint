@@ -34,7 +34,7 @@
   border-radius: 999px;
   filter: blur(100px);
   mix-blend-mode: screen;
-  opacity: 0.28;
+  opacity: 0.35;
 }
 
 .glow span:nth-child(1) {
@@ -47,13 +47,13 @@
   top: 60px;
   width: min(580px, 60%);
   transform: translateX(-50%);
-  background: var(--warning);
+  background: #6366f1;
   opacity: 0.18;
 }
 
 .glow span:nth-child(3) {
   right: -50px;
-  background: var(--accent-cyan);
+  background: #0284c7;
   opacity: 0.2;
 }
 
@@ -273,7 +273,7 @@
 }
 
 .status-dot.warning {
-  background: var(--warning);
+  background: #6366f1;
 }
 
 .status-dot.success {
