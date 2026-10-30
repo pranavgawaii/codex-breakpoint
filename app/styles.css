@@ -1819,3 +1819,23 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(56, 189, 248, 0.45);
 }
+
+
+/* Responsive layout adjustments for mobile viewports */
+@media (max-width: 768px) {
+  .cockpit-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .scenario-chips {
+    overflow-x: auto !important;
+    padding-bottom: 6px !important;
+  }
+
+  .btn-replay-trigger {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
