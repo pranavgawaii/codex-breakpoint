@@ -1644,3 +1644,34 @@ button {
   border-color: rgba(56, 189, 248, 0.3) !important;
   box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.08) !important;
 }
+
+
+.btn-modern-primary,
+.btn-primary {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-modern-primary:hover,
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 6px 24px rgba(56, 189, 248, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-secondary {
+  background: rgba(18, 26, 45, 0.8) !important;
+  border: 1px solid rgba(248, 250, 252, 0.12) !important;
+  color: var(--ink) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(30, 44, 74, 0.9) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  color: #ffffff !important;
+}
