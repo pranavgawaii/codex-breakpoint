@@ -1704,3 +1704,27 @@ button {
   color: #7dd3fc !important;
   border: 1px solid rgba(56, 189, 248, 0.25) !important;
 }
+
+
+.diff-view {
+  background: #090d16 !important;
+  border: 1px solid rgba(248, 250, 252, 0.12) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.diff-line--add {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-left: 3px solid #10b981 !important;
+}
+
+.diff-line--del {
+  background: rgba(244, 63, 94, 0.12) !important;
+  border-left: 3px solid #f43f5e !important;
+}
+
+.diff-line--hunk {
+  background: rgba(56, 189, 248, 0.08) !important;
+  color: #7dd3fc !important;
+  border-left: 3px solid #38bdf8 !important;
+}
