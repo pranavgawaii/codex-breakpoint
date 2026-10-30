@@ -1675,3 +1675,32 @@ button {
   border-color: rgba(56, 189, 248, 0.35) !important;
   color: #ffffff !important;
 }
+
+
+.status-pill--success,
+.badge-success {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.status-pill--warning,
+.badge-warning {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+.status-pill--danger,
+.badge-danger {
+  background: rgba(244, 63, 94, 0.12) !important;
+  color: #fb7185 !important;
+  border: 1px solid rgba(244, 63, 94, 0.3) !important;
+}
+
+.status-pill--neutral,
+.badge-neutral {
+  background: rgba(56, 189, 248, 0.1) !important;
+  color: #7dd3fc !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+}
