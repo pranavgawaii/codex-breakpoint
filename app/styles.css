@@ -1597,3 +1597,35 @@ button {
   outline: 2px solid #38bdf8;
   outline-offset: 2px;
 }
+
+
+.scenario-btn.active {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.15) !important;
+}
+
+.scenario-btn.active .scenario-dot {
+  background: #38bdf8 !important;
+  box-shadow: 0 0 8px #38bdf8 !important;
+}
+
+.scenario-btn:hover:not(.active) {
+  border-color: rgba(248, 250, 252, 0.2) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.btn-replay-trigger {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-replay-trigger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
