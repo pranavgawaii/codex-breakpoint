@@ -1744,3 +1744,38 @@ button {
   font-weight: 700 !important;
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
 }
+
+
+.comparison-table,
+.matrix-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+  border: 1px solid rgba(248, 250, 252, 0.1) !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+
+.comparison-table th,
+.matrix-table th {
+  background: rgba(18, 26, 45, 0.95) !important;
+  color: var(--ink-muted) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 12px 16px !important;
+  border-bottom: 1px solid rgba(248, 250, 252, 0.1) !important;
+}
+
+.comparison-table td,
+.matrix-table td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid rgba(248, 250, 252, 0.06) !important;
+  background: rgba(13, 19, 34, 0.6) !important;
+}
+
+.comparison-table tr:hover td,
+.matrix-table tr:hover td {
+  background: rgba(30, 44, 74, 0.5) !important;
+}
