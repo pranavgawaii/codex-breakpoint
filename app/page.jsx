@@ -187,7 +187,6 @@ export default function Home() {
       <section className="section-reproducer">
         <div className="modern-container">
           <div className="section-head text-center">
-            <span className="section-eyebrow">INTERACTIVE SANDBOX SIMULATOR</span>
             <h2 className="section-title">Experience Deterministic Failure Isolation</h2>
             <p className="section-subtitle">
               Choose a failure mode below and execute an isolated verification sequence in real-time. Watch the runner detect state pollution, calculate memory delta, and synthesize an approval-ready patch.
@@ -202,7 +201,6 @@ export default function Home() {
       <section className="section-failures" id="failures">
         <div className="modern-container">
           <div className="section-head">
-            <span className="section-eyebrow">DIAGNOSTIC CAPABILITIES</span>
             <h2 className="section-title">Failure Vectors Breakpoint Eliminates</h2>
             <p className="section-subtitle">
               Traditional testing suites assume tests are pure functions. Distributed applications leak state. Breakpoint captures the boundary between what was observed and what was dirty.
@@ -232,7 +230,6 @@ export default function Home() {
       <section className="section-architecture" id="architecture">
         <div className="modern-container">
           <div className="section-head text-center">
-            <span className="section-eyebrow">EXECUTION ARCHITECTURE</span>
             <h2 className="section-title">The Deterministic Replay Pipeline</h2>
             <p className="section-subtitle">
               Four hermetic stages that turn a mysterious intermittent failure into a verified cryptographic certificate of resolution.
@@ -256,7 +253,6 @@ export default function Home() {
       <section className="section-matrix" id="matrix">
         <div className="modern-container">
           <div className="section-head">
-            <span className="section-eyebrow">EMPIRICAL COMPARISON</span>
             <h2 className="section-title">Standard CI Log Dumps vs. Breakpoint</h2>
             <p className="section-subtitle">
               Why blind retries and text log dumps fail to solve flaky tests, and how deterministic isolation solves them permanently.
@@ -311,7 +307,6 @@ export default function Home() {
         <div className="modern-container">
           <div className="cta-cockpit-box">
             <div className="cta-mesh-glow" aria-hidden="true" />
-            <span className="cta-kicker">MISSION CONTROL</span>
             <h2 className="cta-headline">Ready To Eliminate Flakiness Forever?</h2>
             <p className="cta-body">
               Connect your local repository, inspect order-dependent failures, and generate verified digital fix certificates right now. 100% local-first on your machine.
