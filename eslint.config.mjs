@@ -13,5 +13,5 @@ export default defineConfig([
     files: ["**/*.{js,jsx,mjs,cjs}"],
     rules: { "no-undef": "error" },
   },
-  globalIgnores([".next/**", ".next-stale-*/**", "node_modules/**", ".breakpoint/**", ".breakpoint-e2e*/**"])
+  globalIgnores([".next/**", ".next-stale-*/**", "node_modules/**", ".breakpoint/**", ".breakpoint-e2e*/**", ".github/**"])
 ]);
