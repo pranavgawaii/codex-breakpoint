@@ -1629,3 +1629,18 @@ button {
   box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
   transform: translateY(-1px) !important;
 }
+
+
+.metric-card,
+.stat-card,
+.feature-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.metric-card:hover,
+.stat-card:hover,
+.feature-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.08) !important;
+}
