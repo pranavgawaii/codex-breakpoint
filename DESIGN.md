@@ -1,19 +1,32 @@
-# Breakpoint landing-page design notes
+# Breakpoint Design System Specification
 
-## Reference inspected
+## Visual Architecture
 
-- Local reference: an editorial developer-tool landing page referenced during the build
-- Inspected: its landing-page composition, navigation, hero, global stylesheet, Tailwind tokens, and product-window component.
+Breakpoint uses a modern dark theme inspired by high-precision observability runtimes and telemetry cockpits.
 
-## Observed visual system
+### Color Tokens
 
-- Canvas: warm off-white `#F7F7F5`; ink `#0A0A0F`; muted text `#5E6472`; borders `#E5E5E5`.
-- Accent: indigo `#4F46E5`, used sparingly for emphasis and interaction states.
-- Typography: Outfit for interface/display copy, an editorial serif italic for one hero word, and system mono for technical labels.
-- Frame: centered, approximately 1200px max width, generous horizontal padding, large whitespace between content regions.
-- Surfaces: white or translucent white panels, 1px hairlines, small shadows, 8–24px corner radii.
-- Composition: a fixed minimal navigation, split hero, large embedded product window, then compact editorial sections and a final CTA.
+- **Canvas & Backgrounds**:
+  - Base canvas: `#090D16` (Deep Obsidian Sapphire)
+  - Subtle background: `#0D1322`
+  - Surfaces: `#121A2D` (Primary panel surface)
+  - Elevated surfaces: `#18233C`
+  - Surface glass: `rgba(18, 26, 45, 0.85)` with blur filter
 
-## Breakpoint adaptation
+- **Ink & Typography**:
+  - Primary ink: `#F8FAFC` (Slate 50)
+  - Secondary ink: `#CBD5E1` (Slate 300)
+  - Muted ink: `#94A3B8` (Slate 400)
+  - Faint ink: `#64748B` (Slate 500)
 
-Breakpoint uses the observed canvas, typography cadence, border treatment, and calm, technical composition. Its copy, information architecture, demo console, findings, and debugging workflow are original to Breakpoint. The product visual is an illustrative fixture and states this plainly.
+- **Accents & Signals**:
+  - Primary accent: `#38BDF8` (Electric Cobalt / Sky 400)
+  - Accent secondary: `#0EA5E9` (Sky 500)
+  - Success signal: `#10B981` (Emerald 500)
+  - Warning signal: `#F59E0B` (Amber 500)
+  - Danger signal: `#F43F5E` (Rose 500)
+
+### Accessibility & Navigation
+
+- **Skip to Content Link**: An accessible skip link (`.skip-link`) is embedded at the top of all workflow pages. It remains off-screen by default and smoothly reveals itself on keyboard tab focus (`:focus-visible`), ensuring screen reader accessibility without disrupting visual hierarchy.
+- **Micro-Interactions**: Metric cards feature GPU-accelerated elevation transforms (`translateY(-2px)`) and luminous border hover glows.
