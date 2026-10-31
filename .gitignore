@@ -19,3 +19,4 @@ engine/*.egg-info
 __pycache__/
 *.pyc
 .pytest_cache/
+.github/skills/impeccable/scripts/bin/
