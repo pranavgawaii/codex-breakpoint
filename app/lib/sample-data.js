@@ -199,3 +199,16 @@ export const SAMPLE_INVESTIGATION_SNAPSHOT = {
     }
   ]
 };
+
+
+export const BUNDLED_SAMPLE_PROJECTS = [
+  SAMPLE_INVESTIGATION_SNAPSHOT.project,
+  {
+    id: "proj_sample_python",
+    name: "Python Ledger Order-Dependence Demo",
+    framework: "pytest",
+    trusted: true,
+    root: "./python-sample-project",
+    testFiles: ["tests/test_ledger_flow.py"]
+  }
+];

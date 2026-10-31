@@ -195,7 +195,7 @@ export default function Onboarding() {
           <section className="project-section" aria-labelledby="projects-heading">
             <div className="section-rule">
               <h2 id="projects-heading">Select a workspace</h2>
-              <span>01 projects available</span>
+              <span>{String(Math.max(1, projects.length)).padStart(2, "0")} projects available</span>
             </div>
 
             <div className="project-grid">

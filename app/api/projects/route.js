@@ -8,8 +8,14 @@ export const dynamic = "force-dynamic";
  * Lists registered projects (engine-owned).
  * @returns {Promise<NextResponse>}
  */
+import { BUNDLED_SAMPLE_PROJECTS } from "../../lib/sample-data";
+
 export async function GET() {
-  return proxyToEngine("/api/projects", { method: "GET" }, "Unable to list projects.");
+  const response = await proxyToEngine("/api/projects", { method: "GET" }, "Unable to list projects.");
+  if (response.status === 502) {
+    return NextResponse.json({ projects: BUNDLED_SAMPLE_PROJECTS, offline: true });
+  }
+  return response;
 }
 
 /**
