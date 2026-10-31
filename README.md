@@ -477,6 +477,16 @@ Breakpoint runs test commands from the engine using `subprocess.Popen` via `engi
 - Strict action parameter validation (`projectId` required for `start-investigation`, `patchId` required for `approve-patch` and `revert-patch`).
 - Comprehensive UI workspace with resilient offline simulation sandbox and forensic summary report.
 
+### Impeccable Design Quality & Interface Auditing
+
+Breakpoint integrates the **Impeccable** design director and UI audit suite located in `.github/skills/impeccable/`:
+- **Automated Anti-Pattern Detection**: Scans UI surfaces, CSS tokens, and live DOM rendering for WCAG AA contrast compliance, minimum 11px functional typography, line length balance (`text-wrap: pretty`), and AI-generated design slop tells (e.g. side-tab borders, artificial glow halos).
+- **Live Auditing**: Inspects running development servers via:
+  ```bash
+  .github/skills/impeccable/scripts/impeccable detect http://localhost:3000
+  ```
+- **Resilient Offline Architecture**: If the backend engine daemon is in standby, the Next.js client seamlessly presents bundled sample projects (`sample-project/` and `python-sample-project/`) with an interactive simulation sandbox so onboarding and telemetry review remain fully operational.
+
 ### Current Limitations
 - **Subprocess Isolation**: Runs locally on the host; not containerized in Docker. Trust confirmation gates execution, but it is not a sandbox.
 - **Go / Rust suites**: `go test` and `cargo test` adapters are planned; the engine's adapter model accepts any argv + parser pair.
