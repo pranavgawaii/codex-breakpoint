@@ -19,7 +19,7 @@ IGNORE_DIRS = {
     "target", "vendor", "__pycache__", ".venv", "venv", ".tox", ".mypy_cache",
     ".pytest_cache", ".ruff_cache", "site-packages", ".breakpoint",
 }
-IGNORE_FILES = {"package-lock.json", "pnpm-lock.yaml"}
+IGNORE_FILES = {"package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb"}
 MAX_FILES = 400
 MAX_TEST_FILES = 32
 
@@ -133,7 +133,10 @@ def detect_framework(root: str, pkg: dict) -> RunningFramework:
         or "pytest" in python_dependency_text
         or "pytest" in requirements_text
         or "pytest" in json.dumps(pyproject.get("tool", {}))
-        or (Path(root) / "tox.ini").exists() and "pytest" in (Path(root) / "tox.ini").read_text(encoding="utf-8")
+        or (
+            (Path(root) / "tox.ini").is_file()
+            and (lambda p: ("pytest" in p.read_text(encoding="utf-8", errors="ignore")) if p.exists() else False)(Path(root) / "tox.ini")
+        )
     )
     if pytest_markers:
         return "pytest"

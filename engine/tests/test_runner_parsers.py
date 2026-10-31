@@ -93,3 +93,16 @@ def test_parse_junitxml_single_root_testcase():
     assert len(tests) == 1
     assert tests[0]["name"] == "standalone_probe"
     assert tests[0]["status"] == "passed"
+
+
+def test_discover_files_ignores_lockfiles(tmp_path):
+    from breakpoint.discovery import discover_files
+    (tmp_path / "yarn.lock").write_text("yarn lock content", encoding="utf-8")
+    (tmp_path / "bun.lockb").write_text("bun lock content", encoding="utf-8")
+    (tmp_path / "package-lock.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "test_sample.py").write_text("def test_ok(): pass", encoding="utf-8")
+    result = discover_files(str(tmp_path))
+    assert "test_sample.py" in result["testFiles"]
+    assert "yarn.lock" not in result["files"]
+    assert "bun.lockb" not in result["files"]
+    assert "package-lock.json" not in result["files"]
