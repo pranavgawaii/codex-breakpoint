@@ -26,3 +26,10 @@ def test_cli_scan():
     result = runner.invoke(app, ["scan"])
     assert result.exit_code == 0
     assert "static finding" in result.stdout.lower() or "analysis" in result.stdout.lower() or "finding" in result.stdout.lower()
+
+
+def test_cli_workflow_dry_run():
+    result = runner.invoke(app, ["workflow", "--dry-run"])
+    assert result.exit_code == 0
+    assert "dry run execution plan" in result.stdout.lower()
+    assert "static shared-state" in result.stdout.lower()
