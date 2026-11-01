@@ -15,6 +15,26 @@ export function ModernNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <header className={`modern-nav-wrapper ${scrolled ? "is-scrolled" : ""}`}>
       <nav className="modern-nav-island" aria-label="Main Navigation">
