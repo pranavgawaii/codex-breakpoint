@@ -4188,3 +4188,25 @@
     width: 100%;
   }
 }
+
+/* Print Optimization for Investigation Audit Trail */
+@media print {
+  .skip-link,
+  .product-header,
+  .workspace-back,
+  .report-head-meta button,
+  .btn,
+  .ambient-background-glow {
+    display: none !important;
+  }
+  body, .product-shell, .report-page, .report-sheet {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .report-section {
+    page-break-inside: avoid;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+}

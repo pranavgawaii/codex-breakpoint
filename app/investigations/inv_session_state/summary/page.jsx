@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, ClockIcon, FileIcon, FolderIcon, InfoIcon, PlayIcon, ShieldCheckIcon, SparkIcon, TerminalIcon } from "../../../components/icons";
 import { ProductHeader, StatusPill } from "../../../components/product-chrome";
 import { DiffView } from "../../../components/diff-view";
+
 function lastItem(items) {
     return items.length ? items[items.length - 1] : undefined;
 }
@@ -52,6 +53,8 @@ function runnerLabel(framework) {
 export default function Summary() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
+    const [copiedSummary, setCopiedSummary] = useState(false);
+
     useEffect(() => {
         let cancelled = false;
         fetch("/api/investigations")
@@ -84,6 +87,7 @@ export default function Summary() {
             cancelled = true;
         };
     }, []);
+
     const hypothesis = lastItem(data?.hypotheses ?? []);
     const comparison = lastItem(data?.comparisons ?? []);
     const patch = [...(data?.patches ?? [])].reverse().find((item) => item.status === "applied") ??
@@ -94,6 +98,38 @@ export default function Summary() {
     const unknown = [...(data?.evidence ?? [])].reverse().find((item) => !item.observed);
     const observed = (data?.evidence ?? []).filter((item) => item.observed).length;
     const unknownCount = (data?.evidence ?? []).length - observed;
+
+    const handleCopySummary = async () => {
+        if (!data) return;
+        const text = [
+            `Breakpoint Investigation Audit Certificate`,
+            `=========================================`,
+            `ID: ${data.investigation.id}`,
+            `Status: ${investigationLabel(data.investigation.status)}`,
+            `Title: ${data.investigation.title}`,
+            `Goal: ${data.investigation.goal}`,
+            `Target: ${target ? `${target.testFile} (${target.reasoning})` : "None"}`,
+            `Runs: ${data.runs.length} | Evidence: ${data.evidence.length} (${observed} observed, ${unknownCount} unknown)`,
+            `Hypothesis: ${hypothesis ? `${hypothesis.confidence} — ${hypothesis.description}` : "None"}`,
+            `Verification: ${verification ? `${verification.result} — ${verification.notes}` : "Not verified"}`,
+            `Timestamp: ${data.investigation.updatedAt}`
+        ].join("\n");
+
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedSummary(true);
+            setTimeout(() => setCopiedSummary(false), 2000);
+        } catch {
+            // Clipboard fallback
+        }
+    };
+
+    const handlePrint = () => {
+        if (typeof window !== "undefined") {
+            window.print();
+        }
+    };
+
     return (<div className="product-shell">
       <a className="skip-link" href="#main">
         Skip to content
@@ -126,7 +162,27 @@ export default function Summary() {
             </div>
 
             <div className="report-head-meta">
-              <StatusPill label={investigationLabel(data?.investigation.status)} tone={investigationTone(data?.investigation.status)}/>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                <StatusPill label={investigationLabel(data?.investigation.status)} tone={investigationTone(data?.investigation.status)}/>
+                <button
+                  type="button"
+                  onClick={handleCopySummary}
+                  className="btn btn-secondary"
+                  style={{ padding: "4px 10px", fontSize: "11px", fontFamily: "var(--mono)" }}
+                  aria-label="Copy audit summary to clipboard"
+                >
+                  {copiedSummary ? "Summary Copied" : "Copy Audit Summary"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="btn btn-secondary"
+                  style={{ padding: "4px 10px", fontSize: "11px", fontFamily: "var(--mono)" }}
+                  aria-label="Print or export investigation audit certificate"
+                >
+                  Print Certificate
+                </button>
+              </div>
               <span className="report-generated">
                 <ClockIcon />
                 Generated {formatRecorded(data?.investigation.updatedAt)}
@@ -248,95 +304,86 @@ export default function Summary() {
                       </div>
                       <DiffView patch={patch} compact/>
                     </>) : (<p className="report-muted">
-                      A fix remains review-only until a draft is proposed and explicitly approved.
+                      A fix proposal is drafted from the recorded evidence once a failing sequence
+                      and hypothesis exist.
                     </p>)}
                 </div>
               </section>
 
-              <section className="report-section report-section--last">
+              <section className="report-section">
                 <span className="report-number">05</span>
                 <div className="report-section-body">
-                  <span className="panel-eyebrow">Verification outcome</span>
-                  <div className={`report-verification report-verification--${verification?.result ?? "none"}`.trim()}>
-                    <span className="report-verification-icon" aria-hidden="true">
-                      {verification?.result === "verified" ? <ShieldCheckIcon /> : <InfoIcon />}
-                    </span>
-                    <div>
-                      <h2>{verification ? reportLabel(verification.result) : "No verification recorded."}</h2>
-                      <p>
-                        {verification
+                  <span className="panel-eyebrow">Verification</span>
+                  <h2>{verification ? reportLabel(verification.result) : "Not verified"}</h2>
+                  <p>
+                    {verification
             ? verification.notes
-            : "Approval and verification are separate steps. This report does not claim a fix works until a rerun records the result."}
-                      </p>
-                    </div>
-                  </div>
-                  {verification ? (<>
-                      {patch?.status === "draft" ? (<p className="report-muted">
-                          This is the latest recorded result. The current draft patch has not been
-                          approved or verified yet.
-                        </p>) : null}
-                      <dl className="report-verification-meta">
-                        <div>
-                          <dt>Verification</dt>
-                          <dd><code>{verification.id}</code></dd>
-                        </div>
-                        <div>
-                          <dt>Recorded run</dt>
-                          <dd><code>{verification.runId}</code></dd>
-                        </div>
-                      </dl>
-                    </>) : null}
+            : "Verification reruns the failing probe against the patched files."}
+                  </p>
+                </div>
+              </section>
+
+              <section className="report-section report-section--last">
+                <span className="report-number">06</span>
+                <div className="report-section-body">
+                  <span className="panel-eyebrow">Unknowns left unaddressed</span>
+                  <h2>What the evidence does not prove.</h2>
+                  {unknown ? (<p className="report-warning">
+                      {unknown.claim} Breakpoint records what failed; it does not claim to have
+                      eliminated all unobserved risks.
+                    </p>) : (<p className="report-muted">
+                      Every statement in this report is linked to an observed command execution.
+                    </p>)}
                 </div>
               </section>
             </article>
 
-            <aside className="report-rail" aria-label="Report context">
-              <section className="rail-card rail-card--brief">
-                <div className="rail-head">
-                  <span className="panel-eyebrow">Still unknown</span>
-                  <span className="rail-count">{formatNumber(unknownCount)}</span>
-                </div>
-                <p className="rail-body">
-                  {unknown?.statement ??
-            "Every recorded finding is currently observed. No unknown state has been recorded."}
+            <aside className="report-rail">
+              <section className="rail-panel">
+                <span className="panel-eyebrow">Audit details</span>
+                <dl className="report-dl">
+                  <div>
+                    <dt>Investigation ID</dt>
+                    <dd>{data?.investigation.id ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt>Project</dt>
+                    <dd>{data?.project?.name ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt>Framework</dt>
+                    <dd>{runnerLabel(data?.project?.framework)}</dd>
+                  </div>
+                  <div>
+                    <dt>Target test</dt>
+                    <dd>{target?.testFile ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt>Predecessor</dt>
+                    <dd>{target?.predecessorTest ?? "None"}</dd>
+                  </div>
+                  <div>
+                    <dt>Patch applied</dt>
+                    <dd>{patch?.id ?? "None"}</dd>
+                  </div>
+                  <div>
+                    <dt>Verification result</dt>
+                    <dd>{verification?.result ?? "None"}</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <section className="rail-panel">
+                <span className="panel-eyebrow">Safety boundary</span>
+                <p className="report-rail-note">
+                  <ShieldCheckIcon />
+                  All runs executed inside the project root with capped duration and capped output.
                 </p>
-                <span className="rail-caption">Kept visible on purpose</span>
               </section>
 
-              <section className="rail-card">
-                <div className="rail-head">
-                  <span className="panel-eyebrow">Report record</span>
-                </div>
-                <ul className="report-record">
-                  <li>
-                    <span>Investigation</span>
-                    <code>{data?.investigation.id ?? "—"}</code>
-                  </li>
-                  <li>
-                    <span>Project</span>
-                    <code>{data?.project?.name ?? "—"}</code>
-                  </li>
-                  <li>
-                    <span>Runner</span>
-                    <code>{data ? runnerLabel(data?.project?.framework) : "—"}</code>
-                  </li>
-                  <li>
-                    <span>Mode</span>
-                    <code>local only</code>
-                  </li>
-                  <li>
-                    <span>Updated</span>
-                    <code>{formatRecorded(data?.investigation.updatedAt)}</code>
-                  </li>
-                </ul>
-              </section>
-
-              <section className="rail-card">
-                <div className="rail-head">
-                  <span className="panel-eyebrow">Next step</span>
-                  <SparkIcon />
-                </div>
-                <p className="rail-body">
+              <section className="rail-panel">
+                <span className="panel-eyebrow">Next steps</span>
+                <p className="report-rail-copy">
                   Return to the workspace to inspect the full run history, open any evidence record, or
                   start another controlled investigation.
                 </p>
