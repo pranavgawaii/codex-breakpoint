@@ -17,7 +17,7 @@ from pathlib import Path
 STORE_FILE = "investigations.json"
 MAX_STORE_BYTES = 20 * 1024 * 1024
 
-_lock = threading.Lock()
+_lock = threading.RLock()
 _directory_cache: str | None = None
 
 
@@ -155,20 +155,21 @@ def normalize_store(raw: object) -> dict:
 
 def read_store() -> dict:
     """Loads and normalizes the store; an absent file yields an empty store."""
-    file = data_file_path()
-    try:
-        raw_text = file.read_text(encoding="utf-8")
-    except FileNotFoundError:
-        return empty_store()
-    if len(raw_text) > MAX_STORE_BYTES:
-        raise RuntimeError("The local investigation store is unexpectedly large. Reset the store before continuing.")
-    try:
-        parsed = json.loads(raw_text)
-    except json.JSONDecodeError as error:
-        raise RuntimeError(f"The local investigation store is not valid JSON: {error}") from error
-    if not isinstance(parsed, dict):
-        raise RuntimeError("The local investigation store is not a JSON object.")
-    return normalize_store(parsed)
+    with _lock:
+        file = data_file_path()
+        try:
+            raw_text = file.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return empty_store()
+        if len(raw_text) > MAX_STORE_BYTES:
+            raise RuntimeError("The local investigation store is unexpectedly large. Reset the store before continuing.")
+        try:
+            parsed = json.loads(raw_text)
+        except json.JSONDecodeError as error:
+            raise RuntimeError(f"The local investigation store is not valid JSON: {error}") from error
+        if not isinstance(parsed, dict):
+            raise RuntimeError("The local investigation store is not a JSON object.")
+        return normalize_store(parsed)
 
 
 def write_store(data: dict) -> None:
@@ -177,7 +178,15 @@ def write_store(data: dict) -> None:
     file = directory / STORE_FILE
     temporary = directory / f"{STORE_FILE}.{os.getpid()}.{uuid.uuid4().hex}.tmp"
     text = json.dumps(data, indent=2)
-    descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
-        handle.write(text)
-    os.replace(temporary, file)
+    with _lock:
+        try:
+            descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+            with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                handle.write(text)
+            os.replace(temporary, file)
+        finally:
+            if temporary.exists():
+                try:
+                    temporary.unlink()
+                except OSError:
+                    pass
