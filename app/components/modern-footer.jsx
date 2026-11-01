@@ -4,14 +4,14 @@ export function ModernFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="modern-footer-root">
+    <footer className="modern-footer-root" role="contentinfo" aria-label="Breakpoint Footer">
       <div className="footer-top-rule" />
       <div className="modern-footer-container">
         <div className="footer-main-grid">
           {/* Brand Info */}
           <div className="footer-brand-col">
             <div className="footer-logo">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect
                   x="3"
                   y="3"
@@ -38,7 +38,7 @@ export function ModernFooter() {
             </p>
 
             <div className="footer-status-pill">
-              <span className="status-pulse-green" />
+              <span className="status-pulse-green" aria-hidden="true" />
               <span className="status-label">ALL RUNNERS OPERATIONAL · v2.4.2</span>
             </div>
           </div>
@@ -67,10 +67,10 @@ export function ModernFooter() {
           <div className="footer-links-col">
             <span className="footer-col-title">ECOSYSTEM</span>
             <ul className="footer-link-list">
-              <li><a href="https://github.com/pranavgawaii/codex-breakpoint" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+              <li><a href="https://github.com/pranavgawaii/codex-breakpoint" target="_blank" rel="noopener noreferrer" aria-label="Breakpoint repository on GitHub (opens in new tab)">GitHub Repository</a></li>
               <li><Link href="/investigations/inv_session_state/summary">Sample Audit Certificate</Link></li>
-              <li><Link href="/dashboard">CI Failure Replay</Link></li>
-              <li><a href="#top">Back to Top &uarr;</a></li>
+              <li><Link href="/api/projects">Projects API Endpoint</Link></li>
+              <li><a href="#top" aria-label="Scroll back to top of page">Back to Top &uarr;</a></li>
             </ul>
           </div>
         </div>
