@@ -51,6 +51,7 @@ export default function Onboarding() {
   const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [projectsLoaded, setProjectsLoaded] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   const [root, setRoot] = useState("");
   const [trusted, setTrusted] = useState(false);
   const [stage, setStage] = useState("idle"); // idle | registering | registered | starting
@@ -63,7 +64,10 @@ export default function Onboarding() {
     fetch("/api/projects")
       .then((response) => response.json())
       .then((result) => {
-        if (!cancelled && Array.isArray(result.projects)) setProjects(result.projects);
+        if (!cancelled) {
+          if (Array.isArray(result.projects)) setProjects(result.projects);
+          if (result.offline) setIsOffline(true);
+        }
       })
       .catch(() => {})
       .finally(() => {
@@ -265,6 +269,24 @@ export default function Onboarding() {
                     the browser.
                   </p>
 
+                  {isOffline ? (
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      background: "rgba(245, 158, 11, 0.1)",
+                      border: "1px solid rgba(245, 158, 11, 0.25)",
+                      marginBottom: "16px",
+                      color: "#fbbf24",
+                      fontSize: "11.5px",
+                      fontFamily: "var(--mono)"
+                    }}>
+                      <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#fbbf24" }} />
+                      <span>Engine offline · Running in local simulation mode (breakpoint serve to connect)</span>
+                    </div>
+                  ) : null}
                   <form className="config-form connect-form" onSubmit={connectProject}>
                     <label className="form-field">
                       <div className="form-field-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "6px" }}>
