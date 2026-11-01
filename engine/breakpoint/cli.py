@@ -11,7 +11,7 @@ from pathlib import Path
 
 import typer
 
-from . import investigations
+from . import __version__, investigations
 from .errors import AppError
 
 app = typer.Typer(
@@ -51,6 +51,35 @@ def _print_snapshot(snapshot: dict, heading: str) -> None:
     verification = snapshot["verifications"][-1] if snapshot["verifications"] else None
     if verification:
         typer.secho(f"  verification: {verification['result']} — {verification['notes']}", fg=typer.colors.GREEN if verification["result"] == "verified" else typer.colors.RED)
+
+
+@app.command()
+def version() -> None:
+    """Prints the Breakpoint engine version."""
+    typer.echo(f"breakpoint engine v{__version__}")
+
+
+@app.command("projects")
+def list_projects() -> None:
+    """Lists registered projects in the engine store."""
+    from .projects import list_projects_action
+
+    try:
+        projects = list_projects_action()
+    except Exception as error:
+        _fail(error)
+
+    if not projects:
+        typer.echo("No registered projects found.")
+        return
+
+    typer.secho(f"registered projects ({len(projects)}):", fg=typer.colors.CYAN)
+    for p in projects:
+        trusted_status = typer.style("trusted", fg=typer.colors.GREEN) if p.get("trusted") else typer.style("untrusted", fg=typer.colors.YELLOW)
+        framework = p.get("framework", "unknown")
+        test_count = len(p.get("testFiles", []))
+        typer.echo(f"  • {p['id']}: {p['name']} [{framework}, {trusted_status}, {test_count} test files]")
+        typer.echo(f"    root: {p['root']}")
 
 
 @app.command()
