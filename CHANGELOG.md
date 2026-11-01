@@ -4,6 +4,21 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-11-02
+
+### Added
+- **Engine Health Endpoint & Latency Tracking**: Added `/api/health` Next.js route providing engine connectivity verification, mode tracking (`online` vs `simulation`), and latency instrumentation.
+- **Dynamic Kernel Status in Navigation**: Integrated live engine health status into `ModernNav` header with color-coded status badges.
+- **CLI Workflow Dry-Run**: Implemented `--dry-run` flag in `breakpoint workflow` to preview the resolved execution plan without spawning child runner processes.
+- **CLI Dry-Run Test Coverage**: Added automated unit test in `test_cli.py` verifying `--dry-run` output formatting.
+- **JSON Investigation Snapshot Export**: Added one-click "Export JSON" action in the investigation summary audit view to download raw state snapshots.
+- **Keyboard Shortcuts Helper Modal**: Added global `HotkeyGuide` component (`?` trigger) with modal dialog documenting navigation and execution hotkeys.
+- **Memory Isolation Model Specification**: Added comprehensive architecture documentation in `docs/ISOLATION_MODEL.md` specifying the 4-phase isolation lifecycle.
+
+### Changed
+- **High-Contrast Focus Indicators**: Enforced WCAG 2.1 AAA compliant focus rings (`:focus-visible`) across all interactive buttons, tabs, and input elements.
+- **CI Workflow Optimization**: Streamlined `.github/workflows/ci.yml` steps to execute root `npm test` and verbose pytest checks.
+
 ## [2.4.2] - 2026-11-01
 
 ### Added
