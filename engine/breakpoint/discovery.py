@@ -17,9 +17,12 @@ from .errors import ValidationError
 IGNORE_DIRS = {
     "node_modules", ".git", ".next", "dist", "build", "coverage", ".cache",
     "target", "vendor", "__pycache__", ".venv", "venv", ".tox", ".mypy_cache",
-    ".pytest_cache", ".ruff_cache", "site-packages", ".breakpoint",
+    ".pytest_cache", ".ruff_cache", "site-packages", ".breakpoint", ".turbo",
 }
-IGNORE_FILES = {"package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb"}
+IGNORE_FILES = {
+    "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb",
+    "poetry.lock", "Pipfile.lock",
+}
 MAX_FILES = 400
 MAX_TEST_FILES = 32
 
@@ -147,7 +150,10 @@ def detect_framework(root: str, pkg: dict) -> RunningFramework:
         entries = set()
     configs = [
         name for name in entries
-        if re.match(r"^jest\.config\.", name) or re.match(r"^vitest\.config\.", name) or re.match(r"^vite\.config\.", name)
+        if re.match(r"^jest\.config\.", name)
+        or re.match(r"^vitest\.config\.", name)
+        or re.match(r"^vitest\.workspace\.", name)
+        or re.match(r"^vite\.config\.", name)
     ]
     if any(name.startswith("vitest") for name in configs) or re.search(r"(vitest|@vitest)", f"{dependency_text} {script_text}"):
         return "vitest"
