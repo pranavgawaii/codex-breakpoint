@@ -122,3 +122,10 @@ def test_strip_noise_double_quotes_blanked():
     cleaned = strip_noise(raw, keep_strings=False)
     assert "\"" not in cleaned
     assert cleaned.count("\n") == raw.count("\n")
+
+
+def test_choose_target_handles_empty_or_malformed_inputs():
+    assert choose_target({}, {}, []) is None
+    fallback = choose_target({"scores": {}}, {}, ["tests/fallback.py"])
+    assert fallback["testFile"] == "tests/fallback.py"
+    assert fallback["targetTest"] is None

@@ -233,7 +233,7 @@ def _py_scan_module_state(rel: str, raw: str) -> dict:
     """
     try:
         tree = ast.parse(raw)
-    except SyntaxError:
+    except (SyntaxError, ValueError, RecursionError):
         return {"rel": rel, "mutableVars": [], "functions": [], "resetCandidates": []}
 
     raw_lines = raw.split("\n")
@@ -341,7 +341,7 @@ def audit_imports(file: str, raw: str, resolver) -> list[dict]:
     if file.endswith(".py"):
         try:
             tree = ast.parse(raw)
-        except SyntaxError:
+        except (SyntaxError, ValueError, RecursionError):
             return audits
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom):
@@ -603,11 +603,14 @@ def analyze_project(file_texts: dict[str, str], test_files: list[str], source_fi
 
 def choose_target(analysis: dict, file_texts: dict[str, str], fallback_test_files: list[str]) -> dict | None:
     """Chooses the investigation target from suspicion ranking."""
-    ranked = sorted(analysis["scores"].items(), key=lambda item: item[1], reverse=True)
+    scores = (analysis or {}).get("scores") or {}
+    ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+    fallback_test_files = fallback_test_files or []
     test_file = ranked[0][0] if ranked else (fallback_test_files[0] if fallback_test_files else None)
     if not test_file:
         return None
 
+    file_texts = file_texts or {}
     names = ordered_test_names(file_texts.get(test_file, ""))
     if not names:
         return {
