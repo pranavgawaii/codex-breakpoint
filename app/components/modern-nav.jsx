@@ -6,6 +6,22 @@ import { useState, useEffect } from "react";
 export function ModernNav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [engineStatus, setEngineStatus] = useState("checking"); // checking | online | offline
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/health")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) {
+          setEngineStatus(data.engine === "online" ? "online" : "offline");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setEngineStatus("offline");
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,9 +91,18 @@ export function ModernNav() {
         </div>
 
         <div className="modern-actions">
-          <div className="system-status-indicator desktop-only">
-            <span className="status-ping" aria-hidden="true" />
-            <span className="status-text">KERNEL ONLINE</span>
+          <div className="system-status-indicator desktop-only" title={`Kernel mode: ${engineStatus}`}>
+            <span
+              className="status-ping"
+              aria-hidden="true"
+              style={{
+                background: engineStatus === "online" ? "#10b981" : engineStatus === "offline" ? "#f59e0b" : "#38bdf8",
+                boxShadow: engineStatus === "online" ? "0 0 10px #10b981" : "0 0 10px rgba(245, 158, 11, 0.5)",
+              }}
+            />
+            <span className="status-text">
+              {engineStatus === "online" ? "KERNEL ONLINE" : engineStatus === "offline" ? "SIMULATION MODE" : "KERNEL INITIALIZING"}
+            </span>
           </div>
 
           <Link href="/app" className="btn-modern-primary">
