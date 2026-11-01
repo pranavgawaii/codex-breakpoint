@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
 import { proxyToEngine } from "../engine-client";
+import { SAMPLE_INVESTIGATION_SNAPSHOT } from "../../lib/sample-data";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
  * Returns the active investigation snapshot (engine-owned).
+ * If the engine is offline, returns the bundled sample snapshot with offline flag.
  * @returns {Promise<NextResponse>}
  */
 export async function GET() {
-  return proxyToEngine("/api/investigations", { method: "GET" }, "Unable to load the investigation.");
+  const response = await proxyToEngine("/api/investigations", { method: "GET" }, "Unable to load the investigation.");
+  if (response.status === 502) {
+    return NextResponse.json({ ...SAMPLE_INVESTIGATION_SNAPSHOT, offline: true });
+  }
+  return response;
 }
 
 /**

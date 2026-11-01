@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { proxyToEngine } from "../engine-client";
+import { BUNDLED_SAMPLE_PROJECTS } from "../../lib/sample-data";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
  * Lists registered projects (engine-owned).
+ * Falls back to bundled sample projects when engine is offline.
  * @returns {Promise<NextResponse>}
  */
-import { BUNDLED_SAMPLE_PROJECTS } from "../../lib/sample-data";
-
 export async function GET() {
   const response = await proxyToEngine("/api/projects", { method: "GET" }, "Unable to list projects.");
   if (response.status === 502) {
