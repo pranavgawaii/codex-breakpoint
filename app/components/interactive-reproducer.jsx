@@ -83,6 +83,26 @@ export function InteractiveReproducer() {
     };
   }, []);
 
+  const selectScenario = (sc) => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      setIsRunning(false);
+    }
+    setSelectedScenario(sc);
+    setRunProgress(4);
+  };
+
+  const handleScenarioKeyDown = (e, index) => {
+    if (e.key === "ArrowRight") {
+      const next = SCENARIOS[(index + 1) % SCENARIOS.length];
+      selectScenario(next);
+    } else if (e.key === "ArrowLeft") {
+      const prev = SCENARIOS[(index - 1 + SCENARIOS.length) % SCENARIOS.length];
+      selectScenario(prev);
+    }
+  };
+
   const triggerReplay = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setIsRunning(true);
@@ -103,29 +123,29 @@ export function InteractiveReproducer() {
     <div className="reproducer-cockpit" id="reproducer">
       {/* Top Scenario Selector Bar */}
       <div className="cockpit-header">
-        <div className="scenario-chips">
-          {SCENARIOS.map((sc) => (
-            <button
-              key={sc.id}
-              type="button"
-              className={`scenario-btn ${selectedScenario.id === sc.id ? "active" : ""}`}
-              onClick={() => {
-                if (timerRef.current) {
-                  clearInterval(timerRef.current);
-                  timerRef.current = null;
-                  setIsRunning(false);
-                }
-                setSelectedScenario(sc);
-                setRunProgress(4);
-              }}
-            >
-              <span className="scenario-dot" />
-              <div className="scenario-btn-text">
-                <span className="scenario-title">{sc.name}</span>
-                <span className="scenario-sub">{sc.kicker}</span>
-              </div>
-            </button>
-          ))}
+        <div className="scenario-chips" role="tablist" aria-label="Failure scenario switcher">
+          {SCENARIOS.map((sc, index) => {
+            const isSelected = selectedScenario.id === sc.id;
+            return (
+              <button
+                key={sc.id}
+                type="button"
+                role="tab"
+                id={`tab-scenario-${sc.id}`}
+                aria-selected={isSelected}
+                aria-controls="cockpit-viewport"
+                className={`scenario-btn ${isSelected ? "active" : ""}`}
+                onClick={() => selectScenario(sc)}
+                onKeyDown={(e) => handleScenarioKeyDown(e, index)}
+              >
+                <span className="scenario-dot" aria-hidden="true" />
+                <div className="scenario-btn-text">
+                  <span className="scenario-title">{sc.name}</span>
+                  <span className="scenario-sub">{sc.kicker}</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         <div className="cockpit-ctrls">
@@ -134,8 +154,9 @@ export function InteractiveReproducer() {
             className="btn-replay-trigger"
             onClick={triggerReplay}
             disabled={isRunning}
+            aria-label={isRunning ? "Simulating execution replay" : `Replay execution sequence for ${selectedScenario.name}`}
           >
-            <span className={isRunning ? "spinner-anim" : "replay-icon"}>
+            <span className={isRunning ? "spinner-anim" : "replay-icon"} aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
               </svg>
@@ -146,18 +167,22 @@ export function InteractiveReproducer() {
       </div>
 
       {/* Main Sandbox Window */}
-      <div className="cockpit-terminal">
+      <div className="cockpit-terminal" id="cockpit-viewport">
         {/* Terminal Header */}
         <div className="terminal-topbar">
-          <div className="terminal-dots">
+          <div className="terminal-dots" aria-hidden="true">
             <span className="dot dot-red" />
             <span className="dot dot-yellow" />
             <span className="dot dot-green" />
           </div>
 
-          <div className="terminal-tabs">
+          <div className="terminal-tabs" role="tablist" aria-label="Cockpit inspector tabs">
             <button
               type="button"
+              role="tab"
+              id="tab-trace"
+              aria-selected={activeTab === "trace"}
+              aria-controls="panel-trace"
               className={`terminal-tab ${activeTab === "trace" ? "is-active" : ""}`}
               onClick={() => setActiveTab("trace")}
             >
@@ -165,6 +190,10 @@ export function InteractiveReproducer() {
             </button>
             <button
               type="button"
+              role="tab"
+              id="tab-diff"
+              aria-selected={activeTab === "diff"}
+              aria-controls="panel-diff"
               className={`terminal-tab ${activeTab === "diff" ? "is-active" : ""}`}
               onClick={() => setActiveTab("diff")}
             >
@@ -172,6 +201,10 @@ export function InteractiveReproducer() {
             </button>
             <button
               type="button"
+              role="tab"
+              id="tab-memory"
+              aria-selected={activeTab === "memory"}
+              aria-controls="panel-memory"
               className={`terminal-tab ${activeTab === "memory" ? "is-active" : ""}`}
               onClick={() => setActiveTab("memory")}
             >
@@ -186,11 +219,10 @@ export function InteractiveReproducer() {
 
         {/* Tab 1: Execution Trace */}
         {activeTab === "trace" && (
-          <div className="trace-view">
+          <div className="trace-view" role="tabpanel" id="panel-trace" aria-labelledby="tab-trace">
             <div className="trace-steps-container">
               {selectedScenario.steps.map((st, idx) => {
                 const isExecuted = idx < runProgress;
-                const isCurrent = idx === runProgress - 1;
                 return (
                   <div
                     key={st.step}
@@ -198,7 +230,7 @@ export function InteractiveReproducer() {
                   >
                     <div className="trace-col-idx">
                       <span className="trace-step-number">{st.step}</span>
-                      {idx < 3 && <div className="trace-connector-line" />}
+                      {idx < 3 && <div className="trace-connector-line" aria-hidden="true" />}
                     </div>
 
                     <div className="trace-col-content">
@@ -242,6 +274,7 @@ export function InteractiveReproducer() {
                   type="button"
                   className="btn-inspect-diff"
                   onClick={() => setActiveTab("diff")}
+                  aria-label="Inspect the synthesized fix patch in the diff viewer"
                 >
                   Inspect Fix Diff &rarr;
                 </button>
@@ -252,7 +285,7 @@ export function InteractiveReproducer() {
 
         {/* Tab 2: Synthesized Patch Diff */}
         {activeTab === "diff" && (
-          <div className="diff-view-panel">
+          <div className="diff-view-panel" role="tabpanel" id="panel-diff" aria-labelledby="tab-diff">
             <div className="diff-header-line">
               <span className="diff-filepath">PATCH TARGET: {selectedScenario.testFile}</span>
               <span className="diff-badge">VERIFIED BY RE-RUN</span>
@@ -277,7 +310,7 @@ export function InteractiveReproducer() {
 
         {/* Tab 3: Memory & Telemetry Stats */}
         {activeTab === "memory" && (
-          <div className="telemetry-stats-panel">
+          <div className="telemetry-stats-panel" role="tabpanel" id="panel-memory" aria-labelledby="tab-memory">
             <div className="stat-boxes-grid">
               <div className="stat-box">
                 <span className="stat-label">Memory Leak Vector</span>
