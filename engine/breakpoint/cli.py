@@ -116,11 +116,24 @@ def scan(project_id: str = typer.Argument(None, help="Project id; defaults to th
 def workflow(
     project_id: str = typer.Option(None, "--project", help="Start on this project instead of the active investigation."),
     test_file: str = typer.Option(None, "--file", help="Restrict triage and the matrix to one test file."),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Preview the resolved execution plan without spawning runner processes."),
 ) -> None:
     """Full pipeline: triage -> target resolution -> matrix -> comparison -> hypothesis."""
     try:
         if project_id:
             investigations.start_investigation(project_id)
+        if dry_run:
+            snapshot = investigations.get_investigation()
+            target = snapshot["investigation"].get("target") or {"testFile": test_file or "auto-detected"}
+            typer.secho("dry run execution plan (no processes spawned):", fg=typer.colors.CYAN)
+            typer.echo(f"  target test: {target.get('testFile')}")
+            typer.echo("  steps:")
+            typer.echo("    1. static shared-state AST analysis")
+            typer.echo("    2. test triage in isolated sandbox")
+            typer.echo("    3. target test probe in isolation")
+            typer.echo("    4. sequential predecessor replay")
+            typer.echo("    5. evidence diffing and hypothesis generation")
+            return
         snapshot = investigations.run_controlled_workflow(
             {"testFile": test_file},
             on_line=lambda line: typer.echo(f"    {line}", color=True) if line.strip() else None,
