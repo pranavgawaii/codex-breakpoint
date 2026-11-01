@@ -130,6 +130,17 @@ export default function Summary() {
         }
     };
 
+    const handleDownloadJson = () => {
+        if (!data || typeof window === "undefined") return;
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `breakpoint-${data?.investigation?.id || "audit"}-snapshot.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     return (<div className="product-shell">
       <a className="skip-link" href="#main">
         Skip to content
@@ -181,6 +192,15 @@ export default function Summary() {
                   aria-label="Print or export investigation audit certificate"
                 >
                   Print Certificate
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadJson}
+                  className="btn btn-secondary"
+                  style={{ padding: "4px 10px", fontSize: "11px", fontFamily: "var(--mono)" }}
+                  aria-label="Download raw JSON investigation snapshot"
+                >
+                  Export JSON
                 </button>
               </div>
               <span className="report-generated">
