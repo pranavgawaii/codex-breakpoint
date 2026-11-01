@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>Don't guess the bug. Prove it.</strong>
+  <strong>Don't guess the bug. Prove it!!</strong>
 </p>
 
 <p align="center">
