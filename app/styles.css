@@ -1848,3 +1848,19 @@ button {
     justify-content: center !important;
   }
 }
+
+/* High-Contrast Keyboard Accessibility & Focus Rings */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent, #38bdf8) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4) !important;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none !important;
+}
