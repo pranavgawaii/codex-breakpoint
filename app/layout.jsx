@@ -1,6 +1,7 @@
 import "./styles.css";
 import "./runtime.css";
 import "./dashboard/dashboard.css";
+import { HotkeyGuide } from "./components/hotkey-guide";
 
 export const viewport = {
   themeColor: "#060913",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
       <body className="antialiased bg-obsidian text-ink" suppressHydrationWarning>
         <div className="ambient-background-glow" aria-hidden="true" />
         {children}
+        <HotkeyGuide />
       </body>
     </html>
   );
