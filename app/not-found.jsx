@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRightIcon, ShieldCheckIcon } from "./components/icons";
+import { ArrowRightIcon, ArrowUpRightIcon, ShieldCheckIcon } from "./components/icons";
 
 export default function NotFound() {
   return (
@@ -14,7 +14,7 @@ export default function NotFound() {
     }}>
 
       <div className="not-found-block" style={{
-        maxWidth: "540px",
+        maxWidth: "560px",
         width: "100%",
         border: "1px solid var(--line-strong)",
         borderRadius: "20px",
@@ -57,7 +57,7 @@ export default function NotFound() {
           color: "var(--muted)",
           fontSize: "14px",
           lineHeight: "1.65",
-          marginBottom: "28px"
+          marginBottom: "24px"
         }}>
           The telemetry kernel could not locate an active investigation run, test record, or resource at this URL coordinates. The route has been logged as an unmapped anomaly.
         </p>
@@ -68,7 +68,7 @@ export default function NotFound() {
           borderRadius: "10px",
           padding: "14px 16px",
           textAlign: "left",
-          marginBottom: "28px",
+          marginBottom: "24px",
           fontFamily: "var(--mono)",
           fontSize: "11px",
           color: "var(--faint)"
@@ -81,7 +81,7 @@ export default function NotFound() {
           <div>RECOVERY: fallback to primary telemetry hub</div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginBottom: "18px" }}>
           <Link href="/" className="btn btn-primary" style={{ padding: "10px 20px", fontSize: "13px" }}>
             Return to Telemetry Home
             <ArrowRightIcon />
@@ -91,7 +91,19 @@ export default function NotFound() {
           </Link>
         </div>
 
-        <div style={{ marginTop: "28px", paddingTop: "20px", borderTop: "1px solid var(--hairline)", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", color: "var(--faint)", fontSize: "11px", fontFamily: "var(--mono)" }}>
+        <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap", fontSize: "12px", color: "var(--muted)" }}>
+          <Link href="/investigations/inv_session_state/summary" style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: "var(--accent)" }}>
+            Sample Audit Report
+            <ArrowUpRightIcon />
+          </Link>
+          <span style={{ color: "var(--faint)" }}>·</span>
+          <Link href="/investigations/new" style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: "var(--accent)" }}>
+            Run Plan Configurator
+            <ArrowUpRightIcon />
+          </Link>
+        </div>
+
+        <div style={{ marginTop: "24px", paddingTop: "18px", borderTop: "1px solid var(--hairline)", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", color: "var(--faint)", fontSize: "11px", fontFamily: "var(--mono)" }}>
           <ShieldCheckIcon style={{ width: "13px", height: "13px", color: "var(--success)" }} />
           Local session state preserved · zero data loss
         </div>
