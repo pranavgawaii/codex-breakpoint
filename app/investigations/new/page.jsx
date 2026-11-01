@@ -1,17 +1,59 @@
 "use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, InfoIcon, LockIcon, TerminalIcon } from "../../components/icons";
 import { ProductHeader, StatusPill } from "../../components/product-chrome";
-const plan = [
-    "static shared-state analysis (no execution)",
-    "triage runs — the most suspect files, up to three",
-    "failing target test in isolation",
-    "predecessor test in isolation",
-    "whole file in declared order",
-    "file again — reproducibility probe"
-];
+
+const PRESETS = {
+  standard: {
+    id: "standard",
+    name: "Standard Matrix",
+    count: "05",
+    description: "Balanced bisection testing triage candidates and predecessor isolation.",
+    steps: [
+      "static shared-state analysis (no execution)",
+      "triage runs — the most suspect files, up to three",
+      "failing target test in isolation",
+      "predecessor test in isolation",
+      "whole file in declared order",
+      "file again — reproducibility probe"
+    ]
+  },
+  fast: {
+    id: "fast",
+    name: "Fast Triage",
+    count: "03",
+    description: "Rapid verification probe for single-test isolation without full suite replay.",
+    steps: [
+      "static shared-state analysis (no execution)",
+      "target test in strict isolation",
+      "sequential execution probe"
+    ]
+  },
+  exhaustive: {
+    id: "exhaustive",
+    name: "Exhaustive Matrix",
+    count: "07",
+    description: "Permutational order bisection to reveal subtle inter-test cache mutations.",
+    steps: [
+      "static shared-state analysis (no execution)",
+      "triage runs across all discovered files",
+      "failing target test in isolation",
+      "predecessor test in isolation",
+      "whole file in forward declared order",
+      "whole file in reversed declared order",
+      "clean isolated sandbox replay"
+    ]
+  }
+};
+
 export default function NewInvestigation() {
-    return (<div className="product-shell">
+  const [activePreset, setActivePreset] = useState("standard");
+  const selected = PRESETS[activePreset] || PRESETS.standard;
+
+  return (
+    <div className="product-shell">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -42,9 +84,9 @@ export default function NewInvestigation() {
             <div className="page-stepper">
               <span className="page-stepper-label">Execution plan</span>
               <span className="page-stepper-value">
-                05 <i aria-hidden="true">/</i> runs
+                {selected.count} <i aria-hidden="true">/</i> runs
               </span>
-              <span className="page-stepper-current">Fixed local commands</span>
+              <span className="page-stepper-current">{selected.name}</span>
             </div>
           </header>
 
@@ -56,6 +98,38 @@ export default function NewInvestigation() {
                   <h2 id="config-heading">What should Breakpoint investigate?</h2>
                 </div>
                 <StatusPill label="Draft" tone="neutral"/>
+              </div>
+
+              {/* Preset Selector */}
+              <div style={{ marginBottom: "20px" }}>
+                <span style={{ display: "block", fontSize: "11px", fontFamily: "var(--mono)", color: "var(--faint)", marginBottom: "8px", textTransform: "uppercase" }}>
+                  Select Execution Profile
+                </span>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {Object.values(PRESETS).map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setActivePreset(preset.id)}
+                      style={{
+                        padding: "6px 12px",
+                        fontSize: "12px",
+                        fontFamily: "var(--mono)",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        background: activePreset === preset.id ? "rgba(56, 189, 248, 0.16)" : "var(--surface-2)",
+                        color: activePreset === preset.id ? "var(--accent)" : "var(--muted)",
+                        border: `1px solid ${activePreset === preset.id ? "var(--accent)" : "var(--line)"}`,
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      {preset.name} ({preset.count})
+                    </button>
+                  ))}
+                </div>
+                <p style={{ fontSize: "12px", color: "var(--faint)", marginTop: "8px" }}>
+                  {selected.description}
+                </p>
               </div>
 
               <div className="config-form">
@@ -98,7 +172,7 @@ export default function NewInvestigation() {
               <div className="plan-card-head">
                 <div>
                   <span className="panel-eyebrow">Permitted execution plan</span>
-                  <h2 id="plan-heading">A fixed execution matrix.</h2>
+                  <h2 id="plan-heading">{selected.name}</h2>
                 </div>
                 <span className="plan-icon" aria-hidden="true">
                   <TerminalIcon />
@@ -111,11 +185,13 @@ export default function NewInvestigation() {
               </p>
 
               <ol className="plan-list">
-                {plan.map((step, index) => (<li key={step}>
+                {selected.steps.map((step, index) => (
+                  <li key={step}>
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <p>{step}</p>
                     <CheckIcon />
-                  </li>))}
+                  </li>
+                ))}
               </ol>
 
               <ul className="plan-badges" aria-label="Execution constraints">
@@ -157,5 +233,6 @@ export default function NewInvestigation() {
           </footer>
         </div>
       </main>
-    </div>);
+    </div>
+  );
 }
