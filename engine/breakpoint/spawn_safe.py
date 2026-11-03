@@ -154,6 +154,9 @@ def run_process(
 
     stdout_text = "".join(stdout_lines)
     stderr_text = "".join(stderr_lines)
+    if timed_out:
+        timeout_note = f"\n[process killed: execution timed out after {timeout_ms}ms]"
+        stderr_text = (stderr_text + timeout_note) if stderr_text else timeout_note.strip()
     exit_code = process.returncode
     status = (
         "timeout"
