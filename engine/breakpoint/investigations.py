@@ -137,19 +137,35 @@ def evidence_record(investigation_id: str, kind: str, statement: str, source_run
 
 def snapshot(data: dict, investigation: dict) -> dict:
     """The full investigation snapshot clients render."""
-    project = next((item for item in data["projects"] if item["id"] == investigation.get("projectId")), None)
-    runs = [data_runs for data_runs in (next((run for run in data["runs"] if run["id"] == run_id), None) for run_id in investigation.get("runIds", [])) if data_runs]
+    projects_by_id = {p["id"]: p for p in data.get("projects", [])}
+    runs_by_id = {r["id"]: r for r in data.get("runs", [])}
+    evidence_by_id = {e["id"]: e for e in data.get("evidence", [])}
+    comparisons_by_id = {c["id"]: c for c in data.get("comparisons", [])}
+    hypotheses_by_id = {h["id"]: h for h in data.get("hypotheses", [])}
+    patches_by_id = {p["id"]: p for p in data.get("patches", [])}
+    verifications_by_id = {v["id"]: v for v in data.get("verifications", [])}
+
+    project = projects_by_id.get(investigation.get("projectId"))
+    runs = [runs_by_id[run_id] for run_id in investigation.get("runIds", []) if run_id in runs_by_id]
+    evidence = [evidence_by_id[eid] for eid in investigation.get("evidenceIds", []) if eid in evidence_by_id]
+    comparisons = [comparisons_by_id[cid] for cid in investigation.get("comparisonIds", []) if cid in comparisons_by_id]
+    hypotheses = [hypotheses_by_id[hid] for hid in investigation.get("hypothesisIds", []) if hid in hypotheses_by_id]
+    patches = [patches_by_id[pid] for pid in investigation.get("patchIds", []) if pid in patches_by_id]
+    verifications = [verifications_by_id[vid] for vid in investigation.get("verificationIds", []) if vid in verifications_by_id]
+    analyses = [item for item in data.get("analyses", []) if item.get("investigationId") == investigation["id"]]
+    tool_invocations = [item for item in data.get("toolInvocations", []) if item.get("investigationId") == investigation["id"]]
+
     return {
         "investigation": investigation,
         "project": project,
         "runs": [public_run(run) for run in runs],
-        "evidence": [item for item in (next((e for e in data["evidence"] if e["id"] == evidence_id), None) for evidence_id in investigation.get("evidenceIds", [])) if item],
-        "comparisons": [item for item in (next((c for c in data["comparisons"] if c["id"] == comparison_id), None) for comparison_id in investigation.get("comparisonIds", [])) if item],
-        "analyses": [item for item in data["analyses"] if item.get("investigationId") == investigation["id"]],
-        "hypotheses": [item for item in (next((h for h in data["hypotheses"] if h["id"] == hypothesis_id), None) for hypothesis_id in investigation.get("hypothesisIds", [])) if item],
-        "toolInvocations": [item for item in data["toolInvocations"] if item.get("investigationId") == investigation["id"]],
-        "patches": [public_patch(patch) for patch in (next((p for p in data["patches"] if p["id"] == patch_id), None) for patch_id in investigation.get("patchIds", [])) if patch],
-        "verifications": [item for item in (next((v for v in data["verifications"] if v["id"] == verification_id), None) for verification_id in investigation.get("verificationIds", [])) if item],
+        "evidence": evidence,
+        "comparisons": comparisons,
+        "analyses": analyses,
+        "hypotheses": hypotheses,
+        "toolInvocations": tool_invocations,
+        "patches": [public_patch(patch) for patch in patches],
+        "verifications": verifications,
     }
 
 
