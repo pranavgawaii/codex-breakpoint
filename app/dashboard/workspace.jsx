@@ -453,7 +453,7 @@ export default function InvestigationWorkspace() {
                   Target <code>{target.testFile}</code>
                   {target.targetTest ? <> · <code>{target.targetTest}</code></> : null}
                   {target.predecessorTest ? <> after <code>{target.predecessorTest}</code></> : null}
-                  {" — "}{target.reasoning}
+                  {target.reasoning ? ` — ${target.reasoning}` : " — Order dependency detected during run triage."}
                 </p>
               ) : null}
             </div>
