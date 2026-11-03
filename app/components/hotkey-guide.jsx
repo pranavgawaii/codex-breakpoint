@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const SHORTCUTS = [
   { key: "?", description: "Toggle keyboard shortcuts guide" },
@@ -12,6 +12,13 @@ const SHORTCUTS = [
 
 export function HotkeyGuide() {
   const [isOpen, setIsOpen] = useState(false);
+  const closeBtnRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && closeBtnRef.current) {
+      closeBtnRef.current.focus();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -96,6 +103,7 @@ export function HotkeyGuide() {
             Keyboard Shortcuts
           </h2>
           <button
+            ref={closeBtnRef}
             type="button"
             onClick={() => setIsOpen(false)}
             aria-label="Close keyboard shortcuts"
