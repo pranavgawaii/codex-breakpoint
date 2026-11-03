@@ -223,10 +223,16 @@ def execute_run_spec(project: dict, investigation_id: str, spec: dict, timeout_m
     result = outcome["result"]
     junit_text = None
     if spec["parser"] == "junit" and spec.get("junitPath"):
+        junit_file = Path(spec["junitPath"])
         try:
-            junit_text = Path(spec["junitPath"]).read_text(encoding="utf-8")
+            junit_text = junit_file.read_text(encoding="utf-8")
         except OSError:
             junit_text = None
+        finally:
+            try:
+                junit_file.unlink(missing_ok=True)
+            except OSError:
+                pass
     return build_test_run(
         run_id=_new_id("run"),
         project_id=project["id"],
