@@ -106,3 +106,19 @@ def test_discover_files_ignores_lockfiles(tmp_path):
     assert "yarn.lock" not in result["files"]
     assert "bun.lockb" not in result["files"]
     assert "package-lock.json" not in result["files"]
+
+
+def test_module_stem_resolution():
+    from breakpoint.patch_review import _module_stem
+    assert _module_stem("src/billing.py") == "billing"
+    assert _module_stem("pkg/__init__.py") == "pkg"
+    assert _module_stem("nested/subpkg/__init__.py") == "subpkg"
+    assert _module_stem("__init__.py") == "__init__"
+
+
+def test_make_unified_diff_multiline_hunks():
+    before = "line1\nline2\nline3\nline4\n"
+    after = "line1\nline2_modified\nline3\nline4\n"
+    diff = make_unified_diff(before, after, "example.py")
+    assert "@@ -1,5 +1,5 @@" in diff
+    assert "-line2\n+line2_modified" in diff
