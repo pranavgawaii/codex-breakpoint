@@ -35,11 +35,12 @@ def register_project(root_input: str, trusted_explicit: bool) -> dict:
     The path must exist, must not be a system prefix, and must plausibly
     contain tests.
     """
-    if not isinstance(root_input, str) or not root_input or len(root_input) > MAX_ROOT_LENGTH:
+    if not isinstance(root_input, str) or not root_input.strip() or len(root_input.strip()) > MAX_ROOT_LENGTH:
         raise ValidationError("Provide a project path (an absolute directory on this machine).")
-    root = os.path.realpath(root_input.strip())
-    if not os.path.isabs(root):
+    cleaned = root_input.strip()
+    if not os.path.isabs(cleaned):
         raise ValidationError("The project path must be absolute.")
+    root = os.path.realpath(cleaned)
     if root in FORBIDDEN_ROOTS or any(
         forbidden != "/" and (root == forbidden or root.startswith(f"{forbidden}/"))
         for forbidden in FORBIDDEN_ROOTS
