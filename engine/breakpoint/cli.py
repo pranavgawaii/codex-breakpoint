@@ -54,9 +54,14 @@ def _print_snapshot(snapshot: dict, heading: str) -> None:
 
 
 @app.command()
-def version() -> None:
+def version(
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Print only the version number."),
+) -> None:
     """Prints the Breakpoint engine version."""
-    typer.echo(f"breakpoint engine v{__version__}")
+    if quiet:
+        typer.echo(__version__)
+    else:
+        typer.echo(f"breakpoint engine v{__version__}")
 
 
 @app.command("projects")
@@ -103,13 +108,19 @@ def register(
 
 
 @app.command("scan")
-def scan(project_id: str = typer.Argument(None, help="Project id; defaults to the active investigation's project.")) -> None:
+def scan(
+    project_id: str = typer.Argument(None, help="Project id; defaults to the active investigation's project."),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only the finding count."),
+) -> None:
     """Runs the static shared-state analysis only (no execution)."""
     try:
         outcome = investigations.scan_project(project_id)
     except Exception as error:
         _fail(error)
-    typer.secho(outcome["summary"], fg=typer.colors.CYAN)
+    if quiet:
+        typer.echo(str(len(outcome["snapshot"]["analyses"])))
+    else:
+        typer.secho(outcome["summary"], fg=typer.colors.CYAN)
 
 
 @app.command()
