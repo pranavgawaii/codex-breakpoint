@@ -12,6 +12,13 @@ function lastItem(items) {
 function formatNumber(value) {
     return new Intl.NumberFormat("en-US").format(value);
 }
+function formatDuration(ms) {
+    if (typeof ms !== "number" || Number.isNaN(ms))
+        return "—";
+    if (ms < 1000)
+        return `${Math.round(ms)} ms`;
+    return `${(ms / 1000).toFixed(2)} s`;
+}
 function formatRecorded(iso) {
     if (!iso)
         return "Not recorded";
@@ -95,7 +102,7 @@ function RunRow({ run }) {
         <span className={`run-exit ${failed ? "run-exit--fail" : ""}`.trim()}>
           exit {run.exitCode ?? "—"}
         </span>
-        <span className="run-duration">{run.durationMs} ms</span>
+        <span className="run-duration">{formatDuration(run.durationMs)}</span>
       </div>
     </li>);
 }
