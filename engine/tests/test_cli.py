@@ -33,3 +33,15 @@ def test_cli_workflow_dry_run():
     assert result.exit_code == 0
     assert "dry run execution plan" in result.stdout.lower()
     assert "static shared-state" in result.stdout.lower()
+
+
+def test_cli_version_quiet():
+    result = runner.invoke(app, ["version", "--quiet"])
+    assert result.exit_code == 0
+    assert result.stdout.strip() == "0.1.0"
+
+
+def test_cli_scan_quiet():
+    result = runner.invoke(app, ["scan", "-q"])
+    assert result.exit_code == 0
+    assert result.stdout.strip().isdigit()
