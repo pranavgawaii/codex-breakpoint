@@ -11,6 +11,7 @@ import queue
 import threading
 from datetime import datetime, timezone
 
+MAX_SUBSCRIBERS = 64
 _subscribers: list[queue.Queue] = []
 _lock = threading.Lock()
 
@@ -19,10 +20,23 @@ def _now_iso() -> str:
     return datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
+def subscriber_count() -> int:
+    """Returns the number of active subscriber queues."""
+    with _lock:
+        return len(_subscribers)
+
+
 def subscribe() -> queue.Queue:
     """Registers a new subscriber queue and returns it."""
     stream: queue.Queue = queue.Queue(maxsize=500)
     with _lock:
+        if len(_subscribers) >= MAX_SUBSCRIBERS:
+            # Drop the oldest inactive subscriber queue to bound memory
+            oldest = _subscribers.pop(0)
+            try:
+                oldest.put_nowait({"at": _now_iso(), "type": "disconnect", "reason": "capacity_limit"})
+            except queue.Full:
+                pass
         _subscribers.append(stream)
     return stream
 
