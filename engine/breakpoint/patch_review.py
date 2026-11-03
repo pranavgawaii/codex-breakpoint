@@ -82,9 +82,6 @@ def make_unified_diff(before: str, after: str, target_path: str) -> str:
     return "\n".join(diff)
 
 
-def _content_hash(content: str) -> str:
-    return hashlib.sha256(content.encode("utf-8")).hexdigest()[:16]
-
 
 def _last_import_line_index(lines: list[str], is_python: bool) -> int:
     last = -1
@@ -192,7 +189,7 @@ def _wire_reset_into_python_test(test_raw: str, module_path: str, reset_name: st
 def _module_stem(module_path: str) -> str:
     """`src/billing.py` -> `billing`; `pkg/__init__.py` -> `pkg`."""
     path = PurePosixPath(module_path)
-    return "pkg" if path.name == "__init__.py" and path.parent.as_posix() else path.stem
+    return path.parent.name if path.name == "__init__.py" and path.parent.name else path.stem
 
 
 def _provable_reset_statements(fact: dict) -> list[str] | None:
