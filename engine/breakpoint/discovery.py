@@ -68,14 +68,15 @@ def discover_files(root: str) -> dict:
             files.append(rel_path)
 
     walk(root_path, "")
+    files = list(dict.fromkeys(files))
     is_js_test = lambda file: bool(TEST_SUFFIX.search(file))  # noqa: E731
     is_py_test = lambda file: bool(PY_TEST_NAME.search(file))  # noqa: E731
-    test_files = [file for file in files if is_js_test(file) or is_py_test(file)]
-    source_files = [
+    test_files = list(dict.fromkeys(file for file in files if is_js_test(file) or is_py_test(file)))
+    source_files = list(dict.fromkeys(
         file for file in files
         if (SOURCE_SUFFIX.search(file) and not is_js_test(file) and not file.endswith(".d.ts"))
         or (PY_SUFFIX.search(file) and not is_py_test(file))
-    ]
+    ))
     return {
         "files": files,
         "testFiles": test_files[:MAX_TEST_FILES],
