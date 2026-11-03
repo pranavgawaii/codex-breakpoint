@@ -17,7 +17,9 @@ The Breakpoint Engine exposes a local-first REST and Server-Sent Events (SSE) in
 ### 1. Health Probe
 - **Method:** `GET`
 - **Route:** `/api/health`
-- **Response:**
+- **Description:** Verifies service liveness and engine availability.
+- **Response Status:** `200 OK`
+- **Response Schema:**
   ```json
   {
     "ok": true,
@@ -28,8 +30,8 @@ The Breakpoint Engine exposes a local-first REST and Server-Sent Events (SSE) in
 ### 2. Projects Collection
 - **Method:** `GET`
 - **Route:** `/api/projects`
-- **Description:** Returns all registered test projects.
-- **Response:**
+- **Description:** Returns all registered test projects stored in local persistence.
+- **Response Schema:**
   ```json
   {
     "projects": [
@@ -48,25 +50,34 @@ The Breakpoint Engine exposes a local-first REST and Server-Sent Events (SSE) in
 
 - **Method:** `POST`
 - **Route:** `/api/projects`
-- **Description:** Registers a project root directory on the local machine.
+- **Description:** Validates and registers a local project directory root.
 - **Request Body:**
-  ```json
-  {
-    "root": "/absolute/path/to/project",
-    "trusted": true
-  }
-  ```
+  | Field | Type | Required | Description |
+  | :--- | :--- | :--- | :--- |
+  | `root` | `string` | Yes | Absolute directory path on local machine. Must be non-empty and non-system path. |
+  | `trusted` | `boolean` | No | Explicit trust confirmation to allow process execution and patch generation (default: `false`). |
 - **Response Status:** `201 Created`
 
 ### 3. Investigation Snapshot
 - **Method:** `GET`
 - **Route:** `/api/investigations`
 - **Description:** Returns the complete state of the active investigation, including recorded runs, static analyses, evidence items, hypotheses, patches, and verifications.
+- **Response Status:** `200 OK`
 
 ### 4. Investigation Action Dispatch
 - **Method:** `POST`
 - **Route:** `/api/investigations`
-- **Description:** Dispatches an engine-owned investigation action.
+- **Description:** Dispatches an engine-owned investigation action in exclusive execution mode.
+- **Request Body Fields:**
+  | Field | Type | Description |
+  | :--- | :--- | :--- |
+  | `action` | `string` | Action identifier (see supported actions below). |
+  | `projectId` | `string` | Target registered project ID (e.g., `project_demo`). |
+  | `testFile` | `string` | Optional relative path to restrict triage or matrix execution. |
+  | `targetTest` | `string` | Optional name pattern for specific failing test target. |
+  | `patchId` | `string` | Target patch ID for `approve-patch` or `revert-patch`. |
+  | `demoOnly` | `boolean` | Restrict action scope to built-in sample project. |
+
 - **Supported Actions:**
   - `run-demo`: Executes the bundled session-state reproducer sequence.
   - `run-workflow`: Runs the full controlled matrix pipeline (triage, target resolution, isolation runs, comparison).
@@ -76,17 +87,32 @@ The Breakpoint Engine exposes a local-first REST and Server-Sent Events (SSE) in
   - `propose-patch`: Drafts a cleanup patch from recorded evidence.
   - `approve-patch`: Applies a proposed patch and reruns the failing probe for verification.
   - `revert-patch`: Restores baseline file content for an applied patch.
-- **Request Body Example:**
-  ```json
-  {
-    "action": "run-workflow",
-    "projectId": "project_demo",
-    "testFile": "test/session-flow.test.js"
-  }
-  ```
 
 ### 5. Live Telemetry Stream
 - **Method:** `GET`
 - **Route:** `/api/events`
 - **Format:** `text/event-stream` (Server-Sent Events)
-- **Description:** Streams live execution log lines, step completions, and runner status events to connected clients.
+- **Description:** Streams live execution log lines, step completions, and runner status events to connected clients. Bounded to a maximum of 64 concurrent subscribers.
+
+---
+
+## Error Response Format
+
+All error responses return structured JSON payloads adhering to standard HTTP status codes:
+
+```json
+{
+  "error": "Human-readable diagnostic error message",
+  "code": "error_code_identifier"
+}
+```
+
+### Standard Error Codes
+| HTTP Status | Code | Cause |
+| :--- | :--- | :--- |
+| `400 Bad Request` | `validation_error` | Missing required payload, invalid parameters, or malformed path. |
+| `403 Forbidden` | `forbidden` | Execution attempted on untrusted project without explicit trust flag. |
+| `404 Not Found` | `not_found` | Requested project, investigation, or patch does not exist. |
+| `409 Conflict` | `conflict` | Another exclusive engine action is currently running. |
+| `503 Service Unavailable` | `ai_unavailable` | External AI provider or model endpoint is unreachable. |
+| `500 Internal Error` | `internal_error` | Unexpected runtime engine exception. |
