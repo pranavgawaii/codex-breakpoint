@@ -38,17 +38,19 @@ def deterministic_hypothesis(
     order_findings = [finding for finding in comparison_findings if finding["category"] == "order" and finding["certainty"] == "observed"]
     status_findings = [finding for finding in comparison_findings if finding["category"] == "status" and finding["certainty"] == "observed"]
 
-    variable_names = list({
+    variable_names = list(dict.fromkeys(
         match.group(1)
         for finding in module_states
         if (match := re.search(r"`([^`]+)`", finding["statement"]))
-    })
-    mutator_names = list({
+    ))
+    mutator_names = list(dict.fromkeys(
         match.group(1)
         for finding in exported_mutators
         if (match := re.search(r"`([A-Za-z_$][\w$]*)`", finding["statement"]))
-    })
-    module_files = list({finding["file"] for finding in module_states})
+    ))
+    module_files = list(dict.fromkeys(
+        finding["file"] for finding in module_states if "file" in finding
+    ))
 
     supporting: list[str] = []
     for finding in order_findings:
