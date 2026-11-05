@@ -12,12 +12,12 @@ from typing import Callable
 
 
 def _evidence_for_run_id(evidence: list[dict]) -> Callable[[str], str]:
-    def lookup(run_id: str) -> str:
-        for item in evidence:
-            if run_id in item.get("sourceRunIds", []) and item.get("kind") == "run":
-                return item["id"]
-        return ""
-    return lookup
+    mapping: dict[str, str] = {}
+    for item in evidence:
+        if item.get("kind") == "run":
+            for run_id in item.get("sourceRunIds", []):
+                mapping.setdefault(run_id, item["id"])
+    return lambda run_id: mapping.get(run_id, "")
 
 
 def _outcomes_by_test(runs: list[dict]) -> dict[str, list[dict]]:
@@ -63,9 +63,9 @@ def compare_run_matrix(runs: list[dict], evidence: list[dict]) -> list[dict]:
         findings.append({
             "category": "order",
             "statement": f'Test "{name}" produced conflicting outcomes: {passing_text}, but {failing_text}.',
-            "evidenceIds": list({
+            "evidenceIds": list(dict.fromkeys(
                 evidence_id_for(observation["runId"]) for observation in observations if evidence_id_for(observation["runId"])
-            }),
+            )),
             "certainty": "observed",
         })
 
