@@ -129,3 +129,12 @@ def test_choose_target_handles_empty_or_malformed_inputs():
     fallback = choose_target({"scores": {}}, {}, ["tests/fallback.py"])
     assert fallback["testFile"] == "tests/fallback.py"
     assert fallback["targetTest"] is None
+
+
+def test_choose_target_tie_breaking_deterministic():
+    analysis = {"scores": {"b_test.py": 10, "a_test.py": 10, "c_test.py": 5}}
+    file_texts = {"a_test.py": "def test_one(): pass\ndef test_two(): pass"}
+    target = choose_target(analysis, file_texts, [])
+    assert target is not None
+    # "a_test.py" sorts alphabetically before "b_test.py" under score tie
+    assert target["testFile"] == "a_test.py"

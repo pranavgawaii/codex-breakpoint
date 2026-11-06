@@ -604,7 +604,8 @@ def analyze_project(file_texts: dict[str, str], test_files: list[str], source_fi
 def choose_target(analysis: dict, file_texts: dict[str, str], fallback_test_files: list[str]) -> dict | None:
     """Chooses the investigation target from suspicion ranking."""
     scores = (analysis or {}).get("scores") or {}
-    ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+    # Secondary key ensures deterministic ranking when multiple test files share identical scores
+    ranked = sorted(scores.items(), key=lambda item: (-item[1], item[0]))
     fallback_test_files = fallback_test_files or []
     test_file = ranked[0][0] if ranked else (fallback_test_files[0] if fallback_test_files else None)
     if not test_file:
