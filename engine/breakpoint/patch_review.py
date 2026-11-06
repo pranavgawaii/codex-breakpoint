@@ -333,10 +333,16 @@ def apply_patch(patch: dict, project: dict) -> dict:
         raise ValidationError("This patch has no recorded apply content; redraft it.")
     resolved = [{"edit": edit, "absolute": _resolve_inside_project(project["root"], edit["targetPath"])} for edit in edits]
     for item in resolved:
-        current = _read_text_raw(item["absolute"])
+        if not item["absolute"].is_file():
+            raise ConflictError(f"Patch blocked: target file does not exist: {item['edit']['targetPath']}")
+        try:
+            current = _read_text_raw(item["absolute"])
+        except OSError as error:
+            raise ConflictError(f"Patch blocked: unable to read {item['edit']['targetPath']}: {error}") from error
         if current != item["edit"]["originalContent"]:
             raise ConflictError(f"Patch blocked: {item['edit']['targetPath']} no longer matches the recorded baseline.")
     for item in resolved:
+        item["absolute"].parent.mkdir(parents=True, exist_ok=True)
         _write_text_raw(item["absolute"], item["edit"]["appliedContent"])
     return {**patch, "status": "applied"}
 
@@ -347,7 +353,12 @@ def revert_patch(patch: dict, project: dict) -> dict:
         raise ValidationError("Only an applied patch can be reverted.")
     resolved = [{"edit": edit, "absolute": _resolve_inside_project(project["root"], edit["targetPath"])} for edit in patch.get("edits") or []]
     for item in resolved:
-        current = _read_text_raw(item["absolute"])
+        if not item["absolute"].is_file():
+            raise ConflictError(f"Revert blocked: target file does not exist: {item['edit']['targetPath']}")
+        try:
+            current = _read_text_raw(item["absolute"])
+        except OSError as error:
+            raise ConflictError(f"Revert blocked: unable to read {item['edit']['targetPath']}: {error}") from error
         if current != item["edit"]["appliedContent"]:
             raise ConflictError(f"Revert blocked: {item['edit']['targetPath']} differs from the recorded applied content.")
     for item in resolved:
