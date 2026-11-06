@@ -4,6 +4,16 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.2] - 2026-11-06
+
+### Fixed
+- **Patch Apply and Revert Verification**: Enforced target file existence and accessibility checks in `patch_review.py` before applying or reverting file patches to prevent silent failures on deleted files.
+- **Deterministic Suspicion Ranking**: Added deterministic tie-breaking in `choose_target` in `state_analysis.py` to preserve stable target selection across identical test suspicion scores.
+- **Audit Certificate Formatting**: Gracefully formatted target test strings in summary audit certificate exports when reasoning metadata is omitted.
+
+### Performance
+- **Run Evidence Mapping**: Precomputed reverse lookup maps in `compare_run_matrix` in `comparison.py` to eliminate redundant linear scans across recorded evidence.
+
 ## [2.5.1] - 2026-11-03
 
 ### Fixed
