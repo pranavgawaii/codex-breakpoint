@@ -108,7 +108,7 @@ export default function Summary() {
             `Status: ${investigationLabel(data.investigation.status)}`,
             `Title: ${data.investigation.title}`,
             `Goal: ${data.investigation.goal}`,
-            `Target: ${target ? `${target.testFile} (${target.reasoning})` : "None"}`,
+            `Target: ${target ? `${target.testFile}${target.reasoning ? ` (${target.reasoning})` : ""}` : "None"}`,
             `Runs: ${data.runs.length} | Evidence: ${data.evidence.length} (${observed} observed, ${unknownCount} unknown)`,
             `Hypothesis: ${hypothesis ? `${hypothesis.confidence} — ${hypothesis.description}` : "None"}`,
             `Verification: ${verification ? `${verification.result} — ${verification.notes}` : "Not verified"}`,
