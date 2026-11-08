@@ -4,6 +4,12 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.3] - 2026-11-08
+
+### Fixed
+- **Runner Test Deduplication Priority**: Prioritized explicit failure test statuses over passing or skipped duplicates in `_dedupe_tests` within `runner.py`, preventing masked failure reporting on retried runs.
+- **Test Runner Executable Resolution**: Added fallback lookup against system `PATH` via `shutil.which` in `discovery.py` when framework binaries (`jest`, `vitest`) are not installed directly under local `node_modules/.bin`.
+
 ## [2.5.2] - 2026-11-06
 
 ### Fixed
