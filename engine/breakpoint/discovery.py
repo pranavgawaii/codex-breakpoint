@@ -208,12 +208,16 @@ def build_run_command(
 
     if framework in ("vitest", "jest"):
         bin_name = "vitest" if framework == "vitest" else "jest"
-        bin_path = Path(root) / "node_modules" / ".bin" / bin_name
-        if not bin_path.exists():
+        local_bin = Path(root) / "node_modules" / ".bin" / bin_name
+        system_bin = shutil.which(bin_name)
+        if local_bin.is_file():
+            argv = [str(local_bin)]
+        elif system_bin:
+            argv = [system_bin]
+        else:
             raise ValidationError(
                 f"{bin_name} is not installed inside this project; install dependencies or use the default node:test runner."
             )
-        argv = [str(bin_path)]
         if framework == "vitest":
             argv.extend(["run", "--reporter=tap", "--no-color"])
         else:
