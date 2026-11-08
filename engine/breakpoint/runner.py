@@ -141,15 +141,20 @@ def parse_junitxml(text: str) -> list[dict]:
 
 
 def _dedupe_tests(tests: list[dict]) -> list[dict]:
-    seen: set[str] = set()
-    kept: list[dict] = []
+    # Group observations by test name, preferring explicit failures over passes
+    by_name: dict[str, dict] = {}
     for test in tests:
-        key = f"{test['name']}::{test['status']}"
-        if key in seen:
+        name = test.get("name", "")
+        if not name:
             continue
-        seen.add(key)
-        kept.append(test)
-    return kept
+        existing = by_name.get(name)
+        if existing is None:
+            by_name[name] = test
+        elif existing.get("status") != "failed" and test.get("status") == "failed":
+            by_name[name] = test
+        elif existing.get("status") == "skipped" and test.get("status") == "passed":
+            by_name[name] = test
+    return list(by_name.values())
 
 
 def parse_output(parser: str, stdout: str, stderr: str, junit_text: str | None = None) -> list[dict]:

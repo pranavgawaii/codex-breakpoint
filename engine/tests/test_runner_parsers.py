@@ -122,3 +122,17 @@ def test_make_unified_diff_multiline_hunks():
     diff = make_unified_diff(before, after, "example.py")
     assert "@@ -1,5 +1,5 @@" in diff
     assert "-line2\n+line2_modified" in diff
+
+
+def test_dedupe_tests_prefers_failure():
+    from breakpoint.runner import _dedupe_tests
+    raw = [
+        {"name": "test_cache", "status": "passed", "durationMs": 10},
+        {"name": "test_cache", "status": "failed", "durationMs": 12, "error": "timeout"},
+        {"name": "test_login", "status": "passed", "durationMs": 5},
+    ]
+    deduped = _dedupe_tests(raw)
+    assert len(deduped) == 2
+    cache_test = next(t for t in deduped if t["name"] == "test_cache")
+    assert cache_test["status"] == "failed"
+    assert cache_test["error"] == "timeout"
