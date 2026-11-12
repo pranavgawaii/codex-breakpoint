@@ -4,6 +4,13 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.4] - 2026-11-12
+
+### Added
+- **CLI JSON Audit Export**: Added `--json` flag to `breakpoint report` command to output raw investigation snapshot payloads directly for automated tooling.
+- **Enriched Engine Health Telemetry**: Enhanced `/api/health` in FastAPI engine to report running version and active SSE subscriber metrics.
+- **API Health Schema Documentation**: Updated `docs/API.md` with enriched health probe response schema.
+
 ## [2.5.3] - 2026-11-08
 
 ### Fixed

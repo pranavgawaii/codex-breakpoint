@@ -17,13 +17,15 @@ The Breakpoint Engine exposes a local-first REST and Server-Sent Events (SSE) in
 ### 1. Health Probe
 - **Method:** `GET`
 - **Route:** `/api/health`
-- **Description:** Verifies service liveness and engine availability.
+- **Description:** Verifies service liveness, engine availability, version, and active subscriber queue count.
 - **Response Status:** `200 OK`
 - **Response Schema:**
   ```json
   {
     "ok": true,
-    "engine": "breakpoint-python"
+    "engine": "breakpoint-python",
+    "version": "0.1.0",
+    "subscribers": 1
   }
   ```
 
