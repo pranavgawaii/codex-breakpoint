@@ -41,7 +41,13 @@ def _error_response(error: Exception) -> JSONResponse:
 
 @app.get("/api/health")
 def health() -> dict:
-    return {"ok": True, "engine": "breakpoint-python"}
+    from . import __version__
+    return {
+        "ok": True,
+        "engine": "breakpoint-python",
+        "version": __version__,
+        "subscribers": events.subscriber_count(),
+    }
 
 
 @app.get("/api/projects")
