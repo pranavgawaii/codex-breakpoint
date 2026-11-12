@@ -205,12 +205,18 @@ def revert(patch_id: str = typer.Argument(None, help="Patch id; defaults to the 
 
 
 @app.command()
-def report() -> None:
+def report(
+    json_output: bool = typer.Option(False, "--json", help="Output raw investigation snapshot as formatted JSON."),
+) -> None:
     """Prints the active investigation's full audit trail."""
     try:
         snapshot = investigations.get_investigation()
     except Exception as error:
         _fail(error)
+    if json_output:
+        import json
+        typer.echo(json.dumps(snapshot, indent=2, default=str))
+        return
     investigation = snapshot["investigation"]
     typer.secho(f"{investigation['title']} — {investigation['id']}", bold=True)
     typer.echo(f"  status: {investigation['status']}")

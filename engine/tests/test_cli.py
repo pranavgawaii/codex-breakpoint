@@ -45,3 +45,12 @@ def test_cli_scan_quiet():
     result = runner.invoke(app, ["scan", "-q"])
     assert result.exit_code == 0
     assert result.stdout.strip().isdigit()
+
+
+def test_cli_report_json():
+    import json
+    result = runner.invoke(app, ["report", "--json"])
+    assert result.exit_code == 0
+    data = json.loads(result.stdout)
+    assert "investigation" in data
+    assert "runs" in data
