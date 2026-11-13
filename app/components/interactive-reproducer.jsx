@@ -95,9 +95,11 @@ export function InteractiveReproducer() {
 
   const handleScenarioKeyDown = (e, index) => {
     if (e.key === "ArrowRight") {
+      e.preventDefault();
       const next = SCENARIOS[(index + 1) % SCENARIOS.length];
       selectScenario(next);
     } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
       const prev = SCENARIOS[(index - 1 + SCENARIOS.length) % SCENARIOS.length];
       selectScenario(prev);
     }
