@@ -136,3 +136,8 @@ def test_dedupe_tests_prefers_failure():
     cache_test = next(t for t in deduped if t["name"] == "test_cache")
     assert cache_test["status"] == "failed"
     assert cache_test["error"] == "timeout"
+
+
+def test_make_unified_diff_identical_text():
+    diff = make_unified_diff("hello\nworld\n", "hello\nworld\n", "test.txt")
+    assert diff == ""

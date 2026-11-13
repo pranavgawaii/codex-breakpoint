@@ -67,6 +67,8 @@ def make_unified_diff(before: str, after: str, target_path: str) -> str:
     baselines; the diff never drives disk writes. Beyond the cap the diff
     degrades to a suppressed summary, which stays honest.
     """
+    if before == after:
+        return ""
     old_lines = before.split("\n")
     new_lines = after.split("\n")
     if len(old_lines) > MAX_DIFF_LINES or len(new_lines) > MAX_DIFF_LINES:
