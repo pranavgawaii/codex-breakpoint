@@ -163,7 +163,7 @@ def _wire_reset_into_python_test(test_raw: str, module_path: str, reset_name: st
     if not already_imports:
         extended = re.sub(
             r"^(\s*from\s+[\w.]+\s+import\s+)(.*)$",
-            lambda match: f"{match.group(1)}{', '.join(sorted([part.strip() for part in match.group(2).split(',') if part.strip()] + [reset_name]))}",
+            lambda match: f"{match.group(1)}{', '.join(sorted(set([part.strip() for part in match.group(2).split(',') if part.strip()] + [reset_name])))}",
             import_line,
             count=1,
         )
