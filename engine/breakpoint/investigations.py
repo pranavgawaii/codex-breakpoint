@@ -258,6 +258,9 @@ def start_investigation(project_id: str) -> dict:
         None,
     )
     if untouched is not None:
+        # Move untouched investigation to end so it becomes current_investigation(data)
+        data["investigations"].remove(untouched)
+        data["investigations"].append(untouched)
         write_store(data)
         return snapshot(data, untouched)
     investigation = {
