@@ -4,6 +4,17 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.5] - 2026-11-13
+
+### Fixed
+- **Patch Review Empty Diff Short-Circuit**: Returned empty string immediately in `make_unified_diff` when original and applied contents are identical.
+- **Active Investigation Ordering**: Prioritized untouched investigations when calling `start_investigation` so newly selected projects properly become active.
+- **Python Import Symbol Deduplication**: Deduplicated symbols when extending Python `from ... import` statements during patch drafting.
+- **Reproducer Tab Arrow Key Navigation**: Prevented page scroll default action when cycling scenario tabs via Left and Right arrow keys in `InteractiveReproducer`.
+
+### Added
+- **CLI Quiet Project Registration**: Added `-q` / `--quiet` option to `breakpoint register` command to print only the registered project ID.
+
 ## [2.5.4] - 2026-11-12
 
 ### Added
