@@ -54,3 +54,9 @@ def test_cli_report_json():
     data = json.loads(result.stdout)
     assert "investigation" in data
     assert "runs" in data
+
+
+def test_cli_register_quiet(isolated_store, node_sample):
+    result = runner.invoke(app, ["register", node_sample["root"], "-q"])
+    assert result.exit_code == 0
+    assert result.stdout.strip().startswith("project_")

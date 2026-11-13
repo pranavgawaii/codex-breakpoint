@@ -91,6 +91,7 @@ def list_projects() -> None:
 def register(
     root: str = typer.Argument(..., help="Absolute path of the project directory."),
     trust: bool = typer.Option(False, "--trust", help="Confirm this directory may execute tests and receive approved patches."),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only the registered project ID."),
 ) -> None:
     """Registers a local project directory."""
     from .projects import register_project_action
@@ -101,6 +102,9 @@ def register(
         _fail(error)
     project = outcome["project"]
     discovery = outcome["discovery"]
+    if quiet:
+        typer.echo(project["id"])
+        return
     typer.secho(f"registered {project['name']} ({project['id']})", fg=typer.colors.GREEN)
     typer.echo(f"  root: {project['root']}")
     typer.echo(f"  framework: {discovery['framework']}  trusted: {project['trusted']}")
