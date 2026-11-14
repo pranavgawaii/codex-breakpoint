@@ -138,3 +138,18 @@ def test_choose_target_tie_breaking_deterministic():
     assert target is not None
     # "a_test.py" sorts alphabetically before "b_test.py" under score tie
     assert target["testFile"] == "a_test.py"
+
+
+def test_py_scan_module_state_augassign_subscript():
+    source = """
+_counters = {"runs": 0}
+
+def bump_runs():
+    _counters["runs"] += 1
+"""
+    fact = scan_module_state("tracker.py", source)
+    assert len(fact["mutableVars"]) == 1
+    assert fact["mutableVars"][0]["name"] == "_counters"
+    bump = next((f for f in fact["functions"] if f["name"] == "bump_runs"), None)
+    assert bump is not None
+    assert "_counters" in bump["mutates"]

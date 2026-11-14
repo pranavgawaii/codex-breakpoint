@@ -269,8 +269,13 @@ def _py_scan_module_state(rel: str, raw: str) -> dict:
                             mutating.add(target.value.id)
                         elif isinstance(target, ast.Attribute) and isinstance(target.value, ast.Name) and target.value.id in module_assignments:
                             mutating.add(target.value.id)
-                elif isinstance(inner, ast.AugAssign) and isinstance(inner.target, ast.Name) and inner.target.id in module_assignments:
-                    mutating.add(inner.target.id)
+                elif isinstance(inner, ast.AugAssign):
+                    if isinstance(inner.target, ast.Name) and inner.target.id in module_assignments:
+                        mutating.add(inner.target.id)
+                    elif isinstance(inner.target, ast.Subscript) and isinstance(inner.target.value, ast.Name) and inner.target.value.id in module_assignments:
+                        mutating.add(inner.target.value.id)
+                    elif isinstance(inner.target, ast.Attribute) and isinstance(inner.target.value, ast.Name) and inner.target.value.id in module_assignments:
+                        mutating.add(inner.target.value.id)
                 elif (
                     isinstance(inner, ast.Call)
                     and isinstance(inner.func, ast.Attribute)
