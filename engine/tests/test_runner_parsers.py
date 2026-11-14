@@ -141,3 +141,14 @@ def test_dedupe_tests_prefers_failure():
 def test_make_unified_diff_identical_text():
     diff = make_unified_diff("hello\nworld\n", "hello\nworld\n", "test.txt")
     assert diff == ""
+
+
+def test_provable_reset_statements_bytes():
+    from breakpoint.patch_review import _provable_reset_statements
+    fact = {
+        "mutableVars": [
+            {"name": "raw_buffer", "kind": "let", "initializer": "b''"},
+        ]
+    }
+    stmts = _provable_reset_statements(fact)
+    assert stmts == ["raw_buffer = b''"]
