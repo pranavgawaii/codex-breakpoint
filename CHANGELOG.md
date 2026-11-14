@@ -4,6 +4,15 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.6] - 2026-11-14
+
+### Fixed
+- **Python AugAssign Mutation Detection**: Extended AST traversal in `_py_scan_module_state` within `state_analysis.py` to identify mutations targeting subscripts (`obj[k] += v`) and attributes (`obj.attr += v`) on module-level variables.
+- **Bytes Literal Reset Support**: Added support for `bytes` (`b''`, `b""`) and `bytearray()` initializers in `_provable_reset_statements` within `patch_review.py`.
+
+### Added
+- **API Investigation Action Validation Tests**: Added unit tests in `test_api.py` validating bad request responses for unsupported investigation actions and missing required project parameters.
+
 ## [2.5.5] - 2026-11-13
 
 ### Fixed
