@@ -4,6 +4,17 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.7] - 2026-11-15
+
+### Fixed
+- **Runner JUnitXML Duration Parsing**: Added protective type error and value error handling in `parse_junitxml` in `runner.py` for malformed duration attributes.
+- **Sparse Findings Defensive Resolution**: Guarded dictionary lookups in `agent.py` to prevent key errors on partially populated or sparse finding objects during hypothesis generation.
+- **Subprocess Working Directory Validation**: Enforced non-empty string validation for `cwd` in `run_process` inside `spawn_safe.py`.
+- **Execution Profile Radiogroup Accessibility**: Added `role="radiogroup"` and `aria-checked` semantics to the execution preset selector in `app/investigations/new/page.jsx`.
+
+### Added
+- **CLI Projects JSON Export**: Added `--json` flag to `breakpoint projects` command to output registered projects as machine-readable JSON.
+
 ## [2.5.6] - 2026-11-14
 
 ### Fixed
