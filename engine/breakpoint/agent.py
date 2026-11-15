@@ -32,11 +32,11 @@ def deterministic_hypothesis(
     """Composes the working hypothesis from observed findings only."""
     evidence_ids = {item["id"] for item in evidence}
 
-    module_states = [finding for finding in state_findings if finding["kind"] == "module-state"]
-    exported_mutators = [finding for finding in state_findings if finding["kind"] == "exported-mutator"]
-    hookless = [finding for finding in state_findings if finding["kind"] in ("no-hooks", "hooks-without-reset")]
-    order_findings = [finding for finding in comparison_findings if finding["category"] == "order" and finding["certainty"] == "observed"]
-    status_findings = [finding for finding in comparison_findings if finding["category"] == "status" and finding["certainty"] == "observed"]
+    module_states = [finding for finding in state_findings if finding.get("kind") == "module-state"]
+    exported_mutators = [finding for finding in state_findings if finding.get("kind") == "exported-mutator"]
+    hookless = [finding for finding in state_findings if finding.get("kind") in ("no-hooks", "hooks-without-reset")]
+    order_findings = [finding for finding in comparison_findings if finding.get("category") == "order" and finding.get("certainty") == "observed"]
+    status_findings = [finding for finding in comparison_findings if finding.get("category") == "status" and finding.get("certainty") == "observed"]
 
     variable_names = list(dict.fromkeys(
         match.group(1)

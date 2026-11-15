@@ -75,3 +75,12 @@ def test_deterministic_hypothesis_unproven_state():
     )
     assert hyp["confidence"] == "low"
     assert "mechanism remains unproven" in hyp["description"]
+
+
+def test_deterministic_hypothesis_handles_sparse_finding_dictionaries():
+    # Findings missing optional or expected keys should not raise KeyError
+    state_findings = [{"id": "st_sparse"}]
+    comparison_findings = [{"statement": "No order issue"}]
+    hyp = deterministic_hypothesis("inv_sparse", comparison_findings, state_findings, [], {})
+    assert hyp["investigationId"] == "inv_sparse"
+    assert hyp["confidence"] == "low"
