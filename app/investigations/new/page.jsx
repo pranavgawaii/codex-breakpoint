@@ -105,11 +105,13 @@ export default function NewInvestigation() {
                 <span style={{ display: "block", fontSize: "11px", fontFamily: "var(--mono)", color: "var(--faint)", marginBottom: "8px", textTransform: "uppercase" }}>
                   Select Execution Profile
                 </span>
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <div role="radiogroup" aria-label="Execution Profile" style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {Object.values(PRESETS).map((preset) => (
                     <button
                       key={preset.id}
                       type="button"
+                      role="radio"
+                      aria-checked={activePreset === preset.id}
                       onClick={() => setActivePreset(preset.id)}
                       style={{
                         padding: "6px 12px",
