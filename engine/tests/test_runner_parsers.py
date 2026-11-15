@@ -152,3 +152,11 @@ def test_provable_reset_statements_bytes():
     }
     stmts = _provable_reset_statements(fact)
     assert stmts == ["raw_buffer = b''"]
+
+
+def test_parse_junitxml_invalid_time_duration():
+    xml = '<testcase name="invalid_time" time="invalid_float"/>'
+    tests = parse_junitxml(xml)
+    assert len(tests) == 1
+    assert tests[0]["name"] == "invalid_time"
+    assert tests[0]["durationMs"] == 0.0

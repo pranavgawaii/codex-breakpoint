@@ -119,7 +119,10 @@ def parse_junitxml(text: str) -> list[dict]:
         # Bare test name: pytest's junitxml also carries classname, but the
         # engine's targets, node ids and ordered names all use bare names.
         display_name = _sanitized_name(name)
-        duration = float(case.get("time") or 0) * 1000
+        try:
+            duration = float(case.get("time") or 0) * 1000
+        except (ValueError, TypeError):
+            duration = 0.0
         children = [local_name(child.tag) for child in case]
         if "failure" in children or "error" in children:
             failure = next((child for child in case if local_name(child.tag) in ("failure", "error")), None)
