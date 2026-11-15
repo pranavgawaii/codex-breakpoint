@@ -65,7 +65,9 @@ def version(
 
 
 @app.command("projects")
-def list_projects() -> None:
+def list_projects(
+    json_output: bool = typer.Option(False, "--json", help="Output projects list as JSON."),
+) -> None:
     """Lists registered projects in the engine store."""
     from .projects import list_projects_action
 
@@ -73,6 +75,11 @@ def list_projects() -> None:
         projects = list_projects_action()
     except Exception as error:
         _fail(error)
+
+    if json_output:
+        import json
+        typer.echo(json.dumps(projects, indent=2, default=str))
+        return
 
     if not projects:
         typer.echo("No registered projects found.")

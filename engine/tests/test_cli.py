@@ -60,3 +60,11 @@ def test_cli_register_quiet(isolated_store, node_sample):
     result = runner.invoke(app, ["register", node_sample["root"], "-q"])
     assert result.exit_code == 0
     assert result.stdout.strip().startswith("project_")
+
+
+def test_cli_projects_json():
+    import json
+    result = runner.invoke(app, ["projects", "--json"])
+    assert result.exit_code == 0
+    data = json.loads(result.stdout)
+    assert isinstance(data, list)
