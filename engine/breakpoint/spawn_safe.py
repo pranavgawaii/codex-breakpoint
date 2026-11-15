@@ -80,8 +80,8 @@ def run_process(
         raise ValidationError("Subprocess argv must be an array of strings.")
     if len(argv) == 0:
         raise ValidationError("Subprocess argv cannot be empty.")
-    if not isinstance(cwd, str):
-        raise ValidationError("Subprocess cwd must be a string.")
+    if not isinstance(cwd, str) or not cwd.strip():
+        raise ValidationError("Subprocess cwd must be a non-empty string.")
 
     echoed_spec = spec or {"label": "ad-hoc process", "argv": list(argv), "cwd": cwd}
     started = time.monotonic()
