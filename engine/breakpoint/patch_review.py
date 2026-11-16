@@ -135,8 +135,8 @@ def _wire_reset_into_test_file(test_raw: str, module_path: str, reset_name: str,
         return None  # unusual import syntax: refuse
     if not already_imports:
         def extend_named(inside: str) -> str:
-            names = [part.strip() for part in inside.split(",") if part.strip()]
-            names.append(reset_name)
+            names = set(part.strip() for part in inside.split(",") if part.strip())
+            names.add(reset_name)
             return "{ " + ", ".join(sorted(names)) + " }"
         lines[import_line_index] = re.sub(r"\{([^}]*)\}", lambda match: extend_named(match.group(1)), import_line, count=1)
     last_import = _last_import_line_index(lines, False)

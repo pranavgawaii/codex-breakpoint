@@ -160,3 +160,13 @@ def test_parse_junitxml_invalid_time_duration():
     assert len(tests) == 1
     assert tests[0]["name"] == "invalid_time"
     assert tests[0]["durationMs"] == 0.0
+
+
+def test_wire_reset_into_test_file_deduplicates_named_imports():
+    from breakpoint.patch_review import _wire_reset_into_test_file
+    raw = 'import { clearSession, authenticate } from "./session";\n\ntest("demo", () => {});'
+    hook_api = {"hook": "beforeEach"}
+    result = _wire_reset_into_test_file(raw, "session", "clearSession", "test/demo.test.js", hook_api)
+    assert result is not None
+    # clearSession was already present; should not be duplicated
+    assert result["appliedContent"].count("clearSession") == 2  # 1 in import, 1 in hook call
