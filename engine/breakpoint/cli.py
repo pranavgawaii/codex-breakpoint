@@ -197,7 +197,10 @@ def approve(patch_id: str = typer.Argument(None, help="Patch id; defaults to the
 
 
 @app.command("revert")
-def revert(patch_id: str = typer.Argument(None, help="Patch id; defaults to the latest applied.")) -> None:
+def revert(
+    patch_id: str = typer.Argument(None, help="Patch id; defaults to the latest applied."),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only the reverted patch ID."),
+) -> None:
     """Restores every file a patch changed to its baseline."""
     try:
         snapshot = investigations.get_investigation()
@@ -212,7 +215,10 @@ def revert(patch_id: str = typer.Argument(None, help="Patch id; defaults to the 
     except Exception as error:
         _fail(error)
     patch = result["patches"][-1]
-    typer.secho(f"reverted {patch['id']} ({patch['status']})", fg=typer.colors.GREEN)
+    if quiet:
+        typer.echo(patch["id"])
+    else:
+        typer.secho(f"reverted {patch['id']} ({patch['status']})", fg=typer.colors.GREEN)
 
 
 @app.command()
