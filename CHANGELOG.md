@@ -4,6 +4,15 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.8] - 2026-11-16
+
+### Fixed
+- **Store Investigation Normalization**: Preserved `closed` investigation lifecycle status during store normalization in `normalize_store` within `store.py`.
+- **JavaScript Named Import Deduplication**: Deduplicated named import specifiers when wiring module reset functions into test files in `patch_review.py`.
+
+### Added
+- **CLI Revert Quiet Mode**: Added `-q` / `--quiet` flag to `breakpoint revert` command to output only the reverted patch ID.
+
 ## [2.5.7] - 2026-11-15
 
 ### Fixed
