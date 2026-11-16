@@ -92,7 +92,7 @@ def normalize_store(raw: object) -> dict:
     data["investigations"] = [
         {
             **item,
-            "status": item["status"] if item.get("status") in ("verified", "needs_review") else "open",
+            "status": item["status"] if item.get("status") in ("verified", "needs_review", "closed") else "open",
             "goal": item.get("goal") if isinstance(item.get("goal"), str) else "",
             "target": item["target"] if isinstance(item.get("target"), dict) and isinstance(item["target"].get("testFile"), str) else None,
             "runIds": _as_array(item.get("runIds")),

@@ -54,3 +54,15 @@ def test_detect_framework_vitest_config(tmp_path):
     (tmp_path / "vitest.config.ts").write_text("export default {}", encoding="utf-8")
     fw = detect_framework(str(tmp_path), {})
     assert fw == "vitest"
+
+
+def test_normalize_store_preserves_closed_status():
+    from breakpoint.store import normalize_store
+    raw = {
+        "investigations": [
+            {"id": "inv_closed", "status": "closed", "title": "Closed Investigation"}
+        ]
+    }
+    normalized = normalize_store(raw)
+    assert len(normalized["investigations"]) == 1
+    assert normalized["investigations"][0]["status"] == "closed"
