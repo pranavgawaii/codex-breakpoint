@@ -4,6 +4,11 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.9] - 2026-11-18
+
+### Added
+- **CLI Patch Quiet Mode**: Added `-q` / `--quiet` option to `breakpoint patch` command to output only the drafted patch ID for headless workflow orchestration.
+
 ## [2.5.8] - 2026-11-16
 
 ### Fixed
