@@ -166,13 +166,19 @@ def workflow(
 
 
 @app.command("patch")
-def propose_patch(demo: bool = typer.Option(False, "--demo", help="Act on the bundled trusted sample.")) -> None:
+def propose_patch(
+    demo: bool = typer.Option(False, "--demo", help="Act on the bundled trusted sample."),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only the drafted patch ID."),
+) -> None:
     """Drafts a cleanup patch from the recorded evidence (unapplied)."""
     try:
         snapshot = investigations.propose_patch(demo)
     except Exception as error:
         _fail(error)
     patch = snapshot["patches"][-1]
+    if quiet:
+        typer.echo(patch["id"])
+        return
     typer.secho(f"drafted {patch['id']} ({patch['status']})", fg=typer.colors.CYAN)
     typer.echo(f"  {patch['description']}")
     typer.echo(patch["diff"])
