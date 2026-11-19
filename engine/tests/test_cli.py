@@ -70,7 +70,7 @@ def test_cli_projects_json():
     assert isinstance(data, list)
 
 
-def test_cli_revert_no_patch_exits():
+def test_cli_revert_no_patch_exits(isolated_store):
     result = runner.invoke(app, ["revert", "--quiet"])
     assert result.exit_code == 1
 
@@ -79,3 +79,8 @@ def test_cli_patch_quiet():
     result = runner.invoke(app, ["patch", "--demo", "-q"])
     assert result.exit_code == 0
     assert result.stdout.strip().startswith("patch_")
+
+
+def test_cli_approve_no_patch_exits(isolated_store):
+    result = runner.invoke(app, ["approve", "--quiet"])
+    assert result.exit_code == 1

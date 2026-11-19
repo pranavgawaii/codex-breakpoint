@@ -185,7 +185,10 @@ def propose_patch(
 
 
 @app.command("approve")
-def approve(patch_id: str = typer.Argument(None, help="Patch id; defaults to the latest draft.")) -> None:
+def approve(
+    patch_id: str = typer.Argument(None, help="Patch id; defaults to the latest draft."),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only the verification outcome status."),
+) -> None:
     """Applies the patch, reruns the failing probe, records verification."""
     try:
         snapshot = investigations.get_investigation()
@@ -199,7 +202,11 @@ def approve(patch_id: str = typer.Argument(None, help="Patch id; defaults to the
         raise
     except Exception as error:
         _fail(error)
-    _print_snapshot(result, "approval complete")
+    if quiet:
+        latest_v = result["verifications"][-1] if result.get("verifications") else None
+        typer.echo(latest_v["result"] if latest_v else "unknown")
+    else:
+        _print_snapshot(result, "approval complete")
 
 
 @app.command("revert")
