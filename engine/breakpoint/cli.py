@@ -139,6 +139,7 @@ def workflow(
     project_id: str = typer.Option(None, "--project", help="Start on this project instead of the active investigation."),
     test_file: str = typer.Option(None, "--file", help="Restrict triage and the matrix to one test file."),
     dry_run: bool = typer.Option(False, "--dry-run", help="Preview the resolved execution plan without spawning runner processes."),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only status or target."),
 ) -> None:
     """Full pipeline: triage -> target resolution -> matrix -> comparison -> hypothesis."""
     try:
@@ -147,6 +148,9 @@ def workflow(
         if dry_run:
             snapshot = investigations.get_investigation()
             target = snapshot["investigation"].get("target") or {"testFile": test_file or "auto-detected"}
+            if quiet:
+                typer.echo(target.get("testFile") or "auto-detected")
+                return
             typer.secho("dry run execution plan (no processes spawned):", fg=typer.colors.CYAN)
             typer.echo(f"  target test: {target.get('testFile')}")
             typer.echo("  steps:")
@@ -158,11 +162,15 @@ def workflow(
             return
         snapshot = investigations.run_controlled_workflow(
             {"testFile": test_file},
-            on_line=lambda line: typer.echo(f"    {line}", color=True) if line.strip() else None,
+            on_line=(lambda line: None) if quiet else (lambda line: typer.echo(f"    {line}", color=True) if line.strip() else None),
         )
     except Exception as error:
         _fail(error)
-    _print_snapshot(snapshot, "controlled workflow complete")
+    if quiet:
+        inv = snapshot.get("investigation") or {}
+        typer.echo(inv.get("status", "unknown"))
+    else:
+        _print_snapshot(snapshot, "controlled workflow complete")
 
 
 @app.command("patch")

@@ -84,3 +84,9 @@ def test_cli_patch_quiet():
 def test_cli_approve_no_patch_exits(isolated_store):
     result = runner.invoke(app, ["approve", "--quiet"])
     assert result.exit_code == 1
+
+def test_cli_workflow_dry_run_quiet():
+    result = runner.invoke(app, ["workflow", "--dry-run", "-q"])
+    assert result.exit_code == 0
+    assert result.stdout.strip() != ""
+    assert "dry run execution plan" not in result.stdout
