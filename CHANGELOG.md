@@ -4,6 +4,15 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.11] - 2026-11-20
+
+### Fixed
+- **Vitest Hook Fallback Detection**: Updated hook resolution in `_hook_api_for` within `patch_review.py` to fall back to `"beforeEach"` for Vitest test files when globals are enabled rather than returning `None`.
+
+### Added
+- **SSE Patch Revert Event Broadcast**: Added `on_event` parameter to `revert_patch_action` in `investigations.py` and broadcasted `"patch_reverted"` event in `api.py` over live SSE streams upon patch revert.
+- **CLI Workflow Quiet Mode**: Added `-q` / `--quiet` flag to `breakpoint workflow` in `cli.py` to suppress verbose step logs and output only the target test or investigation status.
+
 ## [2.5.10] - 2026-11-19
 
 ### Added
