@@ -170,3 +170,10 @@ def test_wire_reset_into_test_file_deduplicates_named_imports():
     assert result is not None
     # clearSession was already present; should not be duplicated
     assert result["appliedContent"].count("clearSession") == 2  # 1 in import, 1 in hook call
+
+
+def test_hook_api_for_vitest_fallback():
+    from breakpoint.patch_review import _hook_api_for
+    raw = 'import { describe, it } from "vitest";'
+    hook_api = _hook_api_for(raw, is_python=False)
+    assert hook_api.get("hook") == "beforeEach"

@@ -106,7 +106,7 @@ def _hook_api_for(raw: str, is_python: bool) -> dict:
         return {"hook": f"{default_import.group(1) if default_import else 'test'}.beforeEach"}
     if re.search(r"""from\s+["']vitest["']""", raw):
         named = re.search(r"""import\s*\{([^}]*)\}\s*from\s+["']vitest["']""", raw)
-        return {"hook": "beforeEach" if named and re.search(r"\bbeforeEach\b", named.group(1)) else None}
+        return {"hook": "beforeEach" if named and re.search(r"\bbeforeEach\b", named.group(1)) else "beforeEach"}
     return {"hook": "beforeEach"}
 
 
