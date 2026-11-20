@@ -71,8 +71,10 @@ def test_node_sample_full_cycle(isolated_store, node_sample):
     assert verify_result["verifications"][-1]["result"] == "verified"
     assert verify_result["investigation"]["status"] == "verified"
 
-    revert_result = investigations.revert_patch_action(patch["id"])
+    events_received = []
+    revert_result = investigations.revert_patch_action(patch["id"], on_event=events_received.append)
     assert revert_result["patches"][-1]["status"] == "reverted"
+    assert any(e.get("type") == "patch_reverted" and e.get("patchId") == patch["id"] for e in events_received)
     _verify_project_clean(NODE_SAMPLE)
 
 

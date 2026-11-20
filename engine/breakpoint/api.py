@@ -128,7 +128,7 @@ async def investigation_action(request: Request) -> JSONResponse:
         if action == "revert-patch":
             if not patch_id:
                 return JSONResponse({"error": "patchId is required for revert-patch."}, status_code=400)
-            return JSONResponse(run_exclusive("revert-patch", lambda: investigations.revert_patch_action(patch_id, demo_only)))
+            return JSONResponse(run_exclusive("revert-patch", lambda: investigations.revert_patch_action(patch_id, demo_only, on_event=events.publish)))
         return JSONResponse({"error": "Unsupported investigation action."}, status_code=400)
     except Exception as error:
         return _error_response(error)

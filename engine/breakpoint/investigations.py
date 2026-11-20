@@ -586,7 +586,7 @@ def approve_and_verify_patch(patch_id: str, demo_only: bool = False, on_event=No
     return snapshot(data, investigation)
 
 
-def revert_patch_action(patch_id: str, demo_only: bool = False) -> dict:
+def revert_patch_action(patch_id: str, demo_only: bool = False, on_event=None) -> dict:
     """Restores every file a patch changed to its recorded baseline."""
     data = read_store()
     bootstrap(data)
@@ -607,4 +607,6 @@ def revert_patch_action(patch_id: str, demo_only: bool = False) -> dict:
     investigation["status"] = "needs_review"
     investigation["updatedAt"] = _now_iso()
     write_store(data)
+    if on_event is not None:
+        on_event({"type": "patch_reverted", "patchId": patch_id})
     return snapshot(data, investigation)

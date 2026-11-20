@@ -28,3 +28,9 @@ def test_api_investigations_missing_project_id_for_start():
     assert response.status_code == 400
     data = response.json()
     assert "projectId is required" in data.get("error", "")
+
+def test_api_investigations_missing_patch_id_for_revert():
+    response = client.post("/api/investigations", json={"action": "revert-patch"})
+    assert response.status_code == 400
+    data = response.json()
+    assert "patchId is required" in data.get("error", "")
