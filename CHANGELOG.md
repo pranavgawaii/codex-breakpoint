@@ -4,6 +4,11 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.12] - 2026-11-22
+
+### Fixed
+- **Project Text Non-UTF8 Decoding Resilience**: Added `UnicodeDecodeError` exception handling alongside `OSError` in `read_project_texts` (`investigations.py`) and `analyze_registered_project` (`projects.py`) so binary or non-UTF-8 files discovered in project paths are safely skipped without halting static analysis.
+
 ## [2.5.11] - 2026-11-20
 
 ### Fixed
