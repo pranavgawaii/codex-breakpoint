@@ -201,8 +201,8 @@ def read_project_texts(project: dict) -> dict:
     for rel in [*files["testFiles"], *files["sourceFiles"]]:
         try:
             file_texts[rel] = read_text_exact(Path(project["root"]) / rel)
-        except OSError:
-            continue  # unreadable files are skipped; analysis proceeds with what it can read
+        except (OSError, UnicodeDecodeError):
+            continue  # unreadable or binary files are skipped; analysis proceeds with what it can read
     return {"fileTexts": file_texts, "testFiles": files["testFiles"], "sourceFiles": files["sourceFiles"]}
 
 

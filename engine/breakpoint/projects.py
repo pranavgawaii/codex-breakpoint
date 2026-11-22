@@ -88,8 +88,8 @@ def analyze_registered_project(project: dict) -> dict:
     for rel in [*files["testFiles"], *files["sourceFiles"]]:
         try:
             file_texts[rel] = read_text_exact(Path(project["root"]) / rel)
-        except OSError:
-            continue  # unreadable file: skip it; analysis proceeds with what it can read
+        except (OSError, UnicodeDecodeError):
+            continue  # unreadable or binary file: skip it; analysis proceeds with what it can read
     analysis = analyze_project(file_texts, files["testFiles"], files["sourceFiles"])
     return {"analysis": analysis, "fileTexts": file_texts}
 

@@ -153,3 +153,28 @@ def bump_runs():
     bump = next((f for f in fact["functions"] if f["name"] == "bump_runs"), None)
     assert bump is not None
     assert "_counters" in bump["mutates"]
+
+def test_read_project_texts_skips_non_utf8_files(tmp_path):
+    from breakpoint.investigations import read_project_texts
+    from breakpoint.projects import analyze_registered_project
+
+    test_file = tmp_path / "test_valid.py"
+    test_file.write_text("def test_ok(): pass\n", encoding="utf-8")
+
+    binary_file = tmp_path / "binary_data.py"
+    binary_file.write_bytes(b"\x80\xff\xfe\x00\x01\x02")
+
+    project = {
+        "id": "proj_tmp",
+        "root": str(tmp_path),
+        "testFiles": ["test_valid.py"],
+        "trusted": True,
+    }
+
+    res = read_project_texts(project)
+    assert "test_valid.py" in res["fileTexts"]
+    assert "binary_data.py" not in res["fileTexts"]
+
+    analyzed = analyze_registered_project(project)
+    assert "test_valid.py" in analyzed["fileTexts"]
+    assert "binary_data.py" not in analyzed["fileTexts"]
