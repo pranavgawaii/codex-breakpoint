@@ -4,6 +4,13 @@ All notable changes to the Breakpoint project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.13] - 2026-11-23
+
+### Added
+- **Custom Investigation Title Support**: Added optional `title` parameter to `start_investigation` in `investigations.py` and the `start-investigation` HTTP action in `api.py` for user-defined investigation labeling.
+- **CLI Scan JSON Export**: Added `--json` flag to `breakpoint scan` in `cli.py` to output static state analysis findings as machine-readable JSON.
+- **Tuple Reset Statement Drafting**: Added support for empty tuple initializers (`()`, `tuple()`) in `_provable_reset_statements` within `patch_review.py` for synthesizing Python module state cleanups.
+
 ## [2.5.12] - 2026-11-22
 
 ### Fixed
