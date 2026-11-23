@@ -177,3 +177,14 @@ def test_hook_api_for_vitest_fallback():
     raw = 'import { describe, it } from "vitest";'
     hook_api = _hook_api_for(raw, is_python=False)
     assert hook_api.get("hook") == "beforeEach"
+
+def test_provable_reset_statements_tuple():
+    from breakpoint.patch_review import _provable_reset_statements
+    fact = {
+        "mutableVars": [
+            {"name": "items_tuple", "kind": "let", "initializer": "()"},
+            {"name": "empty_tuple_call", "kind": "let", "initializer": "tuple()"},
+        ]
+    }
+    stmts = _provable_reset_statements(fact)
+    assert stmts == ["items_tuple = ()", "empty_tuple_call = tuple()"]

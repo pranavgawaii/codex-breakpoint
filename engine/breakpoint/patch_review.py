@@ -209,7 +209,7 @@ def _provable_reset_statements(fact: dict) -> list[str] | None:
                 statements.append(f"{variable['name']}.clear()")
             else:
                 return None  # opaque container: refuse
-        elif initializer in ("None", "True", "False", "0", '""', "''") or re.match(r"^-?\d+(\.\d+)?$", initializer) or re.match(r"^['\"].*['\"]$", initializer) or initializer == "" or re.match(r"^(bytearray\(\)|b''|b\"\")", initializer):
+        elif initializer in ("None", "True", "False", "0", '""', "''") or re.match(r"^-?\d+(\.\d+)?$", initializer) or re.match(r"^['\"].*['\"]$", initializer) or initializer == "" or re.match(r"^(bytearray\(\)|b''|b\"\")", initializer) or initializer in ("()", "tuple()"):
             statements.append(f"{variable['name']} = {initializer or 'None'}")
         else:
             return None  # opaque call initializer: refuse
