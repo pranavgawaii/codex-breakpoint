@@ -34,3 +34,17 @@ def test_api_investigations_missing_patch_id_for_revert():
     assert response.status_code == 400
     data = response.json()
     assert "patchId is required" in data.get("error", "")
+
+def test_api_investigations_start_with_custom_title(isolated_store, node_sample):
+    from breakpoint.projects import register_project_action
+    registered = register_project_action(node_sample["root"], True)
+    project_id = registered["project"]["id"]
+
+    response = client.post("/api/investigations", json={
+        "action": "start-investigation",
+        "projectId": project_id,
+        "title": "Custom Investigation Title",
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["investigation"]["title"] == "Custom Investigation Title"

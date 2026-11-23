@@ -99,6 +99,7 @@ async def investigation_action(request: Request) -> JSONResponse:
     patch_id = body.get("patchId") if isinstance(body.get("patchId"), str) else None
     test_file = body.get("testFile") if isinstance(body.get("testFile"), str) else None
     target_test = body.get("targetTest") if isinstance(body.get("targetTest"), str) else None
+    title = body.get("title") if isinstance(body.get("title"), str) else None
 
     try:
         if action == "run-demo":
@@ -113,7 +114,7 @@ async def investigation_action(request: Request) -> JSONResponse:
         if action == "start-investigation":
             if not project_id:
                 return JSONResponse({"error": "projectId is required for start-investigation."}, status_code=400)
-            return JSONResponse(run_exclusive("start-investigation", lambda: investigations.start_investigation(project_id)))
+            return JSONResponse(run_exclusive("start-investigation", lambda: investigations.start_investigation(project_id, title=title)))
         if action == "ai-review":
             return JSONResponse(run_exclusive("ai-review", lambda: investigations.run_ai_review(demo_only)))
         if action == "propose-patch":

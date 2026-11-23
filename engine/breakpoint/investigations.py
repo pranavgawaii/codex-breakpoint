@@ -243,7 +243,7 @@ def list_projects() -> list[dict]:
     return data["projects"]
 
 
-def start_investigation(project_id: str) -> dict:
+def start_investigation(project_id: str, title: str | None = None) -> dict:
     """Starts a fresh investigation for a registered project; makes it active."""
     data = read_store()
     bootstrap(data)
@@ -258,15 +258,19 @@ def start_investigation(project_id: str) -> dict:
         None,
     )
     if untouched is not None:
+        if title and isinstance(title, str) and title.strip():
+            untouched["title"] = title.strip()
+            untouched["updatedAt"] = _now_iso()
         # Move untouched investigation to end so it becomes current_investigation(data)
         data["investigations"].remove(untouched)
         data["investigations"].append(untouched)
         write_store(data)
         return snapshot(data, untouched)
+    inv_title = title.strip() if (title and isinstance(title, str) and title.strip()) else f"Flaky investigation — {project['name']}"
     investigation = {
         "id": _new_id("inv"),
         "projectId": project_id,
-        "title": f"Flaky investigation — {project['name']}",
+        "title": inv_title,
         "status": "open",
         "goal": "Prove which test sequence breaks which test, then verify a cleanup fix.",
         "target": None,
