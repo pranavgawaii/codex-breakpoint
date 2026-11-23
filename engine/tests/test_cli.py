@@ -90,3 +90,10 @@ def test_cli_workflow_dry_run_quiet():
     assert result.exit_code == 0
     assert result.stdout.strip() != ""
     assert "dry run execution plan" not in result.stdout
+
+def test_cli_scan_json():
+    import json
+    result = runner.invoke(app, ["scan", "--json"])
+    assert result.exit_code == 0
+    data = json.loads(result.stdout)
+    assert isinstance(data, list)

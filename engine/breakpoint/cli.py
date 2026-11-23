@@ -121,6 +121,7 @@ def register(
 @app.command("scan")
 def scan(
     project_id: str = typer.Argument(None, help="Project id; defaults to the active investigation's project."),
+    json_output: bool = typer.Option(False, "--json", help="Output analysis findings snapshot as JSON."),
     quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress verbose output; print only the finding count."),
 ) -> None:
     """Runs the static shared-state analysis only (no execution)."""
@@ -128,6 +129,10 @@ def scan(
         outcome = investigations.scan_project(project_id)
     except Exception as error:
         _fail(error)
+    if json_output:
+        import json
+        typer.echo(json.dumps(outcome["snapshot"]["analyses"], indent=2, default=str))
+        return
     if quiet:
         typer.echo(str(len(outcome["snapshot"]["analyses"])))
     else:
